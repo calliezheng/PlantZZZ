@@ -1,4 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS plantzzz;
+DROP SCHEMA IF EXISTS plantzzz;
+CREATE DATABASE plantzzz;
 USE plantzzz;
 
 DROP TABLE IF EXISTS plant;
@@ -20,6 +21,14 @@ PRIMARY KEY (ID),
 FOREIGN KEY (Plant_ID) REFERENCES plant(ID)
 );
 
+DROP TABLE IF EXISTS user_type;
+CREATE TABLE user_type (
+ID INT NOT NULL AUTO_INCREMENT,
+Type_Name VARCHAR(255) NOT NULL,
+is_active BOOLEAN DEFAULT TRUE,
+PRIMARY KEY (ID)
+);
+
 DROP TABLE IF EXISTS user;
 CREATE TABLE user (
   ID INT NOT NULL AUTO_INCREMENT,
@@ -32,24 +41,16 @@ CREATE TABLE user (
   FOREIGN KEY (User_Type) REFERENCES user_type(ID)
 );
 
-DROP TABLE IF EXISTS user_type;
-CREATE TABLE user_type (
-ID INT NOT NULL AUTO_INCREMENT,
-Type_Name VARCHAR(255) NOT NULL,
-is_active BOOLEAN DEFAULT TRUE,
-PRIMARY KEY (ID)
-);
+INSERT INTO user_type (ID, Type_Name, is_active) VALUES
+(1, 'Admin', 1),
+(2, 'Student', 1);
 
-INSERT INTO user (Username, Email, Password, User_Type, is_active) VALUES
+INSERT INTO user (ID, Username, Email, Password, User_Type, is_active) VALUES
 (1, 'CallieZheng', 'Calliezheng233@gmail.com', 'plantzzz1234', 2, 1),
 (2, 'PixelPioneer', 'PixelPioneer@mail.com', 'plantzzz1234', 2, 1),
 (3, 'EchoSage', 'EchoSage@example.com', 'plantzzz1234', 2, 1),
 (4, 'FrostVoyager', 'FrostVoyager@mail.com', 'plantzzz1234', 2, 1),
 (5, 'Admin', 'Calliezheng@hotmail.com', 'plantzzz1234', 1, 1);
-
-INSERT INTO user_type (ID, Type_Name, is_active) VALUES
-(1, 'Admin', 1),
-(2, 'Student', 1);
 
 INSERT INTO plant (ID, Acadamic_Name, Daily_Name, is_active) VALUES
 (1, "Acaena inermis 'Purpurea'", 'purple bidibid', 1),
@@ -214,7 +215,7 @@ INSERT INTO plant (ID, Acadamic_Name, Daily_Name, is_active) VALUES
 (160, "Protea neriifolia", 'oleanderleaf protea', 1),
 (161, "Prumnopitys taxifolia", 'matai', 1),
 (162, "Prunus x yedoensis", 'Yoshino cherry', 1),
-(163, "Pseudopanax lessonii", 'houpara'),
+(163, "Pseudopanax lessonii", 'houpara', 1),
 (164, "Pseudowintera colorata", 'horopito or pepper tree', 1),
 (165, "Quercus palustris", 'pin oak', 1),
 (166, "Quercus robur", 'English oak', 1),
