@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
 let sequelize;
@@ -37,7 +37,18 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+db.user.belongsTo(db.user_type, { 
+  foreignKey: 'User_Type', // Ensure this matches the foreign key column in 'user' table
+  as: 'UserType' // Alias for including in queries
+});
+
+db.user_type.hasMany(db.user, { 
+  foreignKey: 'User_Type', // Ensure this matches the foreign key column in 'user' table
+  as: 'Users' // Alias for including in queries
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
 
 module.exports = db;

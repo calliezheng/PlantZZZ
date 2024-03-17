@@ -1,25 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('user', {
+    const User_Type = sequelize.define('user_type', {
       ID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      Username: {
+      Type_Name: {
         type: DataTypes.STRING,
-        allowNull: false,
-      },
-      Email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      Password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      User_Type: {
-        type: DataTypes.INTEGER,
         allowNull: false,
       },
       is_active: {
@@ -28,10 +16,10 @@ module.exports = (sequelize, DataTypes) => {
       },
     }, {
       // Model options
-      tableName: 'user', 
+      tableName: 'user_type', 
       timestamps: false, 
     });
   
-    return User;
+    return User_Type;
   };
   

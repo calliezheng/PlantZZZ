@@ -1,19 +1,16 @@
-import React from 'react';
 import './App.css';
-import axios from "axios";
-import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Home from "./pages/Home";
 
 function App() {
-
-  useEffect(() => {
-    axios.get("http://localhost:3001/home").then((response) => {
-    console.log(response);
-    });
-  }, []);
- 
   return (
     <div className="App">
-      
+      <Router>
+        <Link to=""> Sign up/ Sign in</Link>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
