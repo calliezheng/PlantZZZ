@@ -46,11 +46,11 @@ INSERT INTO user_type (ID, Type_Name, is_active) VALUES
 (2, 'Student', 1);
 
 INSERT INTO user (ID, Username, Email, Password, User_Type, is_active) VALUES
-(1, 'CallieZheng', 'Calliezheng233@gmail.com', 'plantzzz1234', 2, 1),
-(2, 'PixelPioneer', 'PixelPioneer@mail.com', 'plantzzz1234', 2, 1),
-(3, 'EchoSage', 'EchoSage@example.com', 'plantzzz1234', 2, 1),
-(4, 'FrostVoyager', 'FrostVoyager@mail.com', 'plantzzz1234', 2, 1),
-(5, 'Admin', 'Calliezheng@hotmail.com', 'plantzzz1234', 1, 1);
+(1, 'CallieZheng', 'Calliezheng233@gmail.com', '$2b$12$pM3cuZeVWhPMFSIUTes07.0TfiVOHhFD0MLQLeoxPiWb571cZc19u', 2, 1),
+(2, 'PixelPioneer', 'PixelPioneer@mail.com', '$2b$12$O.f8VRMICUWK83Xqxe2UQe9jYfOAIU5EeykhaXt64eN2RF2IR6bzG', 2, 1),
+(3, 'EchoSage', 'EchoSage@example.com', '$2b$12$gzj9cCuaEb5rK5NVrHxrbeSJ0ZqSqUg9RizXdxNZj08LPMLkH3iiW', 2, 1),
+(4, 'FrostVoyager', 'FrostVoyager@mail.com', '$2b$12$C.Bn8WoC9XBDeoitkwh9fuUS7lv9E9t7/kNE8Cd9M5MyPnE70kISe', 2, 1),
+(5, 'Admin', 'Calliezheng@hotmail.com', '$2b$12$x8YaY8C5g4EW.FHqPz2eoOGYeL4GyO1X6H8C5ocnprExSOUs2a4hm', 1, 1);
 
 INSERT INTO plant (ID, Acadamic_Name, Daily_Name, is_active) VALUES
 (1, "Acaena inermis 'Purpurea'", 'purple bidibid', 1),
