@@ -32,7 +32,7 @@ export function SignIn() {
           <ErrorMessage name="username" component="div" />
           
           <label>Password</label>
-          <Field id="password" name="password" placeholder="Password"/>
+          <Field id="password" name="password" type="password" placeholder="Password"/>
           <ErrorMessage name="password" component="div" />
           
           <button type="submit">Sign In</button>

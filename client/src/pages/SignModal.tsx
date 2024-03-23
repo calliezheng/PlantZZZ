@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { SignIn, SignUp } from './Sign';
 
-function SignModal() {
+interface SignModalProps {
+  toggleModal: () => void; // Define the type for the toggleModal function
+}
+
+function SignModal({ toggleModal } : SignModalProps) {
   const [isSignUp, setIsSignUp] = useState(true); // true for sign-up form, false for sign-in form
   const [showModal, setShowModal] = useState(false);
-
+  
   return (
     <>
       <button
