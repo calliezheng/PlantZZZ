@@ -38,17 +38,17 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.user.belongsTo(db.user_type, { 
-  foreignKey: 'User_Type', // Ensure this matches the foreign key column in 'user' table
+  foreignKey: 'user_type', // Ensure this matches the foreign key column in 'user' table
   as: 'UserType' // Alias for including in queries
 });
 
 db.user_type.hasMany(db.user, { 
-  foreignKey: 'User_Type', // Ensure this matches the foreign key column in 'user' table
+  foreignKey: 'user_type', // Ensure this matches the foreign key column in 'user' table
   as: 'Users' // Alias for including in queries
 });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-
+console.log(Object.keys(db));
 module.exports = db;

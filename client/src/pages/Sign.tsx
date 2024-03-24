@@ -1,8 +1,11 @@
 import React from 'react';
-import { Formik, Form, Field, ErrorMessage} from 'formik';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers} from 'formik';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 export function SignIn() {
+  
+  const navigate = useNavigate();
   
   interface FormValues {
     username: string;
@@ -19,9 +22,34 @@ export function SignIn() {
     password: Yup.string().min(6).max(20).required(),
   });
   
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+ 
+  const onSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+    try {
+      const response = await fetch('http://localhost:3001/home/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      if (!response.ok) {
+        throw new Error('Sign In Failed');
+      }
+      const responseBody = await response.json();
+      console.log(responseBody);
+      if (responseBody.success) { // Assume your API returns { success: true } on successful login
+        navigate('/dashboard');
+      } else {
+        // Handle failed sign-in attempt
+        actions.setFieldError('general', 'Your username or password is incorrect.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Optionally set form error messages here
+      actions.setFieldError('general', 'Failed to sign in. Please check your credentials and try again.');
+    }
   };
+  
 
   return (
     <div className='signInForm'>
@@ -44,6 +72,8 @@ export function SignIn() {
 
 export function SignUp() {
   
+  const navigate = useNavigate();
+  
   interface FormValues {
     username: string;
     email: string;
@@ -62,8 +92,31 @@ export function SignUp() {
     password: Yup.string().min(6, 'Password must be at least 6 characters').max(20, 'Password must not exceed 20 characters').required('Password is required'),
   });
 
-   const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const onSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+    try {
+      const response = await fetch('http://localhost:3001/home/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      if (!response.ok) {
+        throw new Error('Sign up Failed');
+      }
+      const responseBody = await response.json();
+      console.log(responseBody);
+      if (responseBody.success) { // Assume your API returns { success: true } on successful login
+        navigate('/signin');
+      } else {
+        // Handle failed sign-in attempt
+        actions.setFieldError('general', 'Your username is occupied.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Optionally set form error messages here
+      actions.setFieldError('general', 'Failed to sign up. Please check your credentials and try again.');
+    }
   };
 
   return (
@@ -88,3 +141,4 @@ export function SignUp() {
     </div>
   );
 }
+

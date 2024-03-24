@@ -1,16 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
   const Plant = sequelize.define('plant', {
-    ID: {
+    id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false,
     },
-    Acadamic_Name: {
+    acadamic_Name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    Daily_Name: {
+    daily_Name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
