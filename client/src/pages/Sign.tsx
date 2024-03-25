@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Form, Field, ErrorMessage, FormikHelpers} from 'formik';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers, FormikErrors} from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,10 @@ export function SignIn() {
   interface FormValues {
     username: string;
     password: string;
+  }
+  
+  interface FormikErrorValues extends FormikErrors<FormValues> {
+    general?: string; // This line extends the FormikErrors type
   }
   
   const initialValues:FormValues = {
@@ -51,6 +55,7 @@ export function SignIn() {
   return (
     <div className='signInForm'>
       <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
+      {({ errors, touched }) => (
         <Form>
           <label>Username</label>
           <Field id="username" name="username" placeholder="Username or Email"/>
@@ -60,10 +65,13 @@ export function SignIn() {
           <Field id="password" name="password" type="password" placeholder="Password"/>
           <ErrorMessage name="password" component="span" className="error" />
           
-          <ErrorMessage name="general" component="span" className="error general-error" />
+          {((errors as FormikErrorValues).general) && (
+            <div className="error">{(errors as FormikErrorValues).general}</div>
+          )}
           
           <button type="submit">Sign In</button>
         </Form>
+        )}
       </Formik>
     </div>
   )
