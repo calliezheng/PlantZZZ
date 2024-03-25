@@ -34,22 +34,19 @@ export function SignIn() {
       });
       const responseBody = await response.json();
       if (!response.ok) {
-        throw new Error(responseBody.message || 'Sign In Failed');
+        const errorMessage = responseBody.message || 'Sign In Failed';
+        actions.setFieldError('general', errorMessage);
       }
       console.log(responseBody);
       if (responseBody.success) {
         navigate('/dashboard');
       } else {
-        // Handle failed sign-in attempt
-        actions.setFieldError('general', 'Your username or password is incorrect.');
+        actions.setFieldError('general', responseBody.message || 'Sign in failed.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      // Optionally set form error messages here
-      actions.setFieldError('general', 'Failed to sign in. Please check your credentials and try again.');
-    }
+      actions.setFieldError('general', 'Failed to sign in. Please check your connection and try again.');
   };
-  
+};
 
   return (
     <div className='signInForm'>
@@ -57,11 +54,13 @@ export function SignIn() {
         <Form>
           <label>Username</label>
           <Field id="username" name="username" placeholder="Username or Email"/>
-          <ErrorMessage name="general" component="div" className="error" />
+          <ErrorMessage name="username" component="span" className="error" />
           
           <label>Password</label>
           <Field id="password" name="password" type="password" placeholder="Password"/>
-          <ErrorMessage name="general" component="div" className="error" />
+          <ErrorMessage name="password" component="span" className="error" />
+          
+          <ErrorMessage name="general" component="span" className="error general-error" />
           
           <button type="submit">Sign In</button>
         </Form>
@@ -107,7 +106,7 @@ export function SignUp() {
       const responseBody = await response.json();
       console.log(responseBody);
       if (responseBody.success) { // Assume your API returns { success: true } on successful login
-        navigate('/signin');
+        navigate('/');
       } else {
         // Handle failed sign-in attempt
         actions.setFieldError('general', 'Your username is occupied.');
@@ -125,15 +124,15 @@ export function SignUp() {
         <Form>
           <label htmlFor="username">Username</label>
           <Field id="username" name="username" placeholder="Username" />
-          <ErrorMessage name="username" component="div" />
+          <ErrorMessage name="username" component="span" />
 
           <label htmlFor="email">Email</label>
           <Field id="email" name="email" type="email" placeholder="Email" />
-          <ErrorMessage name="email" component="div" />
+          <ErrorMessage name="email" component="span" />
 
           <label htmlFor="password">Password</label>
           <Field id="password" name="password" type="password" placeholder="Password" />
-          <ErrorMessage name="password" component="div" />
+          <ErrorMessage name="password" component="span" />
           
           <button type="submit">Sign Up</button>
         </Form>

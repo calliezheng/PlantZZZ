@@ -44,32 +44,39 @@ router.post('/signin', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
   try {
+    console.log('Received data:', req.body);
     const { username, email, password } = req.body;
+    console.log('Checking for existing user...');
     const existingUser = await User.findOne({ where: { username } });
 
-    // Check if user already exists
     if (existingUser) {
-      return res.status(409).send({ error: 'User already exists' }); // 409 Conflict
+      console.log('User already exists:', username);
+      return res.status(409).send({ error: 'User already exists' });
     }
 
-    // Hash the password before saving it to the database
+    console.log('Hashing password...');
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
+    console.log('Creating new user...');
     const newUser = await User.create({
       username,
-      email, // Assuming your User model also has an 'email' field
+      email,
       password: hashedPassword,
+      user_type:2,
+      is_active:1
     });
 
-    // You might want to create a token for the new user as well
+    console.log('Generating token...');
     const token = jwt.sign({ id: newUser.id }, 'secret', { expiresIn: '1h' });
 
-    res.status(201).send({ message: 'User created successfully', token }); // 201 Created
+    console.log('User created:', newUser);
+    return res.status(201).send({ success: true, message: 'User created successfully', token });
   } catch (error) {
-    res.status(500).send({ error: error.message }); // 500 Internal Server Error
+    console.error('Signup Error:', error);
+    return res.status(500).send({ error: error.message });
   }
 });
+
 
 
 module.exports = router;
