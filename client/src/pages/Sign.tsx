@@ -32,12 +32,12 @@ export function SignIn() {
         },
         body: JSON.stringify(values),
       });
-      if (!response.ok) {
-        throw new Error('Sign In Failed');
-      }
       const responseBody = await response.json();
+      if (!response.ok) {
+        throw new Error(responseBody.message || 'Sign In Failed');
+      }
       console.log(responseBody);
-      if (responseBody.success) { // Assume your API returns { success: true } on successful login
+      if (responseBody.success) {
         navigate('/dashboard');
       } else {
         // Handle failed sign-in attempt
@@ -57,11 +57,11 @@ export function SignIn() {
         <Form>
           <label>Username</label>
           <Field id="username" name="username" placeholder="Username or Email"/>
-          <ErrorMessage name="username" component="div" />
+          <ErrorMessage name="general" component="div" className="error" />
           
           <label>Password</label>
           <Field id="password" name="password" type="password" placeholder="Password"/>
-          <ErrorMessage name="password" component="div" />
+          <ErrorMessage name="general" component="div" className="error" />
           
           <button type="submit">Sign In</button>
         </Form>
