@@ -1,10 +1,14 @@
 import React from 'react';
 
-function Dashboard() {
-    return(
-        <div>Dashborad</div>
-    );
+const DashboardStudent = () => {
+    const username = localStorage.getItem('username');
     
-};
+    return (
+      <div>
+        {username && <h1>Welcome {username}!</h1>}
+        {/* Rest of your dashboard content */}
+      </div>
+    );
+  };
 
-export default Dashboard;
+export default DashboardStudent;

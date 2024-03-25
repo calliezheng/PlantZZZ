@@ -7,13 +7,11 @@ import Learn from "./pages/Learn";
 import DashboardStudent from './pages/DashboardStudent';
 
 function App() {
-
   const [showModal, setShowModal] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false); // Manage the form state at the App level
 
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
-
+  const toggleModal = () => setShowModal(!showModal);
+  const toggleForm = () => setIsSignUp(!isSignUp);
   return (
     <div className="App">
       <Router>
@@ -27,7 +25,12 @@ function App() {
           <Route path="/learn" element={<Learn />} />
           <Route path="/dashboard" element={<DashboardStudent />} />
         </Routes>
-        {showModal && <SignModal toggleModal={toggleModal} />}
+        <SignModal
+        showModal={showModal}
+        toggleModal={toggleModal}
+        isSignUp={isSignUp}
+        toggleForm={toggleForm}
+      />
       </Router>
     </div>
   );

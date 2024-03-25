@@ -3,7 +3,11 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers, FormikErrors} from 'f
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
-export function SignIn() {
+interface SignInProps {
+  toggleModal: () => void;
+}
+
+export function SignIn({ toggleModal }: SignInProps) {
   
   const navigate = useNavigate();
   
@@ -43,7 +47,11 @@ export function SignIn() {
       }
       console.log(responseBody);
       if (responseBody.success) {
+        localStorage.setItem('user_id', responseBody.id);
+        localStorage.setItem('username', responseBody.username);
+        console.log(responseBody.username)
         navigate('/dashboard');
+        toggleModal();
       } else {
         actions.setFieldError('general', responseBody.message || 'Sign in failed.');
       }
@@ -77,7 +85,11 @@ export function SignIn() {
   )
 }
 
-export function SignUp() {
+interface SignUpProps {
+  toggleModal: () => void;
+}
+
+export function SignUp({ toggleModal }: SignUpProps) {
   
   const navigate = useNavigate();
   
@@ -115,6 +127,7 @@ export function SignUp() {
       console.log(responseBody);
       if (responseBody.success) { // Assume your API returns { success: true } on successful login
         navigate('/');
+        toggleModal();
       } else {
         // Handle failed sign-in attempt
         actions.setFieldError('general', 'Your username is occupied.');

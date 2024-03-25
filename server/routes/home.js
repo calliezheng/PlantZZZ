@@ -33,7 +33,7 @@ router.post('/signin', async (req, res) => {
     }
     console.log('Password valid for user:', username);
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-    return res.json({ success: true, message: 'Authentication successful', token });
+    return res.json({ success: true, message: 'Authentication successful', token, user_id: user.id, username: user.username });
 
   } catch (error) {
     console.error('SignIn Error:', error);

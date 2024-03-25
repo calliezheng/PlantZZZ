@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect } from "react";
 
 function Home() {
     useEffect(() => {
@@ -8,10 +7,11 @@ function Home() {
         console.log(response);
         });
       }, []);
-     
+
   return (
     <div>
-      
+       <h1>PlantZZZ</h1>
+    
     </div>
   )
 }
