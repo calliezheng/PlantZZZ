@@ -4,21 +4,21 @@ USE plantzzz;
 
 DROP TABLE IF EXISTS plant;
 CREATE TABLE plant (
-  ID INT NOT NULL AUTO_INCREMENT,
-  Acadamic_Name VARCHAR(255) NOT NULL,
-  Daily_Name VARCHAR(255) NOT NULL,
+  id INT NOT NULL AUTO_INCREMENT,
+  acadamic_name VARCHAR(255) NOT NULL,
+  daily_name VARCHAR(255) NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
-  PRIMARY KEY (ID)
+  PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS picture;
 CREATE TABLE picture (
 id INT NOT NULL AUTO_INCREMENT,
 picture_file_name VARCHAR(255) NOT NULL,
-plant_ID INT NOT NULL,
+plant_id INT NOT NULL,
 is_active BOOLEAN DEFAULT TRUE,
-PRIMARY KEY (ID),
-FOREIGN KEY (Plant_ID) REFERENCES plant(ID)
+PRIMARY KEY (id),
+FOREIGN KEY (plant_id) REFERENCES plant(id)
 );
 
 DROP TABLE IF EXISTS user_type;
@@ -26,7 +26,7 @@ CREATE TABLE user_type (
 id INT NOT NULL AUTO_INCREMENT,
 type_name VARCHAR(255) NOT NULL,
 is_active BOOLEAN DEFAULT TRUE,
-PRIMARY KEY (ID)
+PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS user;
@@ -37,22 +37,22 @@ CREATE TABLE user (
   password VARCHAR(255) NOT NULL,
   user_type INT NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (User_Type) REFERENCES user_type(ID)
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_type) REFERENCES user_type(id)
 );
 
-INSERT INTO user_type (ID, Type_Name, is_active) VALUES
+INSERT INTO user_type (id, type_name, is_active) VALUES
 (1, 'Admin', 1),
 (2, 'Student', 1);
 
-INSERT INTO user (ID, Username, Email, Password, User_Type, is_active) VALUES
+INSERT INTO user (id, username, email, password, user_type, is_active) VALUES
 (1, 'CallieZheng', 'Calliezheng233@gmail.com', '$2b$12$pM3cuZeVWhPMFSIUTes07.0TfiVOHhFD0MLQLeoxPiWb571cZc19u', 2, 1),
 (2, 'PixelPioneer', 'PixelPioneer@mail.com', '$2b$12$O.f8VRMICUWK83Xqxe2UQe9jYfOAIU5EeykhaXt64eN2RF2IR6bzG', 2, 1),
 (3, 'EchoSage', 'EchoSage@example.com', '$2b$12$gzj9cCuaEb5rK5NVrHxrbeSJ0ZqSqUg9RizXdxNZj08LPMLkH3iiW', 2, 1),
 (4, 'FrostVoyager', 'FrostVoyager@mail.com', '$2b$12$C.Bn8WoC9XBDeoitkwh9fuUS7lv9E9t7/kNE8Cd9M5MyPnE70kISe', 2, 1),
 (5, 'Admin', 'Calliezheng@hotmail.com', '$2b$12$x8YaY8C5g4EW.FHqPz2eoOGYeL4GyO1X6H8C5ocnprExSOUs2a4hm', 1, 1);
 
-INSERT INTO plant (ID, Acadamic_Name, Daily_Name, is_active) VALUES
+INSERT INTO plant (id, acadamic_name, daily_name, is_active) VALUES
 (1, "Acaena inermis 'Purpurea'", 'purple bidibid', 1),
 (2, "Acanthus mollis", 'bears breeches', 1),
 (3, "Acca sellowiana", 'feijoa', 1),

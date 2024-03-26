@@ -2,12 +2,16 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers, FormikErrors} from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 interface SignInProps {
   toggleModal: () => void;
+  authenticateUser: (isAuth: boolean) => void;
 }
 
-export function SignIn({ toggleModal }: SignInProps) {
+export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
   
   const navigate = useNavigate();
   
@@ -50,8 +54,9 @@ export function SignIn({ toggleModal }: SignInProps) {
         localStorage.setItem('user_id', responseBody.id);
         localStorage.setItem('username', responseBody.username);
         console.log(responseBody.username)
-        navigate('/dashboard');
+        navigate('/');
         toggleModal();
+        authenticateUser(true);
       } else {
         actions.setFieldError('general', responseBody.message || 'Sign in failed.');
       }
@@ -128,6 +133,7 @@ export function SignUp({ toggleModal }: SignUpProps) {
       if (responseBody.success) { // Assume your API returns { success: true } on successful login
         navigate('/');
         toggleModal();
+        toast.success('Sign up successful!');
       } else {
         // Handle failed sign-in attempt
         actions.setFieldError('general', 'Your username is occupied.');

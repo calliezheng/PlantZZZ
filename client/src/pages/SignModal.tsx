@@ -6,9 +6,10 @@ interface SignModalProps {
   toggleModal: () => void; // The function to call when we want to toggle the modal
   isSignUp: boolean; // Indicates whether to show the sign-up form or the sign-in form
   toggleForm: () => void; // Function to toggle between sign up and sign in
+  authenticateUser: (isAuth: boolean) => void;
 }
 
-const SignModal: React.FC<SignModalProps> = ({ showModal, toggleModal, isSignUp, toggleForm }) => {
+const SignModal: React.FC<SignModalProps> = ({ showModal, toggleModal, isSignUp, toggleForm, authenticateUser }) => {
   return showModal ? (
     <div className="fixed inset-0 z-50 overflow-auto bg-smoke-light flex">
       <div className="relative p-8 bg-white w-full max-w-md m-auto flex-col flex rounded-lg">
@@ -26,7 +27,7 @@ const SignModal: React.FC<SignModalProps> = ({ showModal, toggleModal, isSignUp,
             <SignUp toggleModal={toggleModal}/>
           ) : (
             // Sign-In Form Component
-            <SignIn toggleModal={toggleModal}/>
+            <SignIn toggleModal={toggleModal} authenticateUser={authenticateUser}/>
           )}
         </div>
         <div className="text-center mt-4">
