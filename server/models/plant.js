@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    acadamic_Name: {
+    acadamic_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    daily_Name: {
+    daily_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
   }, {
-    // Model options
     tableName: 'plant', 
     timestamps: false, 
   });

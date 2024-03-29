@@ -1,24 +1,35 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
 import Home from "./pages/Home";
 import SignModal from "./pages/SignModal";
 import Learn from "./pages/Learn";
 import Quiz from "./pages/Quiz";
 import DashboardStudent from './pages/DashboardStudent';
+import DashboardAdmin from './pages/DashboardAdmin';
+import Profile from './pages/Profile';
+import Password from './pages/Password';
+import ManagePlant from './pages/ManagePlant';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false); // Manage the form state at the App level
-
+  const [isSignUp, setIsSignUp] = useState(false); 
+  const [userType, setUserType] = useState('');
+  
   useEffect(() => {
-    const user_id = localStorage.getItem('user_id');
-    const username = localStorage.getItem('username');
-    setIsAuthenticated(!!user_id && !!username);
-  }, []);
+      const user_id = localStorage.getItem('user_id');
+      const username = localStorage.getItem('username');
+      const user_type = localStorage.getItem('user_type');
+      if (user_id && username && user_type) {
+        setIsAuthenticated(true);
+        setUserType(user_type);
+      }
+    }, []);
+
+  
 
   const toggleModal = () => setShowModal(!showModal);
   const toggleForm = () => setIsSignUp(!isSignUp);
@@ -26,6 +37,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('user_id');
     localStorage.removeItem('username');
+    localStorage.removeItem('user_type');
     setIsAuthenticated(false);
   };
 
@@ -45,7 +57,7 @@ function App() {
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="hover:text-green-600">Dashboard</Link>
-              <button onClick={handleLogout}>Log Out</button>
+              <Link to="/"><button onClick={handleLogout}>Log Out</button></Link>
             </>
           ) : (
             <button onClick={toggleModal}>Sign In / Sign Up</button>
@@ -55,7 +67,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/quiz" element={<Quiz />} />
-          <Route path="/dashboard" element={<DashboardStudent />} />
+          <Route path="/dashboard" element={Number(userType) === 1 ? <DashboardAdmin /> : <DashboardStudent />} />
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/profile/:id/password" element={<Password />} />
+          <Route path="/profile/:id/manageplant" element={<ManagePlant />} />
         </Routes>
         <SignModal
         showModal={showModal}

@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { Plant } = require("../models");
+const { plant:Plant } = require("../models");
 
-router.get("/learn", async (req, res) => {
+console.log(Plant);
+router.get("/", async (req, res) => {
     try {
         const plants = await Plant.findAll();
         res.json(plants);
@@ -12,7 +13,7 @@ router.get("/learn", async (req, res) => {
     }
 });
 
-router.post("/learn", async (req, res) => {
+router.post("/", async (req, res) => {
 
 });
 

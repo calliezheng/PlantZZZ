@@ -33,7 +33,7 @@ router.post('/signin', async (req, res) => {
     }
     console.log('Password valid for user:', username);
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-    return res.json({ success: true, message: 'Authentication successful', token, user_id: user.id, username: user.username });
+    return res.json({ success: true, message: 'Authentication successful', token, user_id: user.id, username: user.username, user_type: user.user_type});
 
   } catch (error) {
     console.error('SignIn Error:', error);
@@ -76,7 +76,5 @@ router.post('/signup', async (req, res) => {
     return res.status(500).send({ error: error.message });
   }
 });
-
-
 
 module.exports = router;

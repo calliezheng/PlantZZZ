@@ -21,7 +21,7 @@ export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
   }
   
   interface FormikErrorValues extends FormikErrors<FormValues> {
-    general?: string; // This line extends the FormikErrors type
+    general?: string;
   }
   
   const initialValues:FormValues = {
@@ -51,9 +51,9 @@ export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
       }
       console.log(responseBody);
       if (responseBody.success) {
-        localStorage.setItem('user_id', responseBody.id);
+        localStorage.setItem('user_id', responseBody.user_id);
         localStorage.setItem('username', responseBody.username);
-        console.log(responseBody.username)
+        localStorage.setItem('user_type', responseBody.user_type);
         navigate('/');
         toggleModal();
         authenticateUser(true);
