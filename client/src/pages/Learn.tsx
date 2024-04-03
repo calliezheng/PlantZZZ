@@ -36,11 +36,17 @@ const Learn = () => {
         {plants.map((plant) => (
           <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
             {plant.Pictures && plant.Pictures[0] && (
-              <img className="w-full" src={`../server/plant picture/${plant.Pictures[0].picture_file_name}`} alt="Plant" />
+              <img className="w-full" 
+              style={{
+                width: '100%', // This will make the image responsive and fill the container
+                height: '200px', // Replace with the height you want
+                objectFit: 'cover' // This will cover the area without stretching the image
+              }}
+              src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
             )}
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
-              <p className="text-gray-700 text-base">
+              <p className="text-gray-700 text-xl">
                 {plant.daily_name}
               </p>
             </div>
