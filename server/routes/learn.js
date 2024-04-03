@@ -1,14 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { plant:Plant } = require("../models");
+const { plant: Plant, picture: Picture } = require("../models");
 
-console.log(Plant);
+// GET route to fetch all plants with their associated pictures
 router.get("/", async (req, res) => {
     try {
-        const plants = await Plant.findAll();
+        const plants = await Plant.findAll({
+            include: [{
+                model: Picture,
+                as: 'Pictures' 
+            }]
+        });
         res.json(plants);
     } catch (error) {
-        console.error('Error fetching plant data:', error);
+        console.error('Error fetching plants with pictures:', error);
         res.status(500).send('Error fetching plant data');
     }
 });

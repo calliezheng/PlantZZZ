@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 interface Plant {
-    id: number;
-    acadamic_name: string;
-    daily_name: string;
-  }
+  id?: number;
+  acadamic_name: string;
+  daily_name: string;
+  Pictures?: Picture[];
+}
+
+interface Picture {
+  id: number;
+  picture_file_name: string;
+}
   
 const Learn = () => {
   const [plants, setPlants] = useState<Plant[]>([]);
@@ -29,7 +35,9 @@ const Learn = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {plants.map((plant) => (
           <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
-            <img className="w-full" src="/img/plant.jpg" alt="Picture not found" /> {/* Replace with your image path */}
+            {plant.Pictures && plant.Pictures[0] && (
+              <img className="w-full" src={`../server/plant picture/${plant.Pictures[0].picture_file_name}`} alt="Plant" />
+            )}
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
               <p className="text-gray-700 text-base">

@@ -47,6 +47,16 @@ db.user_type.hasMany(db.user, {
   as: 'Users' 
 });
 
+db.picture.belongsTo(db.plant, { 
+  foreignKey: 'plant_id', 
+  as: 'Plant' 
+});
+
+db.plant.hasMany(db.picture, { 
+  foreignKey: 'plant_id', 
+  as: 'Pictures' 
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
