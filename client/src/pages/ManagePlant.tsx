@@ -60,9 +60,11 @@ function ManagePlant() {
         'Content-Type': 'multipart/form-data',
         },
       });
-      setPlants([...plants, response.data]);
+      setPlants(currentPlants => [...currentPlants, response.data]);
       setIsAdding(false);
       setSelectedFile(null);
+      alert('New Plant added successfully');
+      window.location.reload();
     } catch (error) {
       console.error('Error adding plant:', error);
     }
@@ -85,13 +87,17 @@ function ManagePlant() {
   const handleDeletePlant = async (id?: number) => {
     if (id) {
       try {
-        await axios.delete(`http://localhost:3001/plant/${id}`);
-        setPlants(plants.filter((p) => p.id !== id));
+        const response = await axios.patch(`http://localhost:3001/plant/deactivate/${id}`); 
+        if(response.status === 204) {
+          alert('Plant deleted successfully');
+          setPlants(currentPlants => currentPlants.filter(p => p.id !== id));
+        }
       } catch (error) {
-        console.error('Error deleting plant:', error);
+        console.error('Error deactivating plant:', error);
       }
     }
-  };
+};
+
 
   return (
     <div>

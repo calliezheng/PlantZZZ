@@ -9,10 +9,10 @@ module.exports = {
     dialect: process.env.DB_DIALECT,
   },
   test: {
-    // your test config
+    
   },
   production: {
-    // your production config
+    
   }
 };
 

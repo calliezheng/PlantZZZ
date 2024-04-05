@@ -6,9 +6,11 @@ const { plant: Plant, picture: Picture } = require("../models");
 router.get("/", async (req, res) => {
     try {
         const plants = await Plant.findAll({
+            where: { is_active: 1 },
             include: [{
                 model: Picture,
                 as: 'Pictures',
+                where: { is_active: 1 },
                 limit: 1, // Only fetch the first picture
                 separate: true, // Necessary for 'limit' to work in 'hasMany' associations
                 order: [['id', 'ASC']], // Assuming 'id' determines the first picture; adjust if needed

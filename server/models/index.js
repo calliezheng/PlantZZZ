@@ -26,7 +26,7 @@ fs
       file.indexOf('.test.js') === -1
     );
   })
-  .forEach(file => {
+  .forEach(file => { 
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
@@ -60,5 +60,4 @@ db.plant.hasMany(db.picture, {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-console.log(Object.keys(db));
 module.exports = db;

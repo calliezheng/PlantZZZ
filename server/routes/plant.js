@@ -2,11 +2,11 @@ const express = require("express");
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
-const { plant:Plant, picture:Picture } = require("../models");
+const { sequelize, plant:Plant, picture:Picture } = require("../models");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const destPath = path.join(__dirname, '..', 'images', 'plant_pictures');
+    const destPath = path.join(__dirname, '..', 'images', 'plant picture');
     cb(null, destPath);
   },
   filename: function (req, file, cb) {
@@ -54,15 +54,30 @@ router.post('/', upload.single('picture'), async (req, res) => {
   });
   
   // Delete a plant
-  router.delete('/:id', async (req, res) => {
+  router.patch('/deactivate/:id', async (req, res) => {
+    const transaction = await sequelize.transaction();
     try {
-      await Plant.destroy({
-        where: { id: req.params.id },
-      });
+      // Update the plant's is_active field to 0
+      await Plant.update(
+        { is_active: 0 },
+        { where: { id: req.params.id } },
+        { transaction }
+      );
+      
+      // Update the related pictures' is_active field to 0
+      await Picture.update(
+        { is_active: 0 },
+        { where: { plant_id: req.params.id } },
+        { transaction }
+      );
+
+      await transaction.commit();
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error: 'Error deleting plant' });
+      await transaction.rollback();
+      res.status(500).json({ error: 'Error updating plant and picture status' });
     }
-  });
+});
+
   
 module.exports = router;
