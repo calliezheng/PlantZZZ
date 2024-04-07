@@ -41,6 +41,16 @@ CREATE TABLE user (
   FOREIGN KEY (user_type) REFERENCES user_type(id)
 );
 
+DROP TABLE IF EXISTS plant_remembered;
+CREATE TABLE plant_remembered (
+  user_id INT NOT NULL,
+  plant_id INT NOT NULL,
+  is_active BOOLEAN DEFAULT TRUE,
+  PRIMARY KEY (user_id, plant_id),
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (plant_id) REFERENCES plant(id)
+);
+
 INSERT INTO user_type (type_name, is_active) VALUES
 ('Admin', 1),
 ('Student', 1);
