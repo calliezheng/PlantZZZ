@@ -10,6 +10,7 @@ import DashboardAdmin from './pages/DashboardAdmin';
 import Profile from './pages/Profile';
 import Password from './pages/Password';
 import ManagePlant from './pages/ManagePlant';
+import PlantLearned from './pages/PlantLearned';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -17,7 +18,6 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false); 
-  const [userType, setUserType] = useState('');
   
   useEffect(() => {
       const user_id = localStorage.getItem('user_id');
@@ -25,11 +25,8 @@ function App() {
       const user_type = localStorage.getItem('user_type');
       if (user_id && username && user_type) {
         setIsAuthenticated(true);
-        setUserType(user_type);
       }
     }, []);
-
-  
 
   const toggleModal = () => setShowModal(!showModal);
   const toggleForm = () => setIsSignUp(!isSignUp);
@@ -56,7 +53,7 @@ function App() {
           <Link to="/quiz" className="hover:text-green-600"> Quiz </Link>
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard" className="hover:text-green-600">Dashboard</Link>
+              <Link to="/dashboard" className="hover:text-green-600 mr-2">Dashboard</Link>
               <Link to="/"><button onClick={handleLogout}>Log Out</button></Link>
             </>
           ) : (
@@ -67,10 +64,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/quiz" element={<Quiz />} />
-          <Route path="/dashboard" element={Number(userType) === 1 ? <DashboardAdmin /> : <DashboardStudent />} />
-          <Route path="/profile/:id" element={<Profile />} />
-          <Route path="/profile/:id/password" element={<Password />} />
-          <Route path="/profile/:id/manageplant" element={<ManagePlant />} />
+          <Route path="/dashboard" element={Number(localStorage.getItem('user_type')) === 1 ? <DashboardAdmin /> : <DashboardStudent />} />
+          <Route path="/dashboard/profile/:id" element={<Profile />} />
+          <Route path="/dashboard/profile/:id/password" element={<Password />} />
+          <Route path="/dashboard/profile/:id/manageplant" element={<ManagePlant />} />
+          <Route path="/dashboard/learned plant/:id" element={<PlantLearned />} />
         </Routes>
         <SignModal
         showModal={showModal}

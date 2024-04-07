@@ -233,7 +233,7 @@ function ManagePlant() {
                   {plant.daily_name}
                 </p>
               </div>
-              <button onClick={() => setEditingPlant(plant)}>Edit</button>
+              <button onClick={() => setEditingPlant(plant)} className="mr-2">Edit</button>
               <button onClick={() => handleDeletePlant(plant.id)}>Delete</button>
             </div>
           ))}

@@ -8,7 +8,8 @@ const DashboardStudent = () => {
     return (
       <div>
         {username && <h1>Welcome {username}!</h1>}
-        <Link to={`/profile/${id}`} className="hover:text-green-600"> Profile </Link>
+        <Link to={`/dashboard/profile/${id}`} className="hover:text-green-600"> Profile </Link>
+        <Link to={`/dashboard/learned plant/${id}`} className="hover:text-green-600"> Plant Learned </Link>
       </div>
     );
   };
