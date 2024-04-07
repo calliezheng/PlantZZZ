@@ -41,17 +41,51 @@ router.post('/', upload.single('picture'), async (req, res) => {
   });
   
   // Update an existing plant
-  router.put('/:id', async (req, res) => {
+  router.put('/:id', upload.single('picture'), async (req, res) => {
+    const plantId = req.params.id;
+    const transaction = await sequelize.transaction();
     try {
-      const updatedPlant = await Plant.update(req.body, {
-        where: { id: req.params.id },
-        returning: true,
+      // Update plant details
+      await Plant.update(
+        { acadamic_name: req.body.acadamic_name, daily_name: req.body.daily_name },
+        { where: { id: plantId } },
+        { transaction }
+      );
+  
+      if (req.file) {
+        // Deactivate the old picture
+        await Picture.update(
+          { is_active: 0 },
+          { where: { plant_id: plantId, is_active: 1 } },
+          { transaction }
+        );
+  
+        // Add new picture
+        await Picture.create({
+          picture_file_name: req.file.filename,
+          plant_id: plantId,
+          is_active: 1
+        }, { transaction });
+      }
+  
+      await transaction.commit();
+      const updatedPlant = await Plant.findByPk(plantId, {
+        include: [{
+          model: Picture,
+          as: 'Pictures', // Make sure this alias matches your association alias
+          where: { is_active: 1 },
+          required: false // This ensures that plants without an active picture are still retrieved
+        }]
       });
+  
       res.json(updatedPlant);
+  
     } catch (error) {
-      res.status(500).json({ error: 'Error updating plant' });
+      await transaction.rollback();
+      res.status(500).json({ error: 'Error updating plant and picture' });
     }
   });
+  
   
   // Delete a plant
   router.patch('/deactivate/:id', async (req, res) => {

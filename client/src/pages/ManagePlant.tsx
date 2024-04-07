@@ -27,6 +27,7 @@ function ManagePlant() {
   const [isAdding, setIsAdding] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
+  const [updatedFiles, setUpdatedFiles] = useState<{[key: number]: File | null }>({});
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -41,9 +42,16 @@ function ManagePlant() {
     fetchPlants();
   }, []);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, plantId?: number) => {
     if (event.currentTarget.files) {
-      setSelectedFile(event.currentTarget.files[0]);
+      const file = event.currentTarget.files[0];
+      if (plantId) {
+        // Handle file selection for editing
+        setUpdatedFiles({ ...updatedFiles, [plantId]: file });
+      } else {
+        // Handle file selection for adding
+        setSelectedFile(file);
+      }
     }
   };
 
@@ -72,17 +80,47 @@ function ManagePlant() {
   };
 
   const handleUpdatePlant = async (values: Plant, actions: FormikHelpers<Plant>) => {
+    // Check if there's an editing plant and if it has an ID
+    if (!editingPlant || editingPlant.id === undefined) {
+      console.error('Error updating plant: editingPlant is not defined or lacks an ID');
+      return;
+    }
+  
+    // Prepare FormData for multipart/form-data request
+    const formData = new FormData();
+    formData.append('acadamic_name', values.acadamic_name);
+    formData.append('daily_name', values.daily_name);
+    
+    const updatedPicture = updatedFiles[editingPlant.id];
+    if (updatedPicture) {
+      formData.append('picture', updatedPicture);
+    }
+  
     try {
-      if (editingPlant && editingPlant.id) {
-        const response = await axios.put(`http://localhost:3001/plant/${editingPlant.id}`, values);
-        setPlants(plants.map((p) => (p.id === editingPlant.id ? response.data : p)));
-        setEditingPlant(null);
-      }
+      // Send the update request with formData
+      const response = await axios.put(`http://localhost:3001/plant/${editingPlant.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      // Update the state to reflect the changes
+      setPlants(currentPlants =>
+        currentPlants.map(plant => (plant.id === editingPlant.id ? { ...plant, ...response.data } : plant))
+    );
+      
+      // Reset editing plant and selected file
+      setEditingPlant(null);
+      alert('Plant updated successfully');
+      window.location.reload();
     } catch (error) {
       console.error('Error updating plant:', error);
+    } finally {
+      // Stop the form submission process
+      actions.setSubmitting(false);
     }
-    actions.setSubmitting(false);
   };
+  
 
   const handleDeletePlant = async (id?: number) => {
     if (id) {
@@ -117,16 +155,12 @@ function ManagePlant() {
               <Field name="daily_name" type="text" placeholder="Daily Name" />
               <ErrorMessage name="daily_name" component="div" />
               <input id="picture" name="picture" type="file" onChange={handleFileChange} />
-              <button type="submit" disabled={isSubmitting}>
-                Add Plant
-              </button>
+              <button type="submit" disabled={isSubmitting}>Add Plant</button>
               <button
                 type="button"
                 onClick={() => setIsAdding(false)} 
                 disabled={isSubmitting}
-              >
-                Cancel
-              </button>
+              >Cancel</button>
             </Form>
           )}
         </Formik>
@@ -146,17 +180,9 @@ function ManagePlant() {
               <ErrorMessage name="acadamic_name" component="div" />
               <Field name="daily_name" type="text" placeholder="Daily Name" />
               <ErrorMessage name="daily_name" component="div" />
-              <input id="file" name="file" type="file" onChange={handleFileChange} />
-              <button type="submit" disabled={isSubmitting}>
-                Update Plant
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsAdding(false)} 
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
+              <input id="picture" name="picture" type="file" onChange={(e) => handleFileChange(e, editingPlant?.id)} />
+              <button type="submit" disabled={isSubmitting}>Update Plant</button>
+              <button type="button" onClick={() => setEditingPlant(null)}>Cancel</button>
             </Form>
           )}
         </Formik>
