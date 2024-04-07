@@ -28,6 +28,8 @@ function ManagePlant() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [updatedFiles, setUpdatedFiles] = useState<{[key: number]: File | null }>({});
+  const [filter, setFilter] = useState<string>('AB');
+
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -41,6 +43,17 @@ function ManagePlant() {
 
     fetchPlants();
   }, []);
+
+  const handleLetterClick = (letterGroup: string) => {
+    setFilter(letterGroup);
+  };
+
+  const filteredPlants = plants.filter((plant) => {
+    const firstLetter = plant.acadamic_name[0].toUpperCase();
+    return filter.includes(firstLetter);
+  });
+  
+  const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, plantId?: number) => {
     if (event.currentTarget.files) {
@@ -139,6 +152,19 @@ function ManagePlant() {
 
   return (
     <div>
+      <div>
+        {letterGroups.map((group) => (
+          <button
+            key={group}
+            onClick={() => handleLetterClick(group)}
+            className={`${
+              filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'
+            } text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
+          >
+            {group}
+          </button>
+        ))}
+      </div>
       {isAdding && (
         <Formik
           initialValues={{
@@ -190,27 +216,27 @@ function ManagePlant() {
       <button onClick={() => setIsAdding(true)}>Add New Plant</button>
     
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {plants.map((plant) => (
+      {filteredPlants.map((plant) => (
           <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
-            {plant.Pictures && plant.Pictures[0] && (
-              <img className="w-full" 
-              style={{
-                width: '100%', // This will make the image responsive and fill the container
-                height: '200px', // Replace with the height you want
-                objectFit: 'cover' // This will cover the area without stretching the image
-              }}
-              src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
-            )}
-            <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
-              <p className="text-gray-700 text-base">
-                {plant.daily_name}
-              </p>
+              {plant.Pictures && plant.Pictures[0] && (
+                <img className="w-full" 
+                style={{
+                  width: '100%', // This will make the image responsive and fill the container
+                  height: '200px', // Replace with the height you want
+                  objectFit: 'cover' // This will cover the area without stretching the image
+                }}
+                src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
+              )}
+              <div className="px-6 py-4">
+                <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
+                <p className="text-gray-700 text-base">
+                  {plant.daily_name}
+                </p>
+              </div>
+              <button onClick={() => setEditingPlant(plant)}>Edit</button>
+              <button onClick={() => handleDeletePlant(plant.id)}>Delete</button>
             </div>
-            <button onClick={() => setEditingPlant(plant)}>Edit</button>
-            <button onClick={() => handleDeletePlant(plant.id)}>Delete</button>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

@@ -15,12 +15,13 @@ interface Picture {
   
 const Learn = () => {
   const [plants, setPlants] = useState<Plant[]>([]);
+  const [filter, setFilter] = useState<string>('AB');
 
   useEffect(() => {
     const fetchPlants = async () => {
       try {
         const response = await axios.get('http://localhost:3001/learn');
-        setPlants(response.data);  
+        setPlants(response.data);
       } catch (error) {
         console.error('Error fetching plant data:', error);
       }
@@ -29,29 +30,54 @@ const Learn = () => {
     fetchPlants();
   }, []);
 
+  const handleLetterClick = (letterGroup: string) => {
+    setFilter(letterGroup);
+  };
+
+  const filteredPlants = plants.filter((plant) => {
+    const firstLetter = plant.acadamic_name[0].toUpperCase();
+    return filter.includes(firstLetter);
+  });
+  
+  // Define letter groups for filtering
+  const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-5">Learn About Plants</h1>
+      <div>
+        {letterGroups.map((group) => (
+          <button
+            key={group}
+            onClick={() => handleLetterClick(group)}
+            className={`${
+              filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'
+            } text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
+          >
+            {group}
+          </button>
+        ))}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {plants.map((plant) => (
+        {filteredPlants.map((plant) => (
           <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
             {plant.Pictures && plant.Pictures[0] && (
-              <img className="w-full" 
-              style={{
-                width: '100%', // Make the image responsive and fill the container
-                height: '200px', // Replace with the height
-                objectFit: 'cover' // Cover the area without stretching the image
-              }}
-              src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
+              <img
+                className="w-full"
+                style={{
+                  width: '100%', // Make the image responsive and fill the container
+                  height: '200px', // Replace with the height
+                  objectFit: 'cover' // Cover the area without stretching the image
+                }}
+                src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                alt={plant.daily_name}
+              />
             )}
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
-              <p className="text-gray-700 text-xl">
+              <p className="text-gray-700 text-base">
                 {plant.daily_name}
               </p>
-            </div>
-            <div className="px-6 pt-4 pb-2">
-              {/* Add tags or other information here */}
             </div>
           </div>
         ))}
