@@ -151,7 +151,7 @@ function ManagePlant() {
 
 
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <div>
         {letterGroups.map((group) => (
           <button
