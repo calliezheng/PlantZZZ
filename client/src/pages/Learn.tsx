@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 interface Plant {
-  id?: number;
+  id: number;
   acadamic_name: string;
   daily_name: string;
   Pictures?: Picture[];
@@ -16,6 +16,8 @@ interface Picture {
 const Learn = () => {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [filter, setFilter] = useState<string>('AB');
+  const [rememberedPlants, setRememberedPlants] = useState<{ [key: number]: boolean }>({});
+  const [showRemembered, setShowRemembered] = useState(false);
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -34,10 +36,16 @@ const Learn = () => {
     setFilter(letterGroup);
   };
 
+  const handleRememberToggle = (plantId: number) => {
+    setRememberedPlants((prev) => ({ ...prev, [plantId]: !prev[plantId] }));
+  };
+
   const filteredPlants = plants.filter((plant) => {
     const firstLetter = plant.acadamic_name[0].toUpperCase();
-    return filter.includes(firstLetter);
+    const isInFilter = filter.includes(firstLetter);
+    return (showRemembered || !rememberedPlants[plant.id]) && isInFilter;
   });
+
   
   // Define letter groups for filtering
   const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
@@ -57,6 +65,9 @@ const Learn = () => {
             {group}
           </button>
         ))}
+        <label className="ml-4">
+          <input type="checkbox" checked={showRemembered} onChange={() => setShowRemembered(!showRemembered)} /> Show Remembered
+        </label>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPlants.map((plant) => (
@@ -65,9 +76,9 @@ const Learn = () => {
               <img
                 className="w-full"
                 style={{
-                  width: '100%', // Make the image responsive and fill the container
-                  height: '200px', // Replace with the height
-                  objectFit: 'cover' // Cover the area without stretching the image
+                  width: '100%', 
+                  height: '200px', 
+                  objectFit: 'cover' 
                 }}
                 src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
                 alt={plant.daily_name}
@@ -79,6 +90,9 @@ const Learn = () => {
                 {plant.daily_name}
               </p>
             </div>
+            <label className="px-6 py-4">
+              <input type="checkbox" checked={!!rememberedPlants[plant.id]} onChange={() => handleRememberToggle(plant.id)} /> Remembered
+            </label>
           </div>
         ))}
       </div>
