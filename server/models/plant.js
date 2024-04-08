@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Plant = sequelize.define('plant', {
+  const Plant = sequelize.define('Plant', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: true,
     },
   }, {
     tableName: 'plant', 

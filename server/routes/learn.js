@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { plant: Plant, picture: Picture } = require("../models");
+const { Plant, Picture } = require("../models");
 
 // GET route to fetch all plants with only their cover picture
 router.get("/", async (req, res) => {

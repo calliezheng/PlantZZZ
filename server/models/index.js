@@ -37,25 +37,31 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-db.user.belongsTo(db.user_type, { 
+db.User.belongsTo(db.User_Type, { 
   foreignKey: 'user_type', 
   as: 'UserType' 
 });
 
-db.user_type.hasMany(db.user, { 
+db.User_Type.hasMany(db.User, { 
   foreignKey: 'user_type', 
   as: 'Users' 
 });
 
-db.picture.belongsTo(db.plant, { 
+db.Picture.belongsTo(db.Plant, { 
   foreignKey: 'plant_id', 
   as: 'Plant' 
 });
 
-db.plant.hasMany(db.picture, { 
+db.Plant.hasMany(db.Picture, { 
   foreignKey: 'plant_id', 
   as: 'Pictures' 
 });
+
+db.User.hasMany(db.Plant_Remembered, { foreignKey: 'user_id' });
+db.Plant_Remembered.belongsTo(db.User, { foreignKey: 'user_id' });
+
+db.Plant.hasMany(db.Plant_Remembered, { foreignKey: 'plant_id' });
+db.Plant_Remembered.belongsTo(db.Plant, { foreignKey: 'plant_id' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

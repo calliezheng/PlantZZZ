@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const User_Type = sequelize.define('user_type', {
+    const User_Type = sequelize.define('User_Type', {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: true,
       },
     }, {
-      // Model options
       tableName: 'user_type', 
       timestamps: false, 
     });
