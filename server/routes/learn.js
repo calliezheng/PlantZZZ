@@ -12,8 +12,8 @@ router.get("/", async (req, res) => {
                 as: 'Pictures',
                 where: { is_active: 1 },
                 limit: 1, // Only fetch the first picture
-                separate: true, // Necessary for 'limit' to work in 'hasMany' associations
-                order: [['id', 'ASC']], // Assuming 'id' determines the first picture; adjust if needed
+                separate: true, 
+                order: [['id', 'ASC']], 
             }]
         });
         res.json(plants);

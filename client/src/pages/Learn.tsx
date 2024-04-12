@@ -36,8 +36,29 @@ const Learn = () => {
     setFilter(letterGroup);
   };
 
-  const handleRememberToggle = (plantId: number) => {
-    setRememberedPlants((prev) => ({ ...prev, [plantId]: !prev[plantId] }));
+  const handleRememberToggle = async (plantId: number) => {
+
+    const userId = localStorage.getItem('user_id');
+   
+    if (!userId) {
+      console.error('User is not logged in');
+      return;
+    }
+  
+    try {
+      // Toggle remembered state locally first
+      setRememberedPlants((prev) => ({ ...prev, [plantId]: !prev[plantId] }));
+  
+      // Send the request to the backend
+      await axios.post(`http://localhost:3001/plant-remembered/:userId/add-remembered-plant`, {
+        user_id: userId,
+        plant_id: plantId,
+        remember: !rememberedPlants[plantId], // This sends the new toggled state
+      });
+
+    } catch (error) {
+      console.error('Error updating remembered plants:', error);
+    }
   };
 
   const filteredPlants = plants.filter((plant) => {
