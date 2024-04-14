@@ -4,7 +4,7 @@ import axios from 'axios';
 interface RememberedPlant {
   Plant: {
     id: number;
-    acadamic_name: string;
+    academic_name: string;
     daily_name: string;
     Pictures: Picture[]; // This should match the structure coming from the API
   };
@@ -40,12 +40,12 @@ function PlantLearned() {
     setFilter(letterGroup);
   };
 
-  const isInFilter = (acadamic_name: string) => {
-    return filter.split('').some(letter => acadamic_name.toUpperCase().startsWith(letter));
+  const isInFilter = (academic_name: string) => {
+    return filter.split('').some(letter => academic_name.toUpperCase().startsWith(letter));
   };
 
   const filteredPlants = rememberedPlants.filter((rememberedPlant) =>
-    isInFilter(rememberedPlant.Plant.acadamic_name)
+    isInFilter(rememberedPlant.Plant.academic_name)
   );
 
   const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
@@ -74,7 +74,7 @@ function PlantLearned() {
               />
             )}
             <div className="px-6 py-4">
-              <div className="font-bold text-lg mb-2">{rememberedPlant.Plant.acadamic_name}</div>
+              <div className="font-bold text-lg mb-2">{rememberedPlant.Plant.academic_name}</div>
               <p className="text-gray-700 text-base">{rememberedPlant.Plant.daily_name}</p>
             </div>
           </div>

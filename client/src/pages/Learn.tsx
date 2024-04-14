@@ -4,7 +4,7 @@ import axios from 'axios';
 //Define the type for Typescript 
 interface Plant {
   id: number;
-  acadamic_name: string;
+  academic_name: string;
   daily_name: string;
   Pictures?: Picture[];
 }
@@ -89,7 +89,7 @@ const Learn = () => {
   };
 
   const filteredPlants = plants.filter((plant) => {
-    const firstLetter = plant.acadamic_name[0].toUpperCase();
+    const firstLetter = plant.academic_name[0].toUpperCase();
     const isInFilter = filter.includes(firstLetter);
     return (showRemembered || !rememberedPlants[plant.id]) && isInFilter;
   });
@@ -125,7 +125,7 @@ const Learn = () => {
               />
             )}
             <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
+              <div className="font-bold text-xl mb-2">{plant.academic_name}</div>
               <p className="text-gray-700 text-base">{plant.daily_name}</p>
             </div>
             <label className="px-6 py-4">

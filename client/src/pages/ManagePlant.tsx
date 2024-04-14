@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 
 interface Plant {
   id?: number;
-  acadamic_name: string;
+  academic_name: string;
   daily_name: string;
   Pictures?: Picture[];
 }
@@ -16,7 +16,7 @@ interface Picture {
 }
 
 const validationSchema = Yup.object().shape({
-  acadamic_name: Yup.string()
+  academic_name: Yup.string()
     .required('Academic name is required'),
   daily_name: Yup.string()
     .required('Daily name is required'),
@@ -49,7 +49,7 @@ function ManagePlant() {
   };
 
   const filteredPlants = plants.filter((plant) => {
-    const firstLetter = plant.acadamic_name[0].toUpperCase();
+    const firstLetter = plant.academic_name[0].toUpperCase();
     return filter.includes(firstLetter);
   });
   
@@ -70,7 +70,7 @@ function ManagePlant() {
 
   const handleAddPlant = async (values: Plant, actions: FormikHelpers<Plant>) => {
     const formData = new FormData();
-    formData.append('acadamic_name', values.acadamic_name);
+    formData.append('academic_name', values.academic_name);
     formData.append('daily_name', values.daily_name);
     if (selectedFile) {
       formData.append('picture', selectedFile);
@@ -101,7 +101,7 @@ function ManagePlant() {
   
     // Prepare FormData for multipart/form-data request
     const formData = new FormData();
-    formData.append('acadamic_name', values.acadamic_name);
+    formData.append('academic_name', values.academic_name);
     formData.append('daily_name', values.daily_name);
     
     const updatedPicture = updatedFiles[editingPlant.id];
@@ -168,7 +168,7 @@ function ManagePlant() {
       {isAdding && (
         <Formik
           initialValues={{
-            acadamic_name: '',
+            academic_name: '',
             daily_name: ''
           }}
           validationSchema={validationSchema}
@@ -176,8 +176,8 @@ function ManagePlant() {
         >
           {({ isSubmitting }) => (
             <Form>
-              <Field name="acadamic_name" type="text" placeholder="Academic Name" />
-              <ErrorMessage name="acadamic_name" component="div" />
+              <Field name="academic_name" type="text" placeholder="Academic Name" />
+              <ErrorMessage name="academic_name" component="div" />
               <Field name="daily_name" type="text" placeholder="Daily Name" />
               <ErrorMessage name="daily_name" component="div" />
               <input id="picture" name="picture" type="file" onChange={handleFileChange} />
@@ -194,7 +194,7 @@ function ManagePlant() {
       {editingPlant && (
         <Formik
           initialValues={{
-            acadamic_name: editingPlant.acadamic_name,
+            academic_name: editingPlant.academic_name,
             daily_name: editingPlant.daily_name,
           }}
           validationSchema={validationSchema}
@@ -202,8 +202,8 @@ function ManagePlant() {
         >
           {({ isSubmitting }) => (
             <Form>
-              <Field name="acadamic_name" type="text" placeholder="Academic Name" />
-              <ErrorMessage name="acadamic_name" component="div" />
+              <Field name="academic_name" type="text" placeholder="Academic Name" />
+              <ErrorMessage name="academic_name" component="div" />
               <Field name="daily_name" type="text" placeholder="Daily Name" />
               <ErrorMessage name="daily_name" component="div" />
               <input id="picture" name="picture" type="file" onChange={(e) => handleFileChange(e, editingPlant?.id)} />
@@ -228,7 +228,7 @@ function ManagePlant() {
                 src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
               )}
               <div className="px-6 py-4">
-                <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
+                <div className="font-bold text-xl mb-2">{plant.academic_name}</div>
                 <p className="text-gray-700 text-base">
                   {plant.daily_name}
                 </p>

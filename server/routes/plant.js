@@ -21,7 +21,7 @@ const upload = multer({ storage: storage });
 router.post('/', upload.single('picture'), async (req, res) => {
     try {
       const plant = await Plant.create({
-        acadamic_name: req.body.acadamic_name,
+        academic_name: req.body.academic_name,
         daily_name: req.body.daily_name,
         is_active: 1
       });
@@ -47,7 +47,7 @@ router.post('/', upload.single('picture'), async (req, res) => {
     try {
       // Update plant details
       await Plant.update(
-        { acadamic_name: req.body.acadamic_name, daily_name: req.body.daily_name },
+        { academic_name: req.body.academic_name, daily_name: req.body.daily_name },
         { where: { id: plantId } },
         { transaction }
       );

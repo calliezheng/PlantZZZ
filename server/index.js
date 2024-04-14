@@ -24,6 +24,9 @@ app.use("/plant", plantRouter);
 const rememberlistRouter = require("./routes/plant_remembered");
 app.use("/plant-remembered", rememberlistRouter);
 
+const quizRouter = require("./routes/quiz");
+app.use("/quiz", quizRouter);
+
 db.sequelize.sync().then(() => {
     app.listen(3001, () => {
         console.log(`Server running on port 3001`);

@@ -5,7 +5,7 @@ USE plantzzz;
 DROP TABLE IF EXISTS plant;
 CREATE TABLE plant (
   id INT NOT NULL AUTO_INCREMENT,
-  acadamic_name VARCHAR(255) NOT NULL,
+  academic_name VARCHAR(255) NOT NULL,
   daily_name VARCHAR(255) NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (id)
@@ -62,7 +62,7 @@ INSERT INTO user (username, email, password, user_type, is_active) VALUES
 ('FrostVoyager', 'FrostVoyager@mail.com', '$2b$12$C.Bn8WoC9XBDeoitkwh9fuUS7lv9E9t7/kNE8Cd9M5MyPnE70kISe', 2, 1),
 ('Admin', 'Calliezheng@hotmail.com', '$2b$12$x8YaY8C5g4EW.FHqPz2eoOGYeL4GyO1X6H8C5ocnprExSOUs2a4hm', 1, 1);
 
-INSERT INTO plant (acadamic_name, daily_name, is_active) VALUES
+INSERT INTO plant (academic_name, daily_name, is_active) VALUES
 ("Acaena inermis _Purpurea_", 'purple bidibid', 1),
 ("Acanthus mollis", 'bears breeches', 1),
 ("Acca sellowiana", 'feijoa', 1),

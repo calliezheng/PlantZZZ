@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    acadamic_name: {
+    academic_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
