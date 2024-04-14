@@ -16,8 +16,12 @@ interface Picture {
 const Learn = () => {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [filter, setFilter] = useState<string>('AB');
-  const [rememberedPlants, setRememberedPlants] = useState<{ [key: number]: boolean }>({});
   const [showRemembered, setShowRemembered] = useState(false);
+
+  const [rememberedPlants, setRememberedPlants] = useState<{ [key: number]: boolean }>(() => {
+    const saved = localStorage.getItem('rememberedPlants');
+    return saved ? JSON.parse(saved) : {};
+  });
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -32,6 +36,11 @@ const Learn = () => {
     fetchPlants();
   }, []);
 
+  useEffect(() => {
+    // Persist remembered plants state to local storage on change
+    localStorage.setItem('rememberedPlants', JSON.stringify(rememberedPlants));
+  }, [rememberedPlants]);
+
   const handleLetterClick = (letterGroup: string) => {
     setFilter(letterGroup);
   };
@@ -45,15 +54,15 @@ const Learn = () => {
       return;
     }
   
-    try {
-      // Toggle remembered state locally first
-      setRememberedPlants((prev) => ({ ...prev, [plantId]: !prev[plantId] }));
-  
-      // Send the request to the backend
-      await axios.post(`http://localhost:3001/plant-remembered/:userId/add-remembered-plant`, {
+    const newRememberedState = !rememberedPlants[plantId];
+
+    setRememberedPlants((prev) => ({ ...prev, [plantId]: newRememberedState }));
+    try {  
+      // Send remembered plants to the backend
+      await axios.post(`http://localhost:3001/plant-remembered/${userId}/add-remembered-plant`, {
         user_id: userId,
         plant_id: plantId,
-        remember: !rememberedPlants[plantId], // This sends the new toggled state
+        remember: newRememberedState, // This sends the new toggled state
       });
 
     } catch (error) {

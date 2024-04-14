@@ -22,6 +22,7 @@ router.get("/:userId", async (req, res) => {
                 }]
             }]
         });
+
         res.json(rememberedPlants);
     } catch (error) {
         console.error('Error fetching remembered plants:', error);
@@ -32,27 +33,24 @@ router.get("/:userId", async (req, res) => {
 router.post("/:userId/add-remembered-plant", async (req, res) => {
     const { user_id, plant_id, remember } = req.body;
     // Authentication and validation logic here
-    if (!user_id || !plant_id || !Array.isArray(plant_id)) {
+    if (!user_id || typeof plant_id !== 'number') {
         return res.status(400).json({ error: 'Invalid input' });
     }
 
     try {
-        if (remember) {
-          // If 'remember' is true, add the plant to the remembered list
-          await Plant_Remembered.findOrCreate({
-            where: { user_id, plant_id },
-            defaults: {
-              user_id,
-              plant_id,
-              is_active: 1,
-            },
-          });
-        } else {
-          // If 'remember' is false, deactivate the remembered plant
-          await Plant_Remembered.update(
-            { is_active: 0 },
-            { where: { user_id, plant_id } }
-          );
+      if (remember) {
+        // Add plant to remembered list
+        await Plant_Remembered.upsert({
+          user_id: user_id,
+          plant_id: plant_id,
+          is_active: 1
+        });
+      } else {
+        // Remove plant from remembered list
+        await Plant_Remembered.update(
+          { is_active: 0 },
+          { where: { user_id, plant_id: plant_id } }
+        );
         }
     
         res.status(200).json({ message: 'Successfully updated remembered plants' });
