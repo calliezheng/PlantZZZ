@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { Plant, Picture } = require("../models");
+const { sequelize, Plant, Picture } = require("../models");
 
 router.get('/', async (req, res) => {
     try {
       // Fetch 10 random plants with their pictures
       const plants = await Plant.findAll({
-        include: [{ model: Picture }],
+        include: [{ model: Picture, as: 'Pictures' }],
         order: sequelize.random(), // This is Sequelize specific; adjust for your ORM
         limit: 10
       });
