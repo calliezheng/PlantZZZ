@@ -12,17 +12,28 @@ interface Picture {
   id: number;
   picture_file_name: string;
 }
-  
+
 const Learn = () => {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [filter, setFilter] = useState<string>('AB');
   const [showRemembered, setShowRemembered] = useState(false);
+  const [rememberedPlants, setRememberedPlants] = useState<{ [key: number]: boolean }>({});
 
-  const [rememberedPlants, setRememberedPlants] = useState<{ [key: number]: boolean }>(() => {
-    const saved = localStorage.getItem('rememberedPlants');
-    return saved ? JSON.parse(saved) : {};
-  });
+  // Function to fetch remembered plants from the backend
+  const fetchRememberedPlants = async (userId: string) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/plant-remembered/${userId}`);
+      const remembered = response.data.reduce((acc: { [key: number]: boolean }, plant: any) => {
+        acc[plant.Plant.id] = true; // Assuming the plant's ID is under the Plant object
+        return acc;
+      }, {});
+      setRememberedPlants(remembered);
+    } catch (error) {
+      console.error('Error fetching remembered plants:', error);
+    }
+  };
 
+  // Effect to fetch plants data
   useEffect(() => {
     const fetchPlants = async () => {
       try {
@@ -36,34 +47,38 @@ const Learn = () => {
     fetchPlants();
   }, []);
 
+  // Effect to fetch remembered plants when a user is logged in
   useEffect(() => {
-    // Persist remembered plants state to local storage on change
-    localStorage.setItem('rememberedPlants', JSON.stringify(rememberedPlants));
-  }, [rememberedPlants]);
+    const userId = localStorage.getItem('user_id');
+    if (userId) {
+      fetchRememberedPlants(userId);
+    }
+  }, []);
 
   const handleLetterClick = (letterGroup: string) => {
     setFilter(letterGroup);
   };
 
   const handleRememberToggle = async (plantId: number) => {
-
     const userId = localStorage.getItem('user_id');
-   
+
     if (!userId) {
       console.error('User is not logged in');
       return;
     }
-  
-    const newRememberedState = !rememberedPlants[plantId];
 
-    setRememberedPlants((prev) => ({ ...prev, [plantId]: newRememberedState }));
-    try {  
-      // Send remembered plants to the backend
+    const newRememberedState = !rememberedPlants[plantId];
+    setRememberedPlants(prev => ({ ...prev, [plantId]: newRememberedState }));
+
+    try {
       await axios.post(`http://localhost:3001/plant-remembered/${userId}/add-remembered-plant`, {
         user_id: userId,
         plant_id: plantId,
-        remember: newRememberedState, // This sends the new toggled state
+        remember: newRememberedState,
       });
+
+      // Optionally, re-fetch the remembered plants to keep the state consistent with the database
+      fetchRememberedPlants(userId);
 
     } catch (error) {
       console.error('Error updating remembered plants:', error);
@@ -76,8 +91,6 @@ const Learn = () => {
     return (showRemembered || !rememberedPlants[plant.id]) && isInFilter;
   });
 
-  
-  // Define letter groups for filtering
   const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
 
   return (
@@ -88,9 +101,7 @@ const Learn = () => {
           <button
             key={group}
             onClick={() => handleLetterClick(group)}
-            className={`${
-              filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'
-            } text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
+            className={`${filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'} text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
           >
             {group}
           </button>
@@ -105,20 +116,14 @@ const Learn = () => {
             {plant.Pictures && plant.Pictures[0] && (
               <img
                 className="w-full"
-                style={{
-                  width: '100%', 
-                  height: '200px', 
-                  objectFit: 'cover' 
-                }}
-                src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
                 alt={plant.daily_name}
               />
             )}
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">{plant.acadamic_name}</div>
-              <p className="text-gray-700 text-base">
-                {plant.daily_name}
-              </p>
+              <p className="text-gray-700 text-base">{plant.daily_name}</p>
             </div>
             <label className="px-6 py-4">
               <input type="checkbox" checked={!!rememberedPlants[plant.id]} onChange={() => handleRememberToggle(plant.id)} /> Remembered
