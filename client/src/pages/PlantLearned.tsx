@@ -19,6 +19,7 @@ function PlantLearned() {
 
   const userId = localStorage.getItem('user_id');
   const [rememberedPlants, setRememberedPlants] = useState<RememberedPlant[]>([]);
+  const [filter, setFilter] = useState<string>('AB');
 
   useEffect(() => {
     const fetchRememberedPlants = async () => {
@@ -34,10 +35,36 @@ function PlantLearned() {
     fetchRememberedPlants();
   }, []);
 
+  //Create the filter function to divided plants in multiple pages 
+  const handleLetterClick = (letterGroup: string) => {
+    setFilter(letterGroup);
+  };
+
+  const isInFilter = (acadamic_name: string) => {
+    return filter.split('').some(letter => acadamic_name.toUpperCase().startsWith(letter));
+  };
+
+  const filteredPlants = rememberedPlants.filter((rememberedPlant) =>
+    isInFilter(rememberedPlant.Plant.acadamic_name)
+  );
+
+  const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
+
   return (
     <div className="container mx-auto p-4">
+      <div>
+      {letterGroups.map((group) => (
+          <button
+            key={group}
+            onClick={() => handleLetterClick(group)}
+            className={`${filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'} text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
+          >
+            {group}
+          </button>
+        ))}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {rememberedPlants.map((rememberedPlant) => (
+      {filteredPlants.map((rememberedPlant) => (
           <div key={rememberedPlant.Plant.id} className="max-w-sm rounded overflow-hidden shadow-lg p-5 m-3 bg-white">
             {rememberedPlant.Plant.Pictures && rememberedPlant.Plant.Pictures.length > 0 && (
               <img

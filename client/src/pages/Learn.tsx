@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+//Define the type for Typescript 
 interface Plant {
   id: number;
   acadamic_name: string;
@@ -24,7 +25,7 @@ const Learn = () => {
     try {
       const response = await axios.get(`http://localhost:3001/plant-remembered/${userId}`);
       const remembered = response.data.reduce((acc: { [key: number]: boolean }, plant: any) => {
-        acc[plant.Plant.id] = true; // Assuming the plant's ID is under the Plant object
+        acc[plant.Plant.id] = true;
         return acc;
       }, {});
       setRememberedPlants(remembered);
@@ -55,10 +56,7 @@ const Learn = () => {
     }
   }, []);
 
-  const handleLetterClick = (letterGroup: string) => {
-    setFilter(letterGroup);
-  };
-
+  // Pass the remembered plant id with user id if signed in to the back end 
   const handleRememberToggle = async (plantId: number) => {
     const userId = localStorage.getItem('user_id');
 
@@ -77,12 +75,17 @@ const Learn = () => {
         remember: newRememberedState,
       });
 
-      // Optionally, re-fetch the remembered plants to keep the state consistent with the database
+      // re-fetch the remembered plants to keep the state consistent with the database
       fetchRememberedPlants(userId);
 
     } catch (error) {
       console.error('Error updating remembered plants:', error);
     }
+  };
+  
+  //Create the filter function to divided plants in multiple pages 
+  const handleLetterClick = (letterGroup: string) => {
+    setFilter(letterGroup);
   };
 
   const filteredPlants = plants.filter((plant) => {
