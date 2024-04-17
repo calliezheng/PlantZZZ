@@ -14,6 +14,12 @@ interface Picture {
   picture_file_name: string;
 }
 
+interface MatchAttempt {
+  academicName: string;
+  dailyName: string;
+  picture: string;
+}
+
 const shuffleArray = (array: any[]) => {
   let currentIndex = array.length, randomIndex;
 
@@ -37,7 +43,7 @@ const Quiz = () => {
   const [academicNames, setAcademicNames] = useState<Plant[]>([]);
   const [dailyNames, setDailyNames] = useState<Plant[]>([]);
   const [pictures, setPictures] = useState<Plant[]>([]);
-  const [matches, setMatches] = useState<Plant[][]>([]); // An array to store matches
+  const [matches, setMatches] = useState<MatchAttempt[]>([]); // An array to store matches
   const [currentMatch, setCurrentMatch] = useState({ academicName: '', dailyName: '', picture: '' });
   const [score, setScore] = useState<number>(0);
 
@@ -94,7 +100,20 @@ const Quiz = () => {
               {...provided.droppableProps}
               className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
             >
-              {/* Your draggable components for academic names */}
+              {academicNames.map((plant, index) => (
+                <Draggable key={plant.id} draggableId={`academic-${plant.id}`} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                    >
+                      {plant.academic_name}
+                    </div>
+                  )}
+                </Draggable>
+              ))}
               {provided.placeholder}
             </div>
           )}
@@ -108,7 +127,20 @@ const Quiz = () => {
               {...provided.droppableProps}
               className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
             >
-              {/* Your draggable components for daily names */}
+              {dailyNames.map((plant, index) => (
+                <Draggable key={plant.id} draggableId={`daily-${plant.id}`} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                    >
+                      {plant.daily_name}
+                    </div>
+                  )}
+                </Draggable>
+              ))}
               {provided.placeholder}
             </div>
           )}
