@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
+import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable'; //Solve the problrm between React 18 and react-beautiful-dnd Droppable 
 
 interface Plant {
   id: number;
@@ -148,17 +149,37 @@ const Quiz = () => {
 
         {/* Droppable container for pictures */}
         <Droppable droppableId="pictures">
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
-            >
-              {/* Your draggable components for pictures */}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
+          >
+            {pictures.map((plant, index) => (
+              <Draggable key={plant.id} draggableId={`picture-${plant.id}`} index={index}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                  >
+                        {plant.Pictures && plant.Pictures[0] && (
+                  <img
+                    className="w-full"
+                    style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                    src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                    alt={plant.daily_name}
+                  />
+                )}
+                  </div>
+                )}
+          </Draggable>
+      ))}
+      {provided.placeholder}
+    </div>
+  )}
+</Droppable>
 
         {/* Droppable container for the match box */}
         <Droppable droppableId="matchBox">
