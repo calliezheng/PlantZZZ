@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
-import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable'; //Solve the problrm between React 18 and react-beautiful-dnd Droppable 
+import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable'; //Solve the problem between React 18 and react-beautiful-dnd Droppable 
 
 interface Plant {
   id: number;
@@ -46,6 +46,9 @@ const Quiz = () => {
   const [pictures, setPictures] = useState<Plant[]>([]);
   const [matches, setMatches] = useState<MatchAttempt[]>([]); // An array to store matches
   const [currentMatch, setCurrentMatch] = useState({ academicName: '', dailyName: '', picture: '' });
+  const [matchedAcademicNames, setMatchedAcademicNames] = useState<Plant[]>([]);
+  const [matchedDailyNames, setMatchedDailyNames] = useState<Plant[]>([]);
+  const [matchedPictures, setMatchedPictures] = useState<Plant[]>([]);
   const [score, setScore] = useState<number>(0);
 
   useEffect(() => {
@@ -64,10 +67,54 @@ const Quiz = () => {
 
   // Handle drag and drop logic here
   const onDragEnd = (result: DropResult) => {
-    // Implement the logic to reorder the answers based on the drag result
-    // Use result.source and result.destination
-    console.log(result);
+    const { source, destination } = result;
+  
+    // Dropped outside the list
+    if (!destination) {
+      return;
+    }
+  
+    // Moving within the same list (reordering)
+    if (source.droppableId === destination.droppableId) {
+      // Logic for reordering within the same list can go here
+    } 
+    // Moving from original list to match box
+    else if (destination.droppableId === "matchBox") {
+      // Depending on the source, add to the matched items
+      if (source.droppableId === "academicNames") {
+        const academicName = academicNames[source.index];
+        setMatchedAcademicNames((prev) => [...prev, academicName]);
+        setAcademicNames((prev) => prev.filter((_, idx) => idx !== source.index));
+      } else if (source.droppableId === "dailyNames") {
+        const dailyName = dailyNames[source.index];
+        setMatchedDailyNames((prev) => [...prev, dailyName]);
+        setDailyNames((prev) => prev.filter((_, idx) => idx !== source.index));
+      } else if (source.droppableId === "pictures") {
+        const picture = pictures[source.index];
+        setMatchedPictures((prev) => [...prev, picture]);
+        setPictures((prev) => prev.filter((_, idx) => idx !== source.index));
+      }
+    } 
+    // Moving from match box back to original list
+    else {
+      if (source.droppableId === "matchBox") {
+        if (destination.droppableId === "academicNames") {
+          const academicName = matchedAcademicNames[source.index];
+          setAcademicNames((prev) => [...prev, academicName]);
+          setMatchedAcademicNames((prev) => prev.filter((_, idx) => idx !== source.index));
+        } else if (destination.droppableId === "dailyNames") {
+          const dailyName = matchedDailyNames[source.index];
+          setDailyNames((prev) => [...prev, dailyName]);
+          setMatchedDailyNames((prev) => prev.filter((_, idx) => idx !== source.index));
+        } else if (destination.droppableId === "pictures") {
+          const picture = matchedPictures[source.index];
+          setPictures((prev) => [...prev, picture]);
+          setMatchedPictures((prev) => prev.filter((_, idx) => idx !== source.index));
+        }
+      }
+    }
   };
+  
 
   const confirmMatch = () => {
     // Check if the current match is correct, partially correct, or incorrect
@@ -181,33 +228,54 @@ const Quiz = () => {
   )}
 </Droppable>
 
-        {/* Droppable container for the match box */}
-        <Droppable droppableId="matchBox">
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="w-64 h-96 bg-gray-300 p-2 rounded"
-            >
-              {/* Placeholder or items that are dragged into the match box */}
-              <div className="text-center font-bold">Match Box</div>
-              {provided.placeholder}
-            </div>
+<Droppable droppableId="matchBox">
+  {(provided) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.droppableProps}
+      className="w-64 h-96 bg-gray-300 p-2 rounded"
+    >
+      {/* Placeholder or items that are dragged into the match box */}
+      <div className="text-center font-bold">Match Box</div>
+      {matchedAcademicNames.map((plant, index) => (
+        <div key={plant.id} className="p-2 mb-2 bg-white rounded shadow">
+          {plant.academic_name}
+        </div>
+      ))}
+      {matchedDailyNames.map((plant, index) => (
+        <div key={plant.id} className="p-2 mb-2 bg-white rounded shadow">
+          {plant.daily_name}
+        </div>
+      ))}
+      {matchedPictures.map((plant, index) => (
+        <div key={plant.id} className="p-2 mb-2 bg-white rounded shadow">
+          {plant.Pictures && plant.Pictures[0] && (
+            <img
+              className="w-full h-48 object-cover"
+              src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}`}
+              alt={plant.daily_name}
+            />
           )}
-        </Droppable>
-      </div>
-
-      {/* Button to finalize the match and calculate the score */}
-      <div className="text-center mt-4">
-      <button
-        onClick={confirmMatch}
-        className="bg-blue-500 text-white px-6 py-2 rounded shadow-lg hover:bg-blue-600 transition-colors"
-        disabled={matches.length >= 10} // Disable after 10 matches
-      >
-        {matches.length < 10 ? 'Confirm Match' : 'See Results'}
-      </button>
+        </div>
+      ))}
+      {provided.placeholder}
     </div>
-    </DragDropContext>
+  )}
+</Droppable>
+
+
+  {/* Button to finalize the match and calculate the score */}
+  <div className="text-center mt-4">
+  <button
+    onClick={confirmMatch}
+    className="bg-blue-500 text-white px-6 py-2 rounded shadow-lg hover:bg-blue-600 transition-colors"
+    disabled={matches.length >= 10} // Disable after 10 matches
+  >
+    {matches.length < 10 ? 'Confirm Match' : 'See Results'}
+  </button>
+</div>
+</div>
+</DragDropContext>
   );
 };
 
