@@ -8,6 +8,7 @@ interface Plant {
   academic_name: string;
   daily_name: string;
   Pictures?: Picture[];
+  location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox';
 }
 
 interface Picture {
@@ -53,68 +54,69 @@ const Quiz = () => {
 
   useEffect(() => {
     const fetchPlants = async () => {
-      // Replace with your API call
-      const response = await axios.get(`http://localhost:3001/quiz`);
-      const shuffledPlants = shuffleArray(response.data);
-      setPlants(shuffledPlants);
-      setAcademicNames(shuffledPlants);
-      setDailyNames(shuffleArray([...shuffledPlants])); // Shuffle again for randomness
-      setPictures(shuffleArray([...shuffledPlants])); // Shuffle again for randomness
+      try {
+        const response = await axios.get(`http://localhost:3001/quiz`);
+        // Shuffle the fetched data
+        let shuffledData = shuffleArray(response.data);
+  
+        // Assign a location to each plant part
+        const academicNamesWithLocation = shuffledData.map(plant => ({
+          ...plant,
+          location: 'academicNames'
+        }));
+        const dailyNamesWithLocation = shuffleArray([...shuffledData]).map(plant => ({
+          ...plant,
+          location: 'dailyNames'
+        }));
+        const picturesWithLocation = shuffleArray([...shuffledData]).map(plant => ({
+          ...plant,
+          location: 'pictures'
+        }));
+  
+        // Combine all parts into one array
+        const combinedPlants = [
+          ...academicNamesWithLocation,
+          ...dailyNamesWithLocation,
+          ...picturesWithLocation,
+        ];
+  
+        // Set the combined plants with location to state
+        setPlants(combinedPlants);
+      } catch (error) {
+        console.error("Error fetching plants data:", error);
+      }
     };
-
+  
     fetchPlants();
   }, []);
-
-  // Handle drag and drop logic here
+  
+  // Handle drag and drop logic
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
   
     // Dropped outside the list
-    if (!destination) {
-      return;
-    }
+    if (!destination) return;
   
-    // Moving within the same list (reordering)
-    if (source.droppableId === destination.droppableId) {
-      // Logic for reordering within the same list can go here
-    } 
-    // Moving from original list to match box
-    else if (destination.droppableId === "matchBox") {
-      // Depending on the source, add to the matched items
-      if (source.droppableId === "academicNames") {
-        const academicName = academicNames[source.index];
-        setMatchedAcademicNames((prev) => [...prev, academicName]);
-        setAcademicNames((prev) => prev.filter((_, idx) => idx !== source.index));
-      } else if (source.droppableId === "dailyNames") {
-        const dailyName = dailyNames[source.index];
-        setMatchedDailyNames((prev) => [...prev, dailyName]);
-        setDailyNames((prev) => prev.filter((_, idx) => idx !== source.index));
-      } else if (source.droppableId === "pictures") {
-        const picture = pictures[source.index];
-        setMatchedPictures((prev) => [...prev, picture]);
-        setPictures((prev) => prev.filter((_, idx) => idx !== source.index));
-      }
-    } 
-    // Moving from match box back to original list
-    else {
-      if (source.droppableId === "matchBox") {
-        if (destination.droppableId === "academicNames") {
-          const academicName = matchedAcademicNames[source.index];
-          setAcademicNames((prev) => [...prev, academicName]);
-          setMatchedAcademicNames((prev) => prev.filter((_, idx) => idx !== source.index));
-        } else if (destination.droppableId === "dailyNames") {
-          const dailyName = matchedDailyNames[source.index];
-          setDailyNames((prev) => [...prev, dailyName]);
-          setMatchedDailyNames((prev) => prev.filter((_, idx) => idx !== source.index));
-        } else if (destination.droppableId === "pictures") {
-          const picture = matchedPictures[source.index];
-          setPictures((prev) => [...prev, picture]);
-          setMatchedPictures((prev) => prev.filter((_, idx) => idx !== source.index));
-        }
-      }
+    // Find the item that's being dragged using its draggableId
+    const draggedItem = plants.find((plant) => `draggable-${plant.id}` === result.draggableId);
+  
+    if (draggedItem && ['academicNames', 'dailyNames', 'pictures', 'matchBox'].includes(destination.droppableId)) {
+      // Update the location of the dragged item with a type assertion
+      draggedItem.location = destination.droppableId as 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox';
+  
+      // Reorder the list
+      setPlants((prevPlants) => {
+        const newPlants = Array.from(prevPlants);
+        newPlants.splice(source.index, 1); // Remove the item from its original position
+        newPlants.splice(destination.index, 0, draggedItem); // Insert the item in the new position
+        return newPlants;
+      });
     }
   };
   
+  const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox') => {
+    return plants.filter(plant => plant.location === location);
+  };
 
   const confirmMatch = () => {
     // Check if the current match is correct, partially correct, or incorrect
@@ -142,57 +144,59 @@ const Quiz = () => {
       <div className="flex flex-col md:flex-row md:justify-center p-5 gap-4">
         {/* Droppable container for academic names */}
         <Droppable droppableId="academicNames">
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
-            >
-              {academicNames.map((plant, index) => (
-                <Draggable key={plant.id} draggableId={`academic-${plant.id}`} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
-                    >
-                      {plant.academic_name}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
+          >
+            {/* Filter and map over academicNames only */}
+            {getListByLocation('academicNames').map((plant, index) => (
+              <Draggable key={plant.id} draggableId={`academic-${plant.id}`} index={index}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                  >
+                    {plant.academic_name}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
         {/* Droppable container for daily names */}
         <Droppable droppableId="dailyNames">
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
-            >
-              {dailyNames.map((plant, index) => (
-                <Draggable key={plant.id} draggableId={`daily-${plant.id}`} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
-                    >
-                      {plant.daily_name}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
+          >
+            {/* Filter and map over academicNames only */}
+            {getListByLocation('dailyNames').map((plant, index) => (
+              <Draggable key={plant.id} draggableId={`daily-${plant.id}`} index={index}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                  >
+                    {plant.daily_name}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
         {/* Droppable container for pictures */}
         <Droppable droppableId="pictures">
@@ -202,7 +206,7 @@ const Quiz = () => {
             {...provided.droppableProps}
             className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
           >
-            {pictures.map((plant, index) => (
+            {getListByLocation('pictures').map((plant, index) => (
               <Draggable key={plant.id} draggableId={`picture-${plant.id}`} index={index}>
                 {(provided) => (
                   <div
@@ -211,7 +215,7 @@ const Quiz = () => {
                     {...provided.dragHandleProps}
                     className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
                   >
-                        {plant.Pictures && plant.Pictures[0] && (
+                    {plant.Pictures && plant.Pictures[0] && (
                   <img
                     className="w-full"
                     style={{ width: '100%', height: '200px', objectFit: 'cover' }}
@@ -229,39 +233,42 @@ const Quiz = () => {
 </Droppable>
 
 <Droppable droppableId="matchBox">
-  {(provided) => (
-    <div
-      ref={provided.innerRef}
-      {...provided.droppableProps}
-      className="w-64 h-96 bg-gray-300 p-2 rounded"
-    >
-      {/* Placeholder or items that are dragged into the match box */}
-      <div className="text-center font-bold">Match Box</div>
-      {matchedAcademicNames.map((plant, index) => (
-        <div key={plant.id} className="p-2 mb-2 bg-white rounded shadow">
-          {plant.academic_name}
-        </div>
-      ))}
-      {matchedDailyNames.map((plant, index) => (
-        <div key={plant.id} className="p-2 mb-2 bg-white rounded shadow">
-          {plant.daily_name}
-        </div>
-      ))}
-      {matchedPictures.map((plant, index) => (
-        <div key={plant.id} className="p-2 mb-2 bg-white rounded shadow">
-          {plant.Pictures && plant.Pictures[0] && (
-            <img
-              className="w-full h-48 object-cover"
-              src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}`}
-              alt={plant.daily_name}
-            />
-          )}
-        </div>
-      ))}
-      {provided.placeholder}
-    </div>
-  )}
-</Droppable>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="w-64 h-96 bg-gray-300 p-2 rounded"
+          >
+            <div className="text-center font-bold">Match Box</div>
+            {/* Filter and map over items that are in the matchBox */}
+            {getListByLocation('matchBox').map((plant, index) => (
+              <Draggable key={plant.id} draggableId={`match-${plant.id}`} index={index}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                  >
+                    {/* Show either name or image depending on the item type */}
+                    {plant.academic_name || plant.daily_name || (
+                      plant.Pictures && plant.Pictures[0] && (
+                        <img
+                          className="w-full"
+                          style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                          src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                          alt={plant.daily_name}
+                        />
+                      )
+                    )}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
 
   {/* Button to finalize the match and calculate the score */}
