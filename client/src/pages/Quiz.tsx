@@ -9,6 +9,7 @@ interface Plant {
   daily_name: string;
   Pictures?: Picture[];
   location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox';
+  type: 'academicNames' | 'dailyNames' | 'pictures';
 }
 
 interface Picture {
@@ -62,15 +63,18 @@ const Quiz = () => {
         // Assign a location to each plant part
         const academicNamesWithLocation = shuffledData.map(plant => ({
           ...plant,
-          location: 'academicNames'
+          location: 'academicNames',
+          type: 'academicNames'
         }));
         const dailyNamesWithLocation = shuffleArray([...shuffledData]).map(plant => ({
           ...plant,
-          location: 'dailyNames'
+          location: 'dailyNames',
+          type: 'dailyNames'
         }));
         const picturesWithLocation = shuffleArray([...shuffledData]).map(plant => ({
           ...plant,
-          location: 'pictures'
+          location: 'pictures',
+          type: 'pictures'
         }));
   
         // Combine all parts into one array
@@ -92,31 +96,41 @@ const Quiz = () => {
   
   // Handle drag and drop logic
   const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
+    const { source, destination, draggableId } = result;
   
-    // Dropped outside the list
+    // Exit if dropped outside the list
     if (!destination) return;
   
-    // Find the item that's being dragged using its draggableId
-    const draggedItem = plants.find((plant) => `draggable-${plant.id}` === result.draggableId);
+    // Parse the draggableId to get the type and id
+    const [type, id] = draggableId.split('-');
+    const parsedId = parseInt(id);
   
-    if (draggedItem && ['academicNames', 'dailyNames', 'pictures', 'matchBox'].includes(destination.droppableId)) {
-      // Update the location of the dragged item with a type assertion
-      draggedItem.location = destination.droppableId as 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox';
+    // Find the item that's being dragged
+    const draggedItem = plants.find(plant => plant.id === parsedId && plant.type === type);
   
-      // Reorder the list
-      setPlants((prevPlants) => {
-        const newPlants = Array.from(prevPlants);
-        newPlants.splice(source.index, 1); // Remove the item from its original position
-        newPlants.splice(destination.index, 0, draggedItem); // Insert the item in the new position
-        return newPlants;
-      });
+    if (draggedItem) {
+      // If the destination is the matchBox, we need to update only the location
+      if (destination.droppableId === 'matchBox') {
+        setPlants(prevPlants => prevPlants.map(p =>
+          p.id === parsedId && p.type === type
+            ? { ...p, location: destination.droppableId as 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox'}
+            : p
+        ));
+      } else {
+        // In case it's going back to its original list, reset the location
+        setPlants(prevPlants => prevPlants.map(p =>
+          p.id === parsedId && p.type === type
+            ? { ...p, location: p.type }
+            : p
+        ));
+      }
     }
   };
   
-  const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox') => {
-    return plants.filter(plant => plant.location === location);
-  };
+const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox') => {
+  return plants.filter(plant => plant.location === location);
+};
+
 
   const confirmMatch = () => {
     // Check if the current match is correct, partially correct, or incorrect
@@ -152,7 +166,7 @@ const Quiz = () => {
           >
             {/* Filter and map over academicNames only */}
             {getListByLocation('academicNames').map((plant, index) => (
-              <Draggable key={plant.id} draggableId={`academic-${plant.id}`} index={index}>
+              <Draggable key={`academicNames-${plant.id}`} draggableId={`academicNames-${plant.id}`} index={index}>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
@@ -180,7 +194,7 @@ const Quiz = () => {
           >
             {/* Filter and map over academicNames only */}
             {getListByLocation('dailyNames').map((plant, index) => (
-              <Draggable key={plant.id} draggableId={`daily-${plant.id}`} index={index}>
+              <Draggable key={`dailyNames-${plant.id}`} draggableId={`dailyNames-${plant.id}`} index={index}>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
@@ -207,7 +221,7 @@ const Quiz = () => {
             className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
           >
             {getListByLocation('pictures').map((plant, index) => (
-              <Draggable key={plant.id} draggableId={`picture-${plant.id}`} index={index}>
+              <Draggable key={`pictures-${plant.id}`} draggableId={`pictures-${plant.id}`} index={index}>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
@@ -242,7 +256,7 @@ const Quiz = () => {
             <div className="text-center font-bold">Match Box</div>
             {/* Filter and map over items that are in the matchBox */}
             {getListByLocation('matchBox').map((plant, index) => (
-              <Draggable key={plant.id} draggableId={`match-${plant.id}`} index={index}>
+              <Draggable key={`match-${plant.id}-${plant.type}`} draggableId={`match-${plant.id}-${plant.type}`} index={index}>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
