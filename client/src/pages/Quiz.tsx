@@ -83,7 +83,7 @@ const Quiz = () => {
           ...dailyNamesWithLocation,
           ...picturesWithLocation,
         ];
-  
+        console.log('combinedPlants:', combinedPlants)
         // Set the combined plants with location to state
         setPlants(combinedPlants);
       } catch (error) {
@@ -96,36 +96,51 @@ const Quiz = () => {
   
   // Handle drag and drop logic
   const onDragEnd = (result: DropResult) => {
-    const { source, destination, draggableId } = result;
-  
-    // Exit if dropped outside the list
-    if (!destination) return;
-  
-    // Parse the draggableId to get the type and id
-    const [type, id] = draggableId.split('-');
-    const parsedId = parseInt(id);
-  
-    // Find the item that's being dragged
-    const draggedItem = plants.find(plant => plant.id === parsedId && plant.type === type);
-  
-    if (draggedItem) {
-      // If the destination is the matchBox, we need to update only the location
-      if (destination.droppableId === 'matchBox') {
-        setPlants(prevPlants => prevPlants.map(p =>
+  const { source, destination, draggableId } = result;
+
+  console.log('Drag ended, result:', result); // Log the result of the drag
+
+  // Exit if dropped outside the list
+  if (!destination) return;
+
+  // Parse the draggableId to get the type and id
+  const [type, id] = draggableId.split('-');
+  const parsedId = parseInt(id);
+
+  console.log(`Dragged item type: ${type}, id: ${parsedId}`); // Log the type and ID
+
+  // Find the item that's being dragged
+  const draggedItem = plants.find(plant => plant.id === parsedId && plant.type === type);
+
+  console.log('Dragged item:', draggedItem); // Log the dragged item
+
+  if (draggedItem) {
+    // If the destination is the matchBox, we need to update only the location
+    if (destination.droppableId === 'matchBox') {
+      setPlants(prevPlants => {
+        const newPlants = prevPlants.map(p =>
           p.id === parsedId && p.type === type
             ? { ...p, location: destination.droppableId as 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox'}
             : p
-        ));
-      } else {
-        // In case it's going back to its original list, reset the location
-        setPlants(prevPlants => prevPlants.map(p =>
+        );
+        console.log('New plants after dropping in matchBox:', newPlants); // Log the new plants array
+        return newPlants;
+      });
+    } else {
+      // In case it's going back to its original list, reset the location
+      setPlants(prevPlants => {
+        const newPlants = prevPlants.map(p =>
           p.id === parsedId && p.type === type
             ? { ...p, location: p.type }
             : p
-        ));
-      }
+        );
+        console.log('New plants after moving back to list:', newPlants); // Log the new plants array
+        return newPlants;
+      });
     }
-  };
+  }
+};
+
   
 const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox') => {
   return plants.filter(plant => plant.location === location);
@@ -256,7 +271,7 @@ const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures'
             <div className="text-center font-bold">Match Box</div>
             {/* Filter and map over items that are in the matchBox */}
             {getListByLocation('matchBox').map((plant, index) => (
-              <Draggable key={`match-${plant.id}-${plant.type}`} draggableId={`match-${plant.id}-${plant.type}`} index={index}>
+              <Draggable key={`match-${plant.id}-${plant.type}`} draggableId={`${plant.type}-${plant.id}`} index={index}>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
@@ -265,16 +280,26 @@ const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures'
                     className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
                   >
                     {/* Show either name or image depending on the item type */}
-                    {plant.academic_name || plant.daily_name || (
-                      plant.Pictures && plant.Pictures[0] && (
+                    {
+                      plant.type === 'academicNames' && (
+                        <div className="name-display">{plant.academic_name}</div>
+                      )
+                    }
+                    {
+                      plant.type === 'dailyNames' && (
+                        <div className="name-display">{plant.daily_name}</div>
+                      )
+                    }
+                    {
+                      plant.type === 'pictures' && plant.Pictures && plant.Pictures[0] && (
                         <img
                           className="w-full"
                           style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                          src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                          src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}`}
                           alt={plant.daily_name}
                         />
                       )
-                    )}
+                    }
                   </div>
                 )}
               </Draggable>
