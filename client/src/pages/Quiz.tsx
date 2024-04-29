@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable'; //Solve the problem between React 18 and react-beautiful-dnd Droppable 
+import { useNavigate } from 'react-router-dom';
 
-interface Plant {
+export interface Plant {
   id: number;
-  academic_name: string;
-  daily_name: string;
+  academic_name?: string;
+  daily_name?: string;
   Pictures?: Picture[];
   location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox';
   type: 'academicNames' | 'dailyNames' | 'pictures';
 }
 
-interface Picture {
+export interface Picture {
   id: number;
   picture_file_name: string;
 }
@@ -21,6 +22,11 @@ interface MatchAttempt {
   academicId: number;
   dailyId: number;
   pictureId: number;
+}
+
+interface MatchPackage {
+  items: Plant[];
+  score: number;
 }
 
 const shuffleArray = (array: any[]) => {
@@ -42,16 +48,12 @@ const shuffleArray = (array: any[]) => {
 };
 
 const Quiz = () => {
+  const navigate = useNavigate();
   const [plants, setPlants] = useState<Plant[]>([]);
-  const [academicNames, setAcademicNames] = useState<Plant[]>([]);
-  const [dailyNames, setDailyNames] = useState<Plant[]>([]);
-  const [pictures, setPictures] = useState<Plant[]>([]);
   const [matches, setMatches] = useState<MatchAttempt[]>([]); // An array to store matches
-  const [currentMatch, setCurrentMatch] = useState({ academicName: '', dailyName: '', picture: '' });
-  const [matchedAcademicNames, setMatchedAcademicNames] = useState<Plant[]>([]);
-  const [matchedDailyNames, setMatchedDailyNames] = useState<Plant[]>([]);
-  const [matchedPictures, setMatchedPictures] = useState<Plant[]>([]);
   const [score, setScore] = useState<number>(0);
+  const [matchPackages, setMatchPackages] = useState<MatchPackage[]>([]);
+
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -148,47 +150,69 @@ const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures'
 
 
 const confirmMatch = () => {
-// Get the items in the matchBox
-const matchedAcademic = plants.find(p => p.location === 'matchBox' && p.type === 'academicNames');
-const matchedDaily = plants.find(p => p.location === 'matchBox' && p.type === 'dailyNames');
-const matchedPicture = plants.find(p => p.location === 'matchBox' && p.type === 'pictures');
+  // Retrieve items from the match box
+  const matchedItems = plants.filter(plant => plant.location === 'matchBox');
 
-// Ensure there is one and only one item from each list in the matchBox
-if (matchedAcademic && matchedDaily && matchedPicture) {
-  // Check if all three parts match
-  const isPerfectMatch = matchedAcademic.id === matchedDaily.id && matchedDaily.id === matchedPicture.id;
-  const isPartialMatch = matchedAcademic.id === matchedDaily.id || matchedDaily.id === matchedPicture.id || matchedAcademic.id === matchedPicture.id;
-  
-  if (isPerfectMatch) {
-    setScore(prevScore => prevScore + 3);
-  } else if (isPartialMatch) {
-    setScore(prevScore => prevScore + 1);
+  if (matchedItems.length === 3) { // Ensure exactly three items are matched
+    // Check if the matched items are from each category
+    const hasAllTypes = ['academicNames', 'dailyNames', 'pictures'].every(type =>
+      matchedItems.some(item => item.type === type)
+    );
+
+    if (hasAllTypes) {
+      // Calculate score for the match
+      let matchScore = calculateMatchScore(matchedItems);
+
+      // Create a package of the matched items
+      const matchPackage = {
+        items: matchedItems,
+        score: matchScore
+      };
+
+      // Update the match packages state and score
+      setMatchPackages(prevPackages => [...prevPackages, matchPackage]);
+      setScore(prevScore => prevScore + matchScore);
+
+      // Remove the matched items from the current plants state
+      setPlants(prevPlants => prevPlants.filter(plant => plant.location !== 'matchBox'));
+
+      // Prepare for next match if not completed all matches
+      if (matchPackages.length < 9) { // If fewer than 10 matches have been completed
+        // Reset or prepare UI for the next match
+      } else {
+        // End of the game, display results or process further
+        navigate('/quizresult', { state: { matchPackages: matchPackages } });
+        // Optionally call a function to display detailed results
+      }
+    } else {
+      alert("Please match one item from each category.");
+    }
+  } else {
+    alert("Please match exactly three items.");
   }
-  
-  // Add the current match to the list of attempts
-  setMatches(prevMatches => [...prevMatches, {
-    academicId: matchedAcademic.id,
-    dailyId: matchedDaily.id,
-    pictureId: matchedPicture.id
-  }]);
-  
-  // Clear the matchBox by resetting the location of matched items
-  setPlants(prevPlants => prevPlants.map(p => ({
-    ...p,
-    location: p.id === matchedAcademic.id || p.id === matchedDaily.id || p.id === matchedPicture.id ? p.type : p.location
-  })));
-  
-  // Check if the quiz is completed
-  if (matches.length === 9) { // Check for the 9th attempt as this function will add the 10th
-    // Show results and score after a brief delay to process the last match
-    setTimeout(() => {
-      alert(`Quiz completed! Your score is: ${score + (isPerfectMatch ? 3 : isPartialMatch ? 1 : 0)}`); // Include the score from the last match
-    }, 0);
-  }
-} else {
-  alert("Please drag exactly one academic name, one daily name, and one picture to the match box.");
-}
 };
+
+
+function calculateMatchScore(matchedItems: Plant[]): number {
+  // Find the items that are in the match box for each type
+  const matchedAcademic = matchedItems.find(p => p.type === 'academicNames');
+  const matchedDaily = matchedItems.find(p => p.type === 'dailyNames');
+  const matchedPicture = matchedItems.find(p => p.type === 'pictures');
+
+  // Check if all three parts are not undefined and match
+  if (matchedAcademic && matchedDaily && matchedPicture) {
+    const isPerfectMatch = matchedAcademic.id === matchedDaily.id && matchedDaily.id === matchedPicture.id;
+    const isPartialMatch = matchedAcademic.id === matchedDaily.id || matchedDaily.id === matchedPicture.id || matchedAcademic.id === matchedPicture.id;
+    
+    if (isPerfectMatch) {
+      return 3; // Return a score of 3 for a perfect match
+    } else if (isPartialMatch) {
+      return 1; // Return a score of 1 for a partial match
+    }
+  }
+  return 0; // Return a score of 0 if there is no match or something is undefined
+}
+
 
 
   return (
