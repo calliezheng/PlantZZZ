@@ -27,6 +27,7 @@ interface MatchAttempt {
 interface MatchPackage {
   items: Plant[];
   score: number;
+  correctIds: Set<number>;
 }
 
 const shuffleArray = (array: any[]) => {
@@ -153,67 +154,83 @@ const confirmMatch = () => {
   // Retrieve items from the match box
   const matchedItems = plants.filter(plant => plant.location === 'matchBox');
 
-  if (matchedItems.length === 3) { // Ensure exactly three items are matched
+  if (matchedItems.length === 3) {
     // Check if the matched items are from each category
     const hasAllTypes = ['academicNames', 'dailyNames', 'pictures'].every(type =>
       matchedItems.some(item => item.type === type)
     );
-
+  
     if (hasAllTypes) {
       // Calculate score for the match
-      let matchScore = calculateMatchScore(matchedItems);
-
-      // Create a package of the matched items
-      const matchPackage = {
-        items: matchedItems,
-        score: matchScore
-      };
-
+      const { score, correctIds } = calculateMatchScore(matchedItems);
+  
       // Update the match packages state and score
-      setMatchPackages(prevPackages => [...prevPackages, matchPackage]);
-      setScore(prevScore => prevScore + matchScore);
-
+      setMatchPackages(prevPackages => {
+        const updatedMatchPackages = [
+          ...prevPackages,
+          { items: matchedItems, score, correctIds }
+        ];
+        
+        // Check if this is the last match to be added
+        if (updatedMatchPackages.length === 10) {
+          // If it's the last match, navigate to the results page
+          navigate('/quizresult', { state: { matchPackages: updatedMatchPackages } });
+        }
+        
+        // Return the updated state
+        return updatedMatchPackages;
+      });
+  
+      setScore(prevScore => prevScore + score);
+  
       // Remove the matched items from the current plants state
       setPlants(prevPlants => prevPlants.filter(plant => plant.location !== 'matchBox'));
-
-      // Prepare for next match if not completed all matches
-      if (matchPackages.length < 9) { // If fewer than 10 matches have been completed
-        // Reset or prepare UI for the next match
-      } else {
-        // End of the game, display results or process further
-        navigate('/quizresult', { state: { matchPackages: matchPackages } });
-        // Optionally call a function to display detailed results
-      }
     } else {
       alert("Please match one item from each category.");
     }
   } else {
     alert("Please match exactly three items.");
-  }
+  }  
 };
 
 
-function calculateMatchScore(matchedItems: Plant[]): number {
+function calculateMatchScore(matchedItems: Plant[]): { score: number, correctIds: Set<number> } {
   // Find the items that are in the match box for each type
-  const matchedAcademic = matchedItems.find(p => p.type === 'academicNames');
-  const matchedDaily = matchedItems.find(p => p.type === 'dailyNames');
-  const matchedPicture = matchedItems.find(p => p.type === 'pictures');
+  const matchedAcademic = matchedItems.find(item => item.type === 'academicNames');
+  const matchedDaily = matchedItems.find(item => item.type === 'dailyNames');
+  const matchedPicture = matchedItems.find(item => item.type === 'pictures');
 
-  // Check if all three parts are not undefined and match
+  let correctIds = new Set<number>();
+
+  // Check if all three parts match
   if (matchedAcademic && matchedDaily && matchedPicture) {
-    const isPerfectMatch = matchedAcademic.id === matchedDaily.id && matchedDaily.id === matchedPicture.id;
-    const isPartialMatch = matchedAcademic.id === matchedDaily.id || matchedDaily.id === matchedPicture.id || matchedAcademic.id === matchedPicture.id;
-    
-    if (isPerfectMatch) {
-      return 3; // Return a score of 3 for a perfect match
-    } else if (isPartialMatch) {
-      return 1; // Return a score of 1 for a partial match
+    if (matchedAcademic.id === matchedDaily.id && matchedDaily.id === matchedPicture.id) {
+      // All items match, perfect match
+      correctIds.add(matchedAcademic.id);
+      return { score: 3, correctIds };
+    } else {
+      // Check for partial matches
+      if (matchedAcademic.id === matchedDaily.id) {
+        correctIds.add(matchedAcademic.id);
+      }
+      if (matchedDaily.id === matchedPicture.id) {
+        correctIds.add(matchedDaily.id);
+      }
+      if (matchedAcademic.id === matchedPicture.id) {
+        correctIds.add(matchedAcademic.id);
+      }
     }
   }
-  return 0; // Return a score of 0 if there is no match or something is undefined
+
+  return {
+    score: correctIds.size, // Score is the number of correct IDs
+    correctIds
+  };
 }
 
-
+const quitQuiz = () => {
+  navigate(-1); 
+};
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -365,6 +382,13 @@ function calculateMatchScore(matchedItems: Plant[]): number {
     disabled={matches.length >= 10} // Disable after 10 matches
   >
     {matches.length < 10 ? 'Confirm Match' : 'See Results'}
+  </button>
+</div>
+<div className="text-center mt-4">
+  <button 
+    onClick={quitQuiz} 
+    className="bg-blue-500 text-white px-6 py-2 rounded shadow-lg hover:bg-blue-600 transition-colors"
+    >Quit
   </button>
 </div>
 </div>
