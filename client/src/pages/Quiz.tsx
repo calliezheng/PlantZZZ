@@ -18,9 +18,9 @@ interface Picture {
 }
 
 interface MatchAttempt {
-  academicName: string;
-  dailyName: string;
-  picture: string;
+  academicId: number;
+  dailyId: number;
+  pictureId: number;
 }
 
 const shuffleArray = (array: any[]) => {
@@ -147,26 +147,49 @@ const getListByLocation = (location: 'academicNames' | 'dailyNames' | 'pictures'
 };
 
 
-  const confirmMatch = () => {
-    // Check if the current match is correct, partially correct, or incorrect
-    // Update the matches and score state accordingly
+const confirmMatch = () => {
+// Get the items in the matchBox
+const matchedAcademic = plants.find(p => p.location === 'matchBox' && p.type === 'academicNames');
+const matchedDaily = plants.find(p => p.location === 'matchBox' && p.type === 'dailyNames');
+const matchedPicture = plants.find(p => p.location === 'matchBox' && p.type === 'pictures');
 
-    // Here's a mockup of the logic; you will need to replace it with actual checking logic
-    const isMatchCorrect = true; // Replace this with actual condition check
-    if (isMatchCorrect) {
-      setScore((prevScore) => prevScore + 3);
-    }
+// Ensure there is one and only one item from each list in the matchBox
+if (matchedAcademic && matchedDaily && matchedPicture) {
+  // Check if all three parts match
+  const isPerfectMatch = matchedAcademic.id === matchedDaily.id && matchedDaily.id === matchedPicture.id;
+  const isPartialMatch = matchedAcademic.id === matchedDaily.id || matchedDaily.id === matchedPicture.id || matchedAcademic.id === matchedPicture.id;
+  
+  if (isPerfectMatch) {
+    setScore(prevScore => prevScore + 3);
+  } else if (isPartialMatch) {
+    setScore(prevScore => prevScore + 1);
+  }
+  
+  // Add the current match to the list of attempts
+  setMatches(prevMatches => [...prevMatches, {
+    academicId: matchedAcademic.id,
+    dailyId: matchedDaily.id,
+    pictureId: matchedPicture.id
+  }]);
+  
+  // Clear the matchBox by resetting the location of matched items
+  setPlants(prevPlants => prevPlants.map(p => ({
+    ...p,
+    location: p.id === matchedAcademic.id || p.id === matchedDaily.id || p.id === matchedPicture.id ? p.type : p.location
+  })));
+  
+  // Check if the quiz is completed
+  if (matches.length === 9) { // Check for the 9th attempt as this function will add the 10th
+    // Show results and score after a brief delay to process the last match
+    setTimeout(() => {
+      alert(`Quiz completed! Your score is: ${score + (isPerfectMatch ? 3 : isPartialMatch ? 1 : 0)}`); // Include the score from the last match
+    }, 0);
+  }
+} else {
+  alert("Please drag exactly one academic name, one daily name, and one picture to the match box.");
+}
+};
 
-    // Add the current match to the list of attempts and reset for the next match
-    setMatches((prevMatches) => [...prevMatches, currentMatch]);
-    setCurrentMatch({ academicName: '', dailyName: '', picture: '' });
-
-    // If it was the 10th match, calculate and show results
-    if (matches.length === 9) {
-      // Show results and score
-      alert(`Quiz completed! Your score is: ${score}`);
-    }
-  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
