@@ -13,6 +13,7 @@ import Password from './pages/Password';
 import ManagePlant from './pages/ManagePlant';
 import ManageStaff from './pages/ManageStaff';
 import PlantLearned from './pages/PlantLearned';
+import Store from './pages/Store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -73,6 +74,7 @@ function App() {
           <Route path="/dashboard/profile/:id/manageplant" element={<ManagePlant />} />
           <Route path="/dashboard/profile/:id/managestaff" element={<ManageStaff />} />
           <Route path="/dashboard/learned plant/:id" element={<PlantLearned />} />
+          <Route path="/dashboard/store/:id" element={<Store />} />
         </Routes>
         <SignModal
         showModal={showModal}
