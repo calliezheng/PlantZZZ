@@ -11,6 +11,7 @@ import DashboardAdmin from './pages/DashboardAdmin';
 import Profile from './pages/Profile';
 import Password from './pages/Password';
 import ManagePlant from './pages/ManagePlant';
+import ManageStaff from './pages/ManageStaff';
 import PlantLearned from './pages/PlantLearned';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -70,6 +71,7 @@ function App() {
           <Route path="/dashboard/profile/:id" element={<Profile />} />
           <Route path="/dashboard/profile/:id/password" element={<Password />} />
           <Route path="/dashboard/profile/:id/manageplant" element={<ManagePlant />} />
+          <Route path="/dashboard/profile/:id/managestaff" element={<ManageStaff />} />
           <Route path="/dashboard/learned plant/:id" element={<PlantLearned />} />
         </Routes>
         <SignModal

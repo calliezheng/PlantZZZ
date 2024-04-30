@@ -60,7 +60,9 @@ INSERT INTO user (username, email, password, user_type, is_active) VALUES
 ('PixelPioneer', 'PixelPioneer@mail.com', '$2b$12$O.f8VRMICUWK83Xqxe2UQe9jYfOAIU5EeykhaXt64eN2RF2IR6bzG', 2, 1),
 ('EchoSage', 'EchoSage@example.com', '$2b$12$gzj9cCuaEb5rK5NVrHxrbeSJ0ZqSqUg9RizXdxNZj08LPMLkH3iiW', 2, 1),
 ('FrostVoyager', 'FrostVoyager@mail.com', '$2b$12$C.Bn8WoC9XBDeoitkwh9fuUS7lv9E9t7/kNE8Cd9M5MyPnE70kISe', 2, 1),
-('Admin', 'Calliezheng@hotmail.com', '$2b$12$x8YaY8C5g4EW.FHqPz2eoOGYeL4GyO1X6H8C5ocnprExSOUs2a4hm', 1, 1);
+('Admin', 'Calliezheng@hotmail.com', '$2b$12$x8YaY8C5g4EW.FHqPz2eoOGYeL4GyO1X6H8C5ocnprExSOUs2a4hm', 1, 1),
+('Admin1', 'Staff1@hotmail.com', '$2b$12$x8YaY8C5g4EW.FHqPz2eoOGYeL4GyO1X6H8C5ocnprExSOUs2a4hm', 1, 1),
+('Admin2', 'Staff2@hotmail.com', '$2b$12$x8YaY8C5g4EW.FHqPz2eoOGYeL4GyO1X6H8C5ocnprExSOUs2a4hm', 1, 1);
 
 INSERT INTO plant (academic_name, daily_name, is_active) VALUES
 ("Acaena inermis _Purpurea_", 'purple bidibid', 1),
