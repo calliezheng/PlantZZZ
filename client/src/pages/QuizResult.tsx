@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Plant } from './Quiz';
+import axios from 'axios';
 
 type MatchPackage = {
   items: Plant[];
@@ -13,9 +14,26 @@ const QuizResult: React.FC = () => {
   const location = useLocation();
   const matchPackages = location.state?.matchPackages as MatchPackage[];
   const totalScore = matchPackages?.reduce((acc, matchPkg) => acc + matchPkg.score, 0) ?? 0;
+  const userId = localStorage.getItem('user_id');
   const handleTryAnotherQuiz = () => {
     navigate('/quiz'); 
   };
+
+  const sendScoreToBackend = async (userId: string, score: number) => {
+    try {
+      const url = `http://localhost:3001/quiz/${userId}`; // Adjust URL based on your actual API endpoint
+      const response = await axios.post(url, { score });
+      console.log('Score updated successfully:', response.data);
+    } catch (error) {
+      console.error('Failed to update score:', error);
+    }
+  };
+
+  if (userId) {
+    sendScoreToBackend(userId, totalScore);
+  } else {
+    console.error('User ID is not available');
+  }
 
   return (
     <div className="container mx-auto p-4">

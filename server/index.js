@@ -30,6 +30,9 @@ app.use("/quiz", quizRouter);
 const staffRouter = require("./routes/staff");
 app.use("/staff", staffRouter);
 
+const storeRouter = require("./routes/store");
+app.use("/store", storeRouter);
+
 db.sequelize.sync().then(() => {
     app.listen(3001, () => {
         console.log(`Server running on port 3001`);
