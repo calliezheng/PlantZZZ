@@ -52,14 +52,34 @@ CREATE TABLE plant_remembered (
   FOREIGN KEY (plant_id) REFERENCES plant(id)
 );
 
-DROP TABLE IF EXISTS store;
-CREATE TABLE store (
+DROP TABLE IF EXISTS product_type;
+CREATE TABLE product_type (
+id INT NOT NULL AUTO_INCREMENT,
+type_name VARCHAR(255) NOT NULL,
+is_active BOOLEAN DEFAULT TRUE,
+PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS product;
+CREATE TABLE product (
   id INT NOT NULL AUTO_INCREMENT,
   product_name VARCHAR(255) NOT NULL,
+  product_type INT NOT NULL,
   price INT NOT NULL,
   picture VARCHAR(255) NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS purchase;
+CREATE TABLE purchase (
+id INT NOT NULL AUTO_INCREMENT,
+user_id INT NOT NULL,
+product_id INT NOT NULL,
+price INT NOT NULL,
+PRIMARY KEY (id),
+FOREIGN KEY (user_id) REFERENCES user(id),
+FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
 INSERT INTO user_type (type_name, is_active) VALUES
@@ -616,44 +636,49 @@ INSERT INTO picture (picture_file_name, plant_id, is_active) VALUES
 ('Wisteria sinensis - Chinese wisteria.jpg', 244, 1),
 ('Zantedeschia aethiopica - arum or calla Lily.jpeg', 245, 1);
 
-INSERT INTO store (product_name, price, picture, is_active) VALUES
-('Agapanthus africanus', 100, 'Agapanthus_africanus.png', 1),
-('Aguilegia', 100, 'Aguilegia.svg', 1),
-('Argyranthemum frutescens', 100, 'Argyranthemum_frutescens.svg', 1),
-('Astilbe chinensis', 100, 'Astilbe_chinensis.svg', 1),
-('Bougainvillea', 100, 'Bougainvillea.svg', 1),
-('Bridal Wreath', 100, 'Bridal_Wreath.svg', 1),
-('Campanula medium -- blue', 100, 'Campanula_medium_--_blue', 1),
-('Campanula medium -- pink', 100, 'Campanula_medium_--_pink.svg', 1),
-('Campanula punctata Lam', 100, 'Campanula_punctata_Lam.svg', 1),
-('Cyclamen persicum', 100, 'Cyclamen_persicum.svg', 1),
-('Dahlia pinnata Cav', 100, 'Dahlia_pinnata_Cav.svg', 1),
-('Delphinium', 100, 'Delphinium.svg', 1),
-('Digitalis purpurea', 100, 'Digitalis_purpurea.svg', 1),
-('Elephant Ears', 100, 'Elephant_Ears.svg', 1),
-('Eupatorium fortunei', 100, 'Eupatorium_fortunei.svg', 1),
-('Evening Primrose', 100, 'Agapanthus_africanus.svg', 1),
-('Golden Foster Holly', 100, 'Agapanthus_africanus.svg', 1),
-('Hamamelis mollis', 100, 'Agapanthus_africanus.svg', 1),
-('Helichrysum petiolare', 100, 'Agapanthus_africanus.svg', 1),
-('Hydrangea macrophylla', 100, 'Agapanthus_africanus.svg', 1),
-('Ipomoea nil', 100, 'Agapanthus_africanus.svg', 1),
-('Lamprocapnos spectabilis', 100, 'Lamprocapnos_spectabilis.png', 1),
-('Lavender', 100, 'Lavender.png', 1),
-('Lily', 100, 'Lily.png', 1),
-('Lupinus', 100, 'Lupinus.png', 1),
-('Maple', 100, 'Agapanthus_africanus.svg', 1),
-('Matteuccia struthiopteris', 100, 'Agapanthus_africanus.svg', 1),
-('Myosotis', 100, 'Agapanthus_africanus.svg', 1),
-('Parthenocissus tricuspidata', 100, 'Agapanthus_africanus.svg', 1),
-('Pelargonium hortorum Bailey', 100, 'Agapanthus_africanus.svg', 1),
-('Phlox drummondii', 100, 'Agapanthus_africanus.svg', 1),
-('Purple coneflower', 100, 'Agapanthus_africanus.svg', 1),
-('Rainlily', 100, 'Agapanthus_africanus.svg', 1),
-('Salvia japonica', 100, 'Agapanthus_africanus.svg', 1),
-('Stipa capillata', 100, 'Agapanthus_africanus.svg', 1),
-('Strelitzia reginae', 100, 'Agapanthus_africanus.svg', 1),
-('Tulip', 100, 'Lamprocapnos_spectabilis.png', 1),
-('Verbena officinalis', 100, 'Lavender.png', 1),
-('Viburnum hanceanum Maxim', 100, 'Lily.png', 1),
-('Vitex agnus-castus', 100, 'Lupinus.png', 1);
+INSERT INTO product_type (type_name, is_active) VALUES
+('Plant', 1),
+('Ground', 1),
+('Other', 1);
+
+INSERT INTO product (product_name, product_type, price, picture, is_active) VALUES
+('Agapanthus africanus', 1, 100, 'Agapanthus_africanus.png', 1),
+('Aguilegia', 1, 100, 'Aguilegia.png', 1),
+('Argyranthemum frutescens', 1, 100, 'Argyranthemum_frutescens.png', 1),
+('Astilbe chinensis', 1, 100, 'Astilbe_chinensis.png', 1),
+('Bougainvillea', 1, 100, 'Bougainvillea.png', 1),
+('Bridal Wreath', 1, 100, 'Bridal_Wreath.png', 1),
+('Campanula medium -- blue', 1, 100, 'Campanula_medium_--_blue.png', 1),
+('Campanula medium -- pink', 1, 100, 'Campanula_medium_--_pink.png', 1),
+('Campanula punctata Lam', 1, 100, 'Campanula_punctata_Lam.png', 1),
+('Cyclamen persicum', 1, 100, 'Cyclamen_persicum.png', 1),
+('Dahlia pinnata Cav', 1, 100, 'Dahlia_pinnata_Cav.png', 1),
+('Delphinium', 1, 100, 'Delphinium.png', 1),
+('Digitalis purpurea', 1, 100, 'Digitalis_purpurea.png', 1),
+('Elephant Ears', 1, 100, 'Elephant_Ears.png', 1),
+('Eupatorium fortunei', 1, 100, 'Eupatorium_fortunei.png', 1),
+('Evening Primrose', 1, 100, 'Evening_Primrose.png', 1),
+('Golden Foster Holly', 1, 100, 'Golden_Foster_Holly.png', 1),
+('Hamamelis mollis', 1, 100, 'Hamamelis_mollis.png', 1),
+('Helichrysum petiolare', 1, 100, 'Helichrysum_petiolare.png', 1),
+('Hydrangea macrophylla', 1, 100, 'Hydrangea_macrophylla.png', 1),
+('Ipomoea nil', 1, 100, 'Ipomoea_nil.png', 1),
+('Lamprocapnos spectabilis', 1, 100, 'Lamprocapnos_spectabilis.png', 1),
+('Lavender', 1, 100, 'Lavender.png', 1),
+('Lily', 1, 100, 'Lily.png', 1),
+('Lupinus', 1, 100, 'Lupinus.png', 1),
+('Maple', 1, 100, 'Maple.png', 1),
+('Matteuccia struthiopteris', 1, 100, 'Matteuccia_struthiopteris.png', 1),
+('Myosotis', 1, 100, 'Myosotis.png', 1),
+('Parthenocissus tricuspidata', 1, 100, 'Parthenocissus_tricuspidata.png', 1),
+('Pelargonium hortorum Bailey', 1, 100, 'Pelargonium_hortorum_Bailey.png', 1),
+('Phlox drummondii', 1, 100, 'Phlox_drummondii.png', 1),
+('Purple coneflower', 1, 100, 'Purple_coneflower.png', 1),
+('Rainlily', 1, 100, 'Rainlily.png', 1),
+('Salvia japonica', 1, 100, 'Salvia_japonica.png', 1),
+('Stipa capillata', 1, 100, 'Stipa_capillata.png', 1),
+('Strelitzia reginae', 1, 100, 'Strelitzia_reginae.png', 1),
+('Tulip', 1, 100, 'Tulip.png', 1),
+('Verbena officinalis', 1, 100, 'Verbena_officinalis.png', 1),
+('Viburnum hanceanum Maxim', 1, 100, 'Viburnum_hanceanum_Maxim.png', 1),
+('Vitex agnus-castus', 1, 100, 'Vitex_agnus-castus.png', 1);

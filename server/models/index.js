@@ -63,6 +63,22 @@ db.Plant_Remembered.belongsTo(db.User, { foreignKey: 'user_id' });
 db.Plant.hasMany(db.Plant_Remembered, { foreignKey: 'plant_id' });
 db.Plant_Remembered.belongsTo(db.Plant, { foreignKey: 'plant_id' });
 
+db.Product.belongsTo(db.Product_Type, { 
+  foreignKey: 'product_type', 
+  as: 'ProductType' 
+});
+
+db.Product_Type.hasMany(db.Product, { 
+  foreignKey: 'product_type', 
+  as: 'Products' 
+});
+
+db.User.hasMany(db.Purchase, { foreignKey: 'user_id' });
+db.Purchase.belongsTo(db.User, { foreignKey: 'user_id' });
+
+db.Product.hasMany(db.Purchase, { foreignKey: 'product_id' });
+db.Purchase.belongsTo(db.Product, { foreignKey: 'product_id' });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
