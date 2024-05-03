@@ -52,6 +52,16 @@ CREATE TABLE plant_remembered (
   FOREIGN KEY (plant_id) REFERENCES plant(id)
 );
 
+DROP TABLE IF EXISTS store;
+CREATE TABLE store (
+  id INT NOT NULL AUTO_INCREMENT,
+  product_name VARCHAR(255) NOT NULL,
+  price INT NOT NULL,
+  picture VARCHAR(255) NOT NULL,
+  is_active BOOLEAN DEFAULT TRUE,
+  PRIMARY KEY (id)
+);
+
 INSERT INTO user_type (type_name, is_active) VALUES
 ('Admin', 1),
 ('Student', 1);
@@ -605,3 +615,45 @@ INSERT INTO picture (picture_file_name, plant_id, is_active) VALUES
 ('Viburnum tinus - laurustinus.jpg', 243, 1),
 ('Wisteria sinensis - Chinese wisteria.jpg', 244, 1),
 ('Zantedeschia aethiopica - arum or calla Lily.jpeg', 245, 1);
+
+INSERT INTO store (product_name, price, picture, is_active) VALUES
+('Agapanthus africanus', 100, 'Agapanthus_africanus.png', 1),
+('Aguilegia', 100, 'Aguilegia.svg', 1),
+('Argyranthemum frutescens', 100, 'Argyranthemum_frutescens.svg', 1),
+('Astilbe chinensis', 100, 'Astilbe_chinensis.svg', 1),
+('Bougainvillea', 100, 'Bougainvillea.svg', 1),
+('Bridal Wreath', 100, 'Bridal_Wreath.svg', 1),
+('Campanula medium -- blue', 100, 'Campanula_medium_--_blue', 1),
+('Campanula medium -- pink', 100, 'Campanula_medium_--_pink.svg', 1),
+('Campanula punctata Lam', 100, 'Campanula_punctata_Lam.svg', 1),
+('Cyclamen persicum', 100, 'Cyclamen_persicum.svg', 1),
+('Dahlia pinnata Cav', 100, 'Dahlia_pinnata_Cav.svg', 1),
+('Delphinium', 100, 'Delphinium.svg', 1),
+('Digitalis purpurea', 100, 'Digitalis_purpurea.svg', 1),
+('Elephant Ears', 100, 'Elephant_Ears.svg', 1),
+('Eupatorium fortunei', 100, 'Eupatorium_fortunei.svg', 1),
+('Evening Primrose', 100, 'Agapanthus_africanus.svg', 1),
+('Golden Foster Holly', 100, 'Agapanthus_africanus.svg', 1),
+('Hamamelis mollis', 100, 'Agapanthus_africanus.svg', 1),
+('Helichrysum petiolare', 100, 'Agapanthus_africanus.svg', 1),
+('Hydrangea macrophylla', 100, 'Agapanthus_africanus.svg', 1),
+('Ipomoea nil', 100, 'Agapanthus_africanus.svg', 1),
+('Lamprocapnos spectabilis', 100, 'Lamprocapnos_spectabilis.png', 1),
+('Lavender', 100, 'Lavender.png', 1),
+('Lily', 100, 'Lily.png', 1),
+('Lupinus', 100, 'Lupinus.png', 1),
+('Maple', 100, 'Agapanthus_africanus.svg', 1),
+('Matteuccia struthiopteris', 100, 'Agapanthus_africanus.svg', 1),
+('Myosotis', 100, 'Agapanthus_africanus.svg', 1),
+('Parthenocissus tricuspidata', 100, 'Agapanthus_africanus.svg', 1),
+('Pelargonium hortorum Bailey', 100, 'Agapanthus_africanus.svg', 1),
+('Phlox drummondii', 100, 'Agapanthus_africanus.svg', 1),
+('Purple coneflower', 100, 'Agapanthus_africanus.svg', 1),
+('Rainlily', 100, 'Agapanthus_africanus.svg', 1),
+('Salvia japonica', 100, 'Agapanthus_africanus.svg', 1),
+('Stipa capillata', 100, 'Agapanthus_africanus.svg', 1),
+('Strelitzia reginae', 100, 'Agapanthus_africanus.svg', 1),
+('Tulip', 100, 'Lamprocapnos_spectabilis.png', 1),
+('Verbena officinalis', 100, 'Lavender.png', 1),
+('Viburnum hanceanum Maxim', 100, 'Lily.png', 1),
+('Vitex agnus-castus', 100, 'Lupinus.png', 1);
