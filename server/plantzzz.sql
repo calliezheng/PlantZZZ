@@ -75,8 +75,8 @@ DROP TABLE IF EXISTS purchase;
 CREATE TABLE purchase (
 id INT NOT NULL AUTO_INCREMENT,
 user_id INT NOT NULL,
-product_id INT NOT NULL,
-price INT NOT NULL,
+product_id INT DEFAULT 1,
+quantity INT NOT NULL,
 PRIMARY KEY (id),
 FOREIGN KEY (user_id) REFERENCES user(id),
 FOREIGN KEY (product_id) REFERENCES product(id)

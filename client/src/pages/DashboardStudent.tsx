@@ -11,6 +11,7 @@ const DashboardStudent = () => {
         <Link to={`/dashboard/profile/${id}`} className="hover:text-green-600"> Profile </Link>
         <Link to={`/dashboard/learned plant/${id}`} className="hover:text-green-600"> Plant Learned </Link>
         <Link to={`/dashboard/store/${id}`} className="hover:text-green-600"> Store </Link>
+        <Link to={`/dashboard/garden/${id}`} className="hover:text-green-600"> Garden </Link>
       </div>
     );
   };

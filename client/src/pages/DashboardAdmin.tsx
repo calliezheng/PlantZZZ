@@ -11,6 +11,7 @@ const DashboardAdmin = () => {
         <Link to={`/dashboard/profile/${id}`} className="hover:text-green-600"> Profile </Link>
         <Link to={`/dashboard/profile/${id}/manageplant`} className="hover:text-green-600"> Manage Plant </Link>
         <Link to={`/dashboard/profile/${id}/managestaff`} className="hover:text-green-600"> Manage Staff </Link>
+        <Link to={`/dashboard/profile/${id}/manageproduct`} className="hover:text-green-600"> Manage Product </Link>
       </div>
     );
   };
