@@ -46,46 +46,67 @@ router.post('/', upload.single('picture'), async (req, res) => {
     const plantId = req.params.id;
     const transaction = await sequelize.transaction();
     try {
-      // Update plant details
-      await Plant.update(
-        { academic_name: req.body.academic_name, daily_name: req.body.daily_name },
-        { where: { id: plantId } },
-        { transaction }
-      );
-  
-      if (req.file) {
-        // Deactivate the old picture
-        await Picture.update(
-          { is_active: 0 },
-          { where: { plant_id: plantId, is_active: 1 } },
-          { transaction }
+        // Update plant details within a transaction
+        await Plant.update(
+            {
+                academic_name: req.body.academic_name,
+                daily_name: req.body.daily_name
+            },
+            {
+                where: { id: plantId },
+                transaction: transaction
+            }
         );
-  
-        // Add new picture
-        await Picture.create({
-          picture_file_name: req.file.filename,
-          plant_id: plantId,
-          is_active: 1
-        }, { transaction });
-      }
-  
-      await transaction.commit();
-      const updatedPlant = await Plant.findByPk(plantId, {
-        include: [{
-          model: Picture,
-          as: 'Pictures', // Make sure this alias matches your association alias
-          where: { is_active: 1 },
-          required: false // This ensures that plants without an active picture are still retrieved
-        }]
-      });
-  
-      res.json(updatedPlant);
-  
+
+        // If a new picture was uploaded, handle the old picture deletion
+        if (req.file) {
+            // Find and delete the old picture if it exists
+            const oldPicture = await Picture.findOne({
+                where: { plant_id: plantId, is_active: 1 }
+            });
+
+            if (oldPicture) {
+                // Delete the picture file from the server
+                const oldPicturePath = path.join(__dirname, '..', 'images', 'plant picture', oldPicture.picture_file_name);
+                fs.unlinkSync(oldPicturePath);  // Ensure synchronous deletion
+
+                // Delete the picture record from the database
+                await Picture.destroy({
+                    where: { id: oldPicture.id },
+                    transaction: transaction
+                });
+            }
+
+            // Add new picture
+            await Picture.create({
+                picture_file_name: req.file.filename,
+                plant_id: plantId,
+                is_active: 1
+            }, { transaction });
+        }
+
+        // Commit the transaction
+        await transaction.commit();
+
+        // Fetch the updated plant to return in the response
+        const updatedPlant = await Plant.findByPk(plantId, {
+            include: [{
+                model: Picture,
+                as: 'Pictures',
+                where: { is_active: 1 },
+                required: false
+            }]
+        });
+
+        res.json(updatedPlant);
+
     } catch (error) {
-      await transaction.rollback();
-      res.status(500).json({ error: 'Error updating plant and picture' });
+        // Rollback the transaction in case of an error
+        await transaction.rollback();
+        console.error('Error updating plant:', error);
+        res.status(500).json({ error: 'Error updating plant and picture' });
     }
-  });
+});
   
   
   // Delete a plant
