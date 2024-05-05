@@ -172,12 +172,11 @@ router.post('/product/add', upload.single('picture'), async (req, res) => {
   
       // Check if a new picture was uploaded and an old picture exists
       if (req.file && existingProduct.picture) {
-        const oldPicturePath = path.join(__dirname, '..', 'uploads', existingProduct.picture);
+        const oldPicturePath = path.join(__dirname, '..', 'images', 'product picture', existingProduct.picture);
         // Delete the old picture
         fs.unlink(oldPicturePath, (err) => {
           if (err) {
             console.error('Failed to delete old picture:', err);
-            // Optionally handle the error specifically if you want to proceed even if deleting old picture fails
           }
         });
       }
