@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require('multer');
+const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 const { User, Product, Product_Type, Purchase, sequelize } = require("../models");
@@ -152,6 +153,16 @@ router.post('/product/add', upload.single('picture'), async (req, res) => {
     const productId = req.params.id;
     const transaction = await sequelize.transaction();
     try {
+      // Fetch the existing product to get the old picture path
+      const existingProduct = await Product.findOne({
+        where: { id: productId }
+      });
+  
+      if (!existingProduct) {
+        await transaction.rollback();
+        return res.status(404).json({ error: 'Product not found' });
+      }
+  
       // Construct update data
       const updateData = {
         product_name: req.body.product_name,
@@ -159,7 +170,19 @@ router.post('/product/add', upload.single('picture'), async (req, res) => {
         product_type: req.body.product_type
       };
   
-      // Add picture to update data if a new picture was uploaded
+      // Check if a new picture was uploaded and an old picture exists
+      if (req.file && existingProduct.picture) {
+        const oldPicturePath = path.join(__dirname, '..', 'uploads', existingProduct.picture);
+        // Delete the old picture
+        fs.unlink(oldPicturePath, (err) => {
+          if (err) {
+            console.error('Failed to delete old picture:', err);
+            // Optionally handle the error specifically if you want to proceed even if deleting old picture fails
+          }
+        });
+      }
+  
+      // Add new picture to update data if uploaded
       if (req.file) {
         updateData.picture = req.file.filename;
       }
@@ -175,11 +198,10 @@ router.post('/product/add', upload.single('picture'), async (req, res) => {
   
       // Fetch the updated product to return in the response
       const updatedProduct = await Product.findOne({ where: { id: productId } });
-  
       if (updatedProduct) {
         res.json(updatedProduct);
       } else {
-        res.status(404).json({ error: 'Product not found' });
+        res.status(404).json({ error: 'Product not found after update' });
       }
     } catch (error) {
       // Rollback the transaction in case of an error
@@ -188,7 +210,6 @@ router.post('/product/add', upload.single('picture'), async (req, res) => {
       res.status(500).json({ error: 'Error updating product' });
     }
   });
-
   router.patch('/product/deactivate/:id', async (req, res) => {
     const transaction = await sequelize.transaction();
     try {
@@ -210,7 +231,7 @@ router.post('/product/add', upload.single('picture'), async (req, res) => {
 router.patch('/product/activate/:id', async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    // Update the product's is_active field to 0
+    // Update the product's is_active field to 1
     await Product.update(
       { is_active: 1 },
       { where: { id: req.params.id } },
