@@ -1,76 +1,64 @@
-import React, { useState } from 'react';
-import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
-import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-interface SquareState {
-  product_id?: number;
-  product_name?: string;
-  picture?: string;
+interface Product {
+    product_id: number;
+    product_name: string;
+    picture: string;
 }
 
-function Garden() {
-  const initialGrid: SquareState[][] = Array(10).fill(null).map(() => Array(10).fill({}));
-  const [grid, setGrid] = useState<SquareState[][]>(initialGrid);
+function ItemSelector() {
+    const [items, setItems] = useState<Product[]>([]);
+    const userId = localStorage.getItem('user_id');
 
-  function onDragEnd(result: DropResult) {
-    const { source, destination } = result;
+    useEffect(() => {
+        const fetchItems = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/store/${userId}/cart`);
+                setItems(response.data);
+            } catch (error) {
+                console.error('Failed to fetch items:', error);
+            }
+        };
 
-    if (!destination) {
-        return; // dropped outside any droppable area
-    }
+        fetchItems();
+    }, [userId]);
 
-    if (source.droppableId === destination.droppableId && source.index === destination.index) {
-        return; // dropped back to the same position
-    }
+    const onDragEnd = (result:unknown) => {
+        // Logic to handle item reordering if necessary
+    };
 
-    // Convert IDs back to numbers for indexing
-    const sourceId = parseInt(source.droppableId);
-    const destId = parseInt(destination.droppableId);
-
-    // Perform a deep copy of the grid to manipulate the state
-    const newGrid = JSON.parse(JSON.stringify(grid)); // or use another method to deep clone
-
-    // Remove the item from the original position and insert it into the new position
-    const [movedItem] = newGrid[sourceId].splice(source.index, 1);
-    newGrid[destId].splice(destination.index, 0, movedItem);
-
-    setGrid(newGrid);
-}
-
-
-  return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      {grid.map((row, rowIndex) => (
-        <Droppable droppableId={`row-${rowIndex}`} direction="horizontal" key={rowIndex}>
-          {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="row"
-            >
-              {row.map((cell, index) => (
-                <Draggable key={cell.product_id} draggableId={`item-${cell.product_id}-${index}`} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="square"
-                    >
-                      {cell.picture && (
-                        <img src={`http://localhost:3001/images/products/${encodeURIComponent(cell.picture)}`} alt={cell.product_name} />
-                      )}
+    return (
+        <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="items">
+                {(provided, snapshot) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} className="container mx-auto p-4">
+                        <h1>Drag Items to Your Garden</h1>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {items.map((item, index) => (
+                                <Draggable key={item.product_id} draggableId={`item-${item.product_id}`} index={index}>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            className="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer">
+                                            <img className="w-full h-48 object-cover" src={`http://localhost:3001/images/products/${encodeURIComponent(item.picture)}`} alt={item.product_name} />
+                                            <div className="px-6 py-4">
+                                                <div className="font-bold text-xl mb-2">{item.product_name}</div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
                     </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      ))}
-    </DragDropContext>
-  );
+                )}
+            </Droppable>
+        </DragDropContext>
+    );
 }
 
-export default Garden;
+export default ItemSelector;
