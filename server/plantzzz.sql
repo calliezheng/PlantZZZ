@@ -681,4 +681,7 @@ INSERT INTO product (product_name, product_type, price, picture, is_active) VALU
 ('Tulip', 1, 100, 'Tulip.png', 1),
 ('Verbena officinalis', 1, 100, 'Verbena_officinalis.png', 1),
 ('Viburnum hanceanum Maxim', 1, 100, 'Viburnum_hanceanum_Maxim.png', 1),
-('Vitex agnus-castus', 1, 100, 'Vitex_agnus-castus.png', 1);
+('Vitex agnus-castus', 1, 100, 'Vitex_agnus-castus.png', 1),
+('Land', 2, 100, 'land.jpg', 1),
+('Road', 2, 100, 'road.jpg', 1),
+('Water', 2, 100, 'water.jpg', 1);
