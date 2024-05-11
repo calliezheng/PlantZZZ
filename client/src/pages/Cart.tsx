@@ -28,6 +28,7 @@ function Cart() {
 
         fetchProducts();
     }, [id]);
+    
     return (
         <div className="container mx-auto p-4">
         <h1>Your Purchases</h1>
