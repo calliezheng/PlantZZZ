@@ -117,7 +117,7 @@ router.get("/:id/cart", async (req, res) => {
 
     try {
         const purchases = await Purchase.findAll({
-            where: { user_id: userId },
+            where: { user_id: userId},
             include: [{
                 model: Product,
                 attributes: ['id', 'product_name', 'picture'] 
