@@ -100,23 +100,66 @@ const updateProductQuantity = async (productId:number, increment: boolean) => {
   }
 };
 
+const moveItemWithinGarden = (source: DraggableLocation, destination: DraggableLocation) => {
+  // Create a shallow copy of the grid to manipulate
+  const newGrid = [...grid];
 
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId } = result;
-    if (!destination) return; // Do nothing if dropped outside any droppable area
+  // Parse the row and column from the droppableId of source and destination
+  const sourceCoords = source.droppableId.match(/cell-(\d+)-(\d+)/);
+  const destinationCoords = destination.droppableId.match(/cell-(\d+)-(\d+)/);
 
-    const product = products.find(p => p.product_id.toString() === result.draggableId);
-    if (!product) return;
-    if (source.droppableId === "items-container" && destination.droppableId.includes("cell-")) {
-      // Moving from items to garden
-      moveProductToGarden(product, destination);
-      updateProductQuantity(product.product_id, false); // Decrement
-    } else if (source.droppableId.includes("cell-") && destination.droppableId === "items-container") {
-      // Moving from garden back to items
-      moveProductToItems(source, product);
-      updateProductQuantity(product.product_id, true); // Increment
+  if (sourceCoords && destinationCoords) {
+    const sourceRow = parseInt(sourceCoords[1], 10);
+    const sourceCol = parseInt(sourceCoords[2], 10);
+    const destinationRow = parseInt(destinationCoords[1], 10);
+    const destinationCol = parseInt(destinationCoords[2], 10);
+
+    // Access the source and destination cells using their coordinates
+    const sourceCell = newGrid[sourceRow][sourceCol];
+    const destinationCell = newGrid[destinationRow][destinationCol];
+
+    // Move the content from the source cell to the destination cell
+    if (!destinationCell.occupied) {
+      destinationCell.content = sourceCell.content;
+      destinationCell.occupied = true;
+
+      // Clear the source cell
+      sourceCell.content = null;
+      sourceCell.occupied = false;
     }
-    };
+
+    // Update the grid state to reflect the changes
+    setGrid(newGrid);
+  }
+};
+
+
+const onDragEnd = (result: DropResult) => {
+  const { source, destination, draggableId } = result;
+  if (!destination) return;  // Do nothing if dropped outside a droppable area
+
+  if (source.droppableId.includes("cell-") && destination.droppableId.includes("cell-")) {
+    // Handle item movement within the garden
+    moveItemWithinGarden(source, destination);
+  } else if (source.droppableId === "items-container" && destination.droppableId.includes("cell-")) {
+    // Moving from items to garden
+    const product = products.find(p => p.product_id.toString() === draggableId);
+    if (product) {
+      moveProductToGarden(product, destination);
+      updateProductQuantity(product.product_id, false); // Decrement product count
+    }
+  } else if (source.droppableId.includes("cell-") && destination.droppableId === "items-container") {
+    // Moving from garden back to items
+    // Extract numeric ID from draggableId if formatted like "cell-x-y"
+    const productId = parseInt(draggableId.replace(/^\D+/g, ''), 10);
+    const product = products.find(p => p.product_id === productId);
+    if (product) {
+      moveProductToItems(source, product);
+      updateProductQuantity(product.product_id, true); // Increment product count
+    }
+  }
+};
+
 
   useEffect(() => {
     const fetchProducts = async () => {
