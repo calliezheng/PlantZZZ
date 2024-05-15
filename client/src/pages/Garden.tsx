@@ -3,9 +3,14 @@ import { DragDropContext, DropResult, DraggableLocation, Draggable} from 'react-
 import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable';
 import axios from 'axios';
 
+interface ProductInfo {
+  productId: string;
+  imageUrl: string;
+}
+
 interface Cell {
   id: string;
-  content: string | null;
+  content: ProductInfo | null;
   occupied: boolean;
 }
 
@@ -41,19 +46,20 @@ function Garden() {
     const destinationCell = newGrid[row][col];
 
     if (!destinationCell.occupied) {
-      destinationCell.content = `http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`;
+      destinationCell.content = {
+        productId: product.Product.id.toString(),  // Store the product ID
+        imageUrl: `http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}` // Store the image URL
+      };
       destinationCell.occupied = true;
       setGrid(newGrid);
 
-      const updatedProducts = products.map(p => {
+      setProducts(prevProducts => prevProducts.map(p => {
         if (p.product_id === product.product_id) {
-          // Decrease the quantity by 1
-          return {...p, total_quantity: (parseInt(p.total_quantity) - 1).toString()};
+          // Decrease the quantity by 1 but do not filter out
+          return {...p, total_quantity: Math.max(0, parseInt(p.total_quantity) - 1).toString()};
         }
         return p;
-      }).filter(p => parseInt(p.total_quantity) > 0); // Optionally remove products with zero quantity
-
-      setProducts(updatedProducts);
+      }));
     }
   }
 };
@@ -73,16 +79,16 @@ const moveProductToItems = (source: DraggableLocation, product: Product) => {
       setGrid(newGrid); // Update the grid state
 
       // Return the item to the product list
-      const updatedProducts = products.map(p => {
+      setProducts(prevProducts => prevProducts.map(p => {
         if (p.product_id === product.product_id) {
           // Increment the product quantity
           return {...p, total_quantity: (parseInt(p.total_quantity) + 1).toString()};
         }
         return p;
-      });
-      setProducts(updatedProducts); // Update the products state
+      }));
     }
   }
+  console.log(`Product ${product.product_id} moved back to items. New state:`, products);
 };
 
 
@@ -93,7 +99,7 @@ const updateProductQuantity = async (productId:number, increment: boolean) => {
     increment: increment
   };
   try {
-    await axios.post('http://localhost:3001/store', payload);
+    await axios.post('http://localhost:3001/garden', payload);
     console.log("Quantity updated successfully");
   } catch (error) {
     console.error("Failed to update quantity:", error);
@@ -136,6 +142,8 @@ const moveItemWithinGarden = (source: DraggableLocation, destination: DraggableL
 
 const onDragEnd = (result: DropResult) => {
   const { source, destination, draggableId } = result;
+  console.log(`Drag ended from ${source.droppableId} to ${destination ? destination.droppableId : "none"}`);
+
   if (!destination) return;  // Do nothing if dropped outside a droppable area
 
   if (source.droppableId.includes("cell-") && destination.droppableId.includes("cell-")) {
@@ -145,17 +153,34 @@ const onDragEnd = (result: DropResult) => {
     // Moving from items to garden
     const product = products.find(p => p.product_id.toString() === draggableId);
     if (product) {
+      console.log(`Item with draggableId ${draggableId} is being moved from items-container to a garden cell.`);
       moveProductToGarden(product, destination);
       updateProductQuantity(product.product_id, false); // Decrement product count
     }
-  } else if (source.droppableId.includes("cell-") && destination.droppableId === "items-container") {
+  } else if (source.droppableId.startsWith("cell-") && destination.droppableId === "items-container") {
     // Moving from garden back to items
     // Extract numeric ID from draggableId if formatted like "cell-x-y"
-    const productId = parseInt(draggableId.replace(/^\D+/g, ''), 10);
-    const product = products.find(p => p.product_id === productId);
-    if (product) {
-      moveProductToItems(source, product);
-      updateProductQuantity(product.product_id, true); // Increment product count
+    
+    const coords = source.droppableId.match(/cell-(\d+)-(\d+)/);
+    if (coords) {
+        const row = parseInt(coords[1], 10);
+        const col = parseInt(coords[2], 10);
+        const cell = grid[row][col];
+
+        // Check if the cell and content are not null
+        if (cell && cell.content) {
+            const productID = cell.content.productId;
+            console.log("product:", productID);
+            const product = products.find(p => p.product_id.toString() === productID);
+            console.log("product:", product);
+            if (product) {
+                console.log("Moving item from garden cell back to items container.");
+                moveProductToItems(source, product);
+                updateProductQuantity(product.product_id, true); // Increment product count
+            }
+        } else {
+            console.log("Cell or cell content is null");
+        }
     }
   }
 };
@@ -202,8 +227,8 @@ const onDragEnd = (result: DropResult) => {
                       justifyContent: 'center'
                     }}
                   >
-                    {cell.content && (
-                      <img src={cell.content} alt="Garden item" style={{ width: '100%', height: '100%' }} />
+                    {cell.occupied && cell.content && (
+                      <img src={cell.content.imageUrl} alt="Garden item" style={{ width: '100%', height: '100%' }} />
                     )}
                     {provided.placeholder}
                   </div>
@@ -216,32 +241,39 @@ const onDragEnd = (result: DropResult) => {
       </div>
 
       <Droppable droppableId="items-container">
-      {(provided) => (
-        <div 
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          className="items-container"
-          style={{ width: 300, height: 'auto', border: '1px solid grey', padding: 10 }}
-        >
-          {products.map((product, index) => (
-            <Draggable key={product.product_id} draggableId={product.product_id.toString()} index={index}>
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                  style={{ margin: '10px', padding: '5px', border: '1px solid black' }}
-                >
-                  <img src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} style={{ width: '100%', height: 'auto' }} />
-                  <p>{product.Product.product_name} x {product.total_quantity}</p>
-                </div>
-              )}
-            </Draggable>
-          ))}
-          {provided.placeholder}
-        </div>
-      )}
-    </Droppable>
+        {(provided) => (
+          <div 
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="items-container"
+            style={{ width: 300, height: 'auto', border: '1px solid grey', padding: 10 }}
+          >
+            {products.map((product, index) => {
+              // Check if the product quantity is greater than 0
+              if (parseInt(product.total_quantity, 10) > 0) {
+                return (
+                  <Draggable key={product.product_id} draggableId={product.product_id.toString()} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={{ margin: '10px', padding: '5px', border: '1px solid black' }}
+                      >
+                        <img src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} style={{ width: '100%', height: 'auto' }} />
+                        <p>{product.Product.product_name} x {product.total_quantity}</p>
+                      </div>
+                    )}
+                  </Draggable>
+                );
+              }
+              return null;  // Return null for products with a quantity of 0, thus not rendering them
+            })}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+
     </DragDropContext>
   );
 }
