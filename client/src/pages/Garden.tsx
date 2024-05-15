@@ -94,12 +94,11 @@ const moveProductToItems = (source: DraggableLocation, product: Product) => {
 
 const updateProductQuantity = async (productId:number, increment: boolean) => {
   const payload = {
-    userId: id,
     productId: productId,
     increment: increment
   };
   try {
-    await axios.post('http://localhost:3001/garden', payload);
+    await axios.post(`http://localhost:3001/garden/${id}`, payload);
     console.log("Quantity updated successfully");
   } catch (error) {
     console.error("Failed to update quantity:", error);
