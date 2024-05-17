@@ -3,7 +3,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
-const { Purchase, sequelize } = require("../models");
+const { Purchase, Garden, sequelize } = require("../models");
 
 router.post("/:id/cart", async (req, res) => {
     try {
