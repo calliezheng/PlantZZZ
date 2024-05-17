@@ -3,7 +3,7 @@ import axios from 'axios';
 
 interface Product {
     product_id: number;
-    total_quantity: string;  
+    quantity: string;  
     Product: {
         id: number;
         product_name: string;
@@ -38,7 +38,7 @@ function Cart() {
                     <img className="w-full h-48 object-cover" src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} />
                     <div className="px-6 py-4">
                         <div className="font-bold text-xl mb-2">{product.Product.product_name}</div>
-                        <p className="text-gray-700 text-base">Quantity: {product.total_quantity}</p>
+                        <p className="text-gray-700 text-base">Quantity: {product.quantity}</p>
                     </div>
                 </div>
             ))}

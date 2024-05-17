@@ -81,57 +81,80 @@ router.get("/product/type", async (req, res) => {
 });
 
 router.post('/purchase/:userId', async (req, res) => {
-    const { userId } = req.params;
-    const { productId, quantity } = req.body;
+  const { userId } = req.params;
+  const { productId, quantity } = req.body;
 
-    const transaction = await sequelize.transaction();
-    try {
-        const product = await Product.findByPk(productId);
-        const user = await User.findByPk(userId);
-        
-        if (user.score >= product.price * quantity) {
-            // Deduct score
-            user.score -= product.price * quantity;
-            await user.save({ transaction });
+  const transaction = await sequelize.transaction();
+  try {
+      const product = await Product.findByPk(productId);
+      const user = await User.findByPk(userId);
+      
+      if (!product) {
+          return res.status(404).send('Product not found');
+      }
 
-            // Create purchase record
-            await Purchase.create({
-                user_id: userId,
-                product_id: productId,
-                quantity: quantity
-            }, { transaction });
+      if (!user) {
+          return res.status(404).send('User not found');
+      }
 
-            await transaction.commit();
-            res.send('Purchase successful');
-        } else {
-            res.status(400).send('Insufficient score');
-        }
-    } catch (error) {
-        await transaction.rollback();
-        res.status(500).send('Error processing purchase');
-    }
+      if (user.score >= product.price * quantity) {
+          // Deduct score
+          user.score -= product.price * quantity;
+          await user.save({ transaction });
+
+          // Check if purchase record already exists
+          const existingPurchase = await Purchase.findOne({
+              where: {
+                  user_id: userId,
+                  product_id: productId
+              }
+          });
+
+          if (existingPurchase) {
+              // Update existing record
+              existingPurchase.quantity += quantity;
+              await existingPurchase.save({ transaction });
+          } else {
+              // Create new purchase record
+              await Purchase.create({
+                  user_id: userId,
+                  product_id: productId,
+                  quantity: quantity
+              }, { transaction });
+          }
+
+          await transaction.commit();
+          res.send('Purchase successful');
+      } else {
+          res.status(400).send('Insufficient score');
+      }
+  } catch (error) {
+      await transaction.rollback();
+      res.status(500).send('Error processing purchase');
+  }
 });
+
 
 router.get("/:id/cart", async (req, res) => {
-    const userId = req.params.id;
+  const userId = req.params.id;
 
-    try {
-        const purchases = await Purchase.findAll({
-            where: { user_id: userId},
-            include: [{
-                model: Product,
-                attributes: ['id', 'product_name', 'picture'] 
-            }],
-            attributes: ['product_id', [sequelize.fn('sum', sequelize.col('quantity')), 'total_quantity']],
-            group: ['product_id', 'Product.id'], // Group by product_id and include the Product model's id for correct aggregation
-        });
+  try {
+      const purchases = await Purchase.findAll({
+          where: { user_id: userId },
+          include: [{
+              model: Product,
+              attributes: ['id', 'product_name', 'picture']
+          }],
+          attributes: ['product_id', 'quantity'], // Fetch product_id and quantity directly
+      });
 
-            res.json(purchases);
-        } catch (error) {
-            console.error('Failed to fetch purchases:', error);
-            res.status(500).send('Error fetching user purchases');
-        }
+      res.json(purchases);
+  } catch (error) {
+      console.error('Failed to fetch purchases:', error);
+      res.status(500).send('Error fetching user purchases');
+  }
 });
+
 
 router.post('/product/add', upload.single('picture'), async (req, res) => {
     try {

@@ -5,7 +5,7 @@ const path = require('path');
 const router = express.Router();
 const { Purchase, sequelize } = require("../models");
 
-router.get("/:id", async (req, res) => {
+router.post("/:id/cart", async (req, res) => {
     try {
         const userId = req.params.id;  
         const item_quantity = await Purchase.findOne({

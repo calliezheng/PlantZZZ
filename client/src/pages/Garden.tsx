@@ -16,7 +16,7 @@ interface Cell {
 
 interface Product {
     product_id: number;
-    total_quantity: string;  
+    quantity: string;  
     Product: {
         id: number;
         product_name: string;
@@ -51,8 +51,8 @@ function Garden() {
     fetchProducts();
 }, [id]);
 
-  const moveProductToGarden = (product: Product, destination: DraggableLocation) => {
-  const newGrid = Array.from(grid); // Shallow copy of the grid
+  const moveProductToGarden = async (product: Product, destination: DraggableLocation) => {
+  const newGrid = Array.from(grid); 
   const destinationCoords = destination.droppableId.match(/cell-(\d+)-(\d+)/);
   if (destinationCoords) {
     const row = parseInt(destinationCoords[1], 10);
@@ -70,15 +70,17 @@ function Garden() {
       setProducts(prevProducts => prevProducts.map(p => {
         if (p.product_id === product.product_id) {
           // Decrease the quantity by 1 but do not filter out
-          return {...p, total_quantity: Math.max(0, parseInt(p.total_quantity) - 1).toString()};
+          return {...p, quantity: Math.max(0, parseInt(p.quantity) - 1).toString()};
         }
         return p;
       }));
+      
+      await saveGardenState();
     }
   }
 };
 
-const moveProductToItems = (source: DraggableLocation, product: Product) => {
+const moveProductToItems = async (source: DraggableLocation, product: Product) => {
   const newGrid = Array.from(grid);
   const sourceCoords = source.droppableId.match(/cell-(\d+)-(\d+)/);
   if (sourceCoords) {
@@ -96,16 +98,18 @@ const moveProductToItems = (source: DraggableLocation, product: Product) => {
       setProducts(prevProducts => prevProducts.map(p => {
         if (p.product_id === product.product_id) {
           // Increment the product quantity
-          return {...p, total_quantity: (parseInt(p.total_quantity) + 1).toString()};
+          return {...p, quantity: (parseInt(p.quantity) + 1).toString()};
         }
         return p;
       }));
+
+      await saveGardenState();
     }
   }
   console.log(`Product ${product.product_id} moved back to items. New state:`, products);
 };
 
-const moveItemWithinGarden = (source: DraggableLocation, destination: DraggableLocation) => {
+const moveItemWithinGarden = async (source: DraggableLocation, destination: DraggableLocation) => {
   // Create a shallow copy of the grid to manipulate
   const newGrid = [...grid];
 
@@ -135,6 +139,7 @@ const moveItemWithinGarden = (source: DraggableLocation, destination: DraggableL
 
     // Update the grid state to reflect the changes
     setGrid(newGrid);
+    await saveGardenState();
   }
 };
 
@@ -190,10 +195,23 @@ const updateProductQuantity = async (productId:number, increment: boolean) => {
     increment: increment
   };
   try {
-    await axios.post(`http://localhost:3001/garden/${id}`, payload);
+    await axios.post(`http://localhost:3001/garden/${id}/cart`, payload);
     console.log("Quantity updated successfully");
   } catch (error) {
     console.error("Failed to update quantity:", error);
+  }
+};
+
+const saveGardenState = async () => {
+  try {
+    const serializedGarden = JSON.stringify(grid);  // Convert the current grid state to a JSON string
+    await axios.post(`http://localhost:3001/garden/${id}/garden`, {
+      userId: id,
+      garden: serializedGarden  // Send the serialized garden as part of your POST request
+    });
+    console.log("Garden state saved successfully.");
+  } catch (error) {
+    console.error('Failed to save garden state:', error);
   }
 };
 
@@ -247,7 +265,7 @@ const updateProductQuantity = async (productId:number, increment: boolean) => {
           >
             {products.map((product, index) => {
               // Check if the product quantity is greater than 0
-              if (parseInt(product.total_quantity, 10) > 0) {
+              if (parseInt(product.quantity, 10) > 0) {
                 return (
                   <Draggable key={product.product_id} draggableId={product.product_id.toString()} index={index}>
                     {(provided) => (
@@ -258,7 +276,7 @@ const updateProductQuantity = async (productId:number, increment: boolean) => {
                         style={{ margin: '10px', padding: '5px', border: '1px solid black' }}
                       >
                         <img src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} style={{ width: '100%', height: 'auto' }} />
-                        <p>{product.Product.product_name} x {product.total_quantity}</p>
+                        <p>{product.Product.product_name} x {product.quantity}</p>
                       </div>
                     )}
                   </Draggable>
