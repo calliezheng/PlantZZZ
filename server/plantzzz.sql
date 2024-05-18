@@ -37,7 +37,6 @@ CREATE TABLE user (
   password VARCHAR(255) NOT NULL,
   user_type INT NOT NULL,
   score INT NOT NULL DEFAULT 0,
-  garden_state TEXT NOT NULL, 
   is_active BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (id),
   FOREIGN KEY (user_type) REFERENCES user_type(id)
@@ -80,6 +79,15 @@ quantity INT NOT NULL DEFAULT 1,
 PRIMARY KEY (user_id, product_id),
 FOREIGN KEY (user_id) REFERENCES user(id),
 FOREIGN KEY (product_id) REFERENCES product(id)
+);
+
+DROP TABLE IF EXISTS garden;
+CREATE TABLE garden (
+user_id INT NOT NULL,
+garden_state TEXT NOT NULL,
+PRIMARY KEY (user_id),
+FOREIGN KEY (user_id) REFERENCES user(id)
+	ON DELETE CASCADE
 );
 
 INSERT INTO user_type (type_name, is_active) VALUES

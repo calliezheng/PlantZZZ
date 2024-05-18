@@ -1,33 +1,22 @@
 module.exports = (sequelize, DataTypes) => {
     const Garden = sequelize.define('Garden', {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-      },
       user_id: {
         type: DataTypes.INTEGER,
+        primaryKey: true,
         allowNull: false,
-        references: {        
-          model: 'User',   
+        references: {
+          model: 'User', 
           key: 'id'
         }
       },
       garden_state: {
         type: DataTypes.TEXT,
-        allowNull: false,
-      },
+        allowNull: false
+      }
     }, {
       tableName: 'garden',
-      timestamps: true, 
+      timestamps: false 
     });
 
-    Garden.associate = function(models) {
-      Garden.belongsTo(models.User, {foreignKey: 'user_id', as: 'user'});
-    };
-
-    return Garden;  
+    return Garden;
 };
-
-  

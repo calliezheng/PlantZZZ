@@ -38,18 +38,30 @@ function Garden() {
   const id = localStorage.getItem('user_id');
 
   useEffect(() => {
-    const fetchProducts = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3001/store/${id}/cart`);
-            console.log(response);
-            setProducts(response.data);
-        } catch (error) {
-            console.error('Failed to fetch purchases:', error);
+    const fetchGardenAndProducts = async () => {
+      try {
+        const [gardenResponse, productsResponse] = await Promise.all([
+          axios.get(`http://localhost:3001/garden/${id}/garden`),
+          axios.get(`http://localhost:3001/store/${id}/cart`)
+        ]);
+        console.log('Garden State from the server:', gardenResponse.data);
+        if (gardenResponse.data.garden_state) {
+          const savedGrid: Cell[][] = JSON.parse(gardenResponse.data.garden_state);
+          console.log(savedGrid);
+          setGrid(savedGrid);
+        } else {
+          setGrid(createEmptyGrid(16, 30));
         }
+        setProducts(productsResponse.data);
+      } catch (error) {
+        console.error('Failed to fetch garden or purchases:', error);
+        // Set to default grid if there is an issue
+        setGrid(createEmptyGrid(16, 30));
+      }
     };
 
-    fetchProducts();
-}, [id]);
+    fetchGardenAndProducts();
+  }, [id]);
 
   const moveProductToGarden = async (product: Product, destination: DraggableLocation) => {
   const newGrid = Array.from(grid); 
@@ -207,7 +219,7 @@ const saveGardenState = async () => {
     const serializedGarden = JSON.stringify(grid);  // Convert the current grid state to a JSON string
     await axios.post(`http://localhost:3001/garden/${id}/garden`, {
       userId: id,
-      garden: serializedGarden  // Send the serialized garden as part of your POST request
+      gardenState: serializedGarden  // Send the serialized garden as part of your POST request
     });
     console.log("Garden state saved successfully.");
   } catch (error) {
@@ -236,7 +248,7 @@ const saveGardenState = async () => {
                       width: '50px',
                       height: '50px',
                       border: '1px solid black',
-                      backgroundColor: snapshot.isDraggingOver ? '#f0e68c' : '#8B4513',
+                      backgroundColor: snapshot.isDraggingOver ? 'highlight' : '#8B4513',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -260,8 +272,7 @@ const saveGardenState = async () => {
           <div 
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="items-container"
-            style={{ width: 300, height: 'auto', border: '1px solid grey', padding: 10 }}
+            className="flex flex-row flex-wrap items-center justify-start p-1 border border-gray-200 overflow-x-auto"
           >
             {products.map((product, index) => {
               // Check if the product quantity is greater than 0
@@ -273,10 +284,10 @@ const saveGardenState = async () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        style={{ margin: '10px', padding: '5px', border: '1px solid black' }}
+                        style={{ minWidth: '100px' }}
                       >
-                        <img src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} style={{ width: '100%', height: 'auto' }} />
-                        <p>{product.Product.product_name} x {product.quantity}</p>
+                        <img src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} className="w-full h-12 object-contain" />
+                        <p className="text-sm">{product.Product.product_name} x {product.quantity}</p>
                       </div>
                     )}
                   </Draggable>
