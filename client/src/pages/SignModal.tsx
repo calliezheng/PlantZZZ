@@ -14,12 +14,12 @@ const SignModal: React.FC<SignModalProps> = ({ showModal, toggleModal, isSignUp,
     <div className="fixed inset-0 z-50 overflow-auto bg-smoke-light flex">
       <div className="relative p-8 bg-white w-full max-w-md m-auto flex-col flex rounded-lg">
         <div>
-          <button className="float-right" onClick={toggleModal}>
+          <button className="float-right text-red-700 text-base" onClick={toggleModal}>
             Close
           </button>
         </div>
-        <div className="py-4 text-lg text-gray-800">
-          <h3>{isSignUp ? 'Sign Up' : 'Sign In'}</h3>
+        <div className="py-4 text-4xl font-bold font-amatic text-green-600">
+          <h3>Welcome to PlantZZZ</h3>
         </div>
         <div>
           {isSignUp ? (
@@ -31,7 +31,7 @@ const SignModal: React.FC<SignModalProps> = ({ showModal, toggleModal, isSignUp,
           )}
         </div>
         <div className="text-center mt-4">
-          <button className="text-blue-500 hover:text-blue-700" onClick={toggleForm}>
+          <button className="text-green-600 hover:text-green-700" onClick={toggleForm}>
             {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
           </button>
         </div>

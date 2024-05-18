@@ -7,12 +7,26 @@ const DashboardStudent = () => {
 
     return (
       <div>
-        {username && <h1>Welcome {username}!</h1>}
-        <Link to={`/dashboard/profile/${id}`} className="hover:text-green-600"> Profile </Link>
-        <Link to={`/dashboard/learned plant/${id}`} className="hover:text-green-600"> Plant Learned </Link>
-        <Link to={`/dashboard/store/${id}`} className="hover:text-green-600"> Store </Link>
-        <Link to={`/dashboard/garden/${id}`} className="hover:text-green-600"> Garden </Link>
+        {username && <h1 className="text-8xl font-amatic font-bold text-brown-light pt-10">Welcome {username}!</h1>}
+        <div className="container mx-auto">
+        <main className="flex flex-col justify-start items-center min-h-screen pt-12">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex justify-center items-center w-100 h-72 border-4 border-brown bg-beige p-8">
+              <Link to={`/dashboard/profile/${id}`} className="text-8xl text-brown hover:text-brown-dark font-amatic font-bold"> Profile </Link>
+            </div>
+            <div className="flex justify-center items-center w-100 h-72 border-4 border-brown bg-beige p-8">
+              <Link to={`/dashboard/learned plant/${id}`} className="text-8xl text-brown hover:text-brown-dark font-amatic font-bold"> Plant Learned </Link>
+            </div>
+          <div className="flex justify-center items-center w-100 h-72 border-4 border-brown bg-beige p-8">
+              <Link to={`/dashboard/store/${id}`} className="text-8xl text-brown hover:text-brown-dark font-amatic font-bold"> Store </Link>
+          </div>
+          <div className="flex justify-center items-center w-100 h-72 border-4 border-brown bg-beige p-8">
+              <Link to={`/dashboard/garden/${id}`} className="text-8xl text-brown hover:text-brown-dark font-amatic font-bold"> Garden </Link>
+          </div>
+        </div>
+       </main>
       </div>
+    </div>
     );
   };
 

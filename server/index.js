@@ -7,6 +7,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/images/plants', express.static(path.join(__dirname, 'images', 'plant picture')));
 app.use('/images/products', express.static(path.join(__dirname, 'images', 'product picture')));
+app.use('/images/other', express.static(path.join(__dirname, 'images', 'other')));
 
 const db = require("./models");
 

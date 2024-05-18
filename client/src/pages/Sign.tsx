@@ -66,23 +66,25 @@ export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
 };
 
   return (
-    <div className='signInForm'>
+    <div className='signInForm max-w-lg mx-auto p-8 bg-white shadow-lg rounded-lg'>
       <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
       {({ errors, touched }) => (
-        <Form>
-          <label>Username</label>
-          <Field id="username" name="username" placeholder="Username or Email"/>
-          <ErrorMessage name="username" component="span" className="error" />
+        <Form className="space-y-6">
+          <label htmlFor="username" className="block text-xl font-medium text-green-700">Username</label>
+          <Field id="username" name="username" placeholder="Username or Email" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
+/>
+          <ErrorMessage name="username" component="span" className="error text-red-500 text-base italic" />
           
-          <label>Password</label>
-          <Field id="password" name="password" type="password" placeholder="Password"/>
-          <ErrorMessage name="password" component="span" className="error" />
+          <label htmlFor="password" className="block text-xl font-medium text-green-700">Password</label>
+          <Field id="password" name="password" type="password" placeholder="Password" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
+/>
+          <ErrorMessage name="password" component="span" className="error text-red-500 text-base italic" />
           
           {((errors as FormikErrorValues).general) && (
-            <div className="error">{(errors as FormikErrorValues).general}</div>
+            <div className="error text-red-500 text-xs italic">{(errors as FormikErrorValues).general}</div>
           )}
           
-          <button type="submit">Sign In</button>
+          <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Sign In</button>
         </Form>
         )}
       </Formik>
@@ -146,22 +148,25 @@ export function SignUp({ toggleModal }: SignUpProps) {
   };
 
   return (
-    <div className='signUpForm'>
+    <div className='signUpForm max-w-lg mx-auto p-8 bg-white shadow-lg rounded-lg'>
       <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
-        <Form>
-          <label htmlFor="username">Username</label>
-          <Field id="username" name="username" placeholder="Username" />
-          <ErrorMessage name="username" component="span" />
+        <Form className="space-y-6">
+          <label htmlFor="username" className="block text-xl font-medium text-green-700">Username</label>
+          <Field id="username" name="username" placeholder="Username" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
+/>
+          <ErrorMessage name="username" component="span" className="error text-red-500 text-base italic"/>
 
-          <label htmlFor="email">Email</label>
-          <Field id="email" name="email" type="email" placeholder="Email" />
-          <ErrorMessage name="email" component="span" />
+          <label htmlFor="email" className="block text-xl font-medium text-green-700">Email</label>
+          <Field id="email" name="email" type="email" placeholder="Email" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
+/>
+          <ErrorMessage name="email" component="span" className="error text-red-500 text-base italic"/>
 
-          <label htmlFor="password">Password</label>
-          <Field id="password" name="password" type="password" placeholder="Password" />
-          <ErrorMessage name="password" component="span" />
+          <label htmlFor="password" className="block text-xl font-medium text-green-700">Password</label>
+          <Field id="password" name="password" type="password" placeholder="Password" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
+/>
+          <ErrorMessage name="password" component="span" className="error text-red-500 text-base italic"/>
           
-          <button type="submit">Sign Up</button>
+          <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-green-500">Sign Up</button>
         </Form>
       </Formik>
     </div>

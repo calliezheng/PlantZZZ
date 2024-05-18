@@ -49,7 +49,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App bg-hero-pattern min-h-screen bg-cover bg-center bg-no-repeat">
       <ToastContainer />
       <Router>
       <div className="flex flex-col w-full">
