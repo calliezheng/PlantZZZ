@@ -21,6 +21,8 @@ const Password = () => {
   const navigate = useNavigate();
  
   return (
+    <div className="flex items-center justify-center pt-36">
+      <div className="bg-beige p-10 rounded-lg shadow-lg max-w-md w-1/3">
     <Formik
       initialValues={{ currentPassword: '', newPassword: '', confirmPassword: '' }}
       validationSchema={validationSchema}
@@ -43,23 +45,20 @@ const Password = () => {
 
       {({ isSubmitting }) => (
         <Form>
-          <label>
-            Current Password:
+          <label>Current Password: </label>
             <Field type="password" name="currentPassword" />
             <ErrorMessage name="currentPassword" component="div" />
-          </label>
+         
 
-          <label>
-            New Password:
+          <label>New Password:</label>
             <Field type="password" name="newPassword" />
             <ErrorMessage name="newPassword" component="div" />
-          </label>
+          
 
-          <label>
-            Confirm New Password:
+          <label>Confirm New Password:</label>
             <Field type="password" name="confirmPassword" />
             <ErrorMessage name="confirmPassword" component="div" />
-          </label>
+          
 
           <button type="submit" disabled={isSubmitting}>
             Change Password
@@ -70,6 +69,8 @@ const Password = () => {
         </Form>
       )}
     </Formik>
+    </div>
+    </div>
   );
 };
 
