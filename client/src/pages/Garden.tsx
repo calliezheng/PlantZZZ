@@ -229,50 +229,51 @@ const saveGardenState = async () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="garden" style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '1600px', margin: 'auto' }}>
-      {grid.flat().map((cell, index) => (
-        <Droppable key={cell.id} droppableId={cell.id}>
-          {(provided, snapshot) => (
-            <Draggable key={cell.id} draggableId={cell.id} index={index}>
-              {(providedDraggable) => (
-                <div
-                  ref={providedDraggable.innerRef}
-                  {...providedDraggable.draggableProps}
-                  {...providedDraggable.dragHandleProps}
-                  style={{ margin: '1px', ...providedDraggable.draggableProps.style }}
-                >
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    style={{
-                      width: '50px',
-                      height: '50px',
-                      border: '1px solid black',
-                      backgroundColor: snapshot.isDraggingOver ? 'highlight' : '#8B4513',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {cell.occupied && cell.content && (
-                      <img src={cell.content.imageUrl} alt="Garden item" style={{ width: '100%', height: '100%' }} />
-                    )}
-                    {provided.placeholder}
-                  </div>
-                </div>
+      <div className="flex justify-center items-start w-full min-h-screen">
+        <div className="flex flex-wrap justify-center garden">
+          {grid.flat().map((cell, index) => (
+            <Droppable key={cell.id} droppableId={cell.id}>
+              {(provided, snapshot) => (
+                <Draggable key={cell.id} draggableId={cell.id} index={index}>
+                  {(providedDraggable) => (
+                    <div
+                      ref={providedDraggable.innerRef}
+                      {...providedDraggable.draggableProps}
+                      {...providedDraggable.dragHandleProps}
+                      style={{ margin: '1px', ...providedDraggable.draggableProps.style }}
+                    >
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        style={{
+                          width: '50px',
+                          height: '50px',
+                          border: '1px solid black',
+                          backgroundColor: snapshot.isDraggingOver ? 'highlight' : '#8B4513',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        {cell.occupied && cell.content && (
+                          <img src={cell.content.imageUrl} alt="Garden item" style={{ width: '100%', height: '100%' }} />
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
               )}
-            </Draggable>
-          )}
-          </Droppable>
-        ))}
-      </div>
-
+              </Droppable>
+            ))}
+          </div>
+    <div className="w-36 h-full overflow-y-auto shadow-lg max-h-full" style={{height: 'calc(16.6 * 50px)'}}>
       <Droppable droppableId="items-container">
         {(provided) => (
           <div 
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="flex flex-row flex-wrap items-center justify-start p-1 border border-gray-200 overflow-x-auto"
+            className="p-2"
           >
             {products.map((product, index) => {
               // Check if the product quantity is greater than 0
@@ -284,10 +285,10 @@ const saveGardenState = async () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        style={{ minWidth: '100px' }}
+                        className="mb-2"
                       >
-                        <img src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} className="w-full h-12 object-contain" />
-                        <p className="text-sm">{product.Product.product_name} x {product.quantity}</p>
+                        <img src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} className="w-16 h-16 object-cover" />
+                        <p className="text-center text-sm">{product.Product.product_name} x {product.quantity}</p>
                       </div>
                     )}
                   </Draggable>
@@ -299,7 +300,8 @@ const saveGardenState = async () => {
           </div>
         )}
       </Droppable>
-
+      </div>
+      </div>
     </DragDropContext>
   );
 }

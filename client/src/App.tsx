@@ -52,7 +52,7 @@ function App() {
     <div className="App">
       <ToastContainer />
       <Router>
-        <h1 className="text-4xl font-bold text-green-600">PlantZZZ.web.app</h1>
+        <h1 className="text-6xl font-bold text-green-600 text-left">PlantZZZ.web.app</h1>
         <nav>
           <Link to="/" className="hover:text-green-600"> Home </Link>
           <Link to="/learn" className="hover:text-green-600"> Learn </Link>
