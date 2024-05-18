@@ -52,20 +52,22 @@ function App() {
     <div className="App">
       <ToastContainer />
       <Router>
-        <h1 className="text-6xl font-bold text-green-600 text-left">PlantZZZ.web.app</h1>
-        <nav>
-          <Link to="/" className="hover:text-green-600"> Home </Link>
-          <Link to="/learn" className="hover:text-green-600"> Learn </Link>
-          <Link to="/quiz" className="hover:text-green-600"> Quiz </Link>
-          {isAuthenticated ? (
-            <>
-              <Link to="/dashboard" className="hover:text-green-600 mr-2">Dashboard</Link>
-              <Link to="/"><button onClick={handleLogout}>Log Out</button></Link>
-            </>
-          ) : (
-            <button onClick={toggleModal}>Sign In / Sign Up</button>
-          )}
-        </nav>
+      <div className="flex flex-col w-full">
+          <Link to="/" ><h1 className="text-8xl font-amatic font-bold text-green-600 text-left hover:text-green-700">PlantZZZ.web.app</h1></Link>
+          <nav className="flex items-start space-x-4">
+            <Link to="/" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Home </Link>
+            <Link to="/learn" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Learn </Link>
+            <Link to="/quiz" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Quiz </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl mr-2">Dashboard</Link>
+                <Link to="/" ><button onClick={handleLogout} className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl mr-2">Log Out</button></Link>
+              </>
+            ) : (
+              <button onClick={toggleModal} className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl mr-2">Sign In / Sign Up</button>
+            )}
+          </nav>
+        </div>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/learn" element={<Learn />} />
