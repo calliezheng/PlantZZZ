@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
 import Home from "./pages/Home";
 import SignModal from "./pages/SignModal";
 import Learn from "./pages/Learn";
+import ChooseQuiz from "./pages/ChooseQuiz";
 import Quiz from "./pages/Quiz";
 import OriginalQuiz from "./pages/OriginalQuiz";
 import QuizResult from "./pages/QuizResult";
@@ -58,7 +59,7 @@ function App() {
           <nav className="flex items-start pl-8 space-x-4">
             <Link to="/" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Home </Link>
             <Link to="/learn" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Learn </Link>
-            <Link to="/quiz" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Quiz </Link>
+            <Link to="/choosequiz" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Quiz </Link>
             {isAuthenticated ? (
               <>
                 <Link to="/dashboard" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl mr-2">Dashboard</Link>
@@ -72,6 +73,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/learn" element={<Learn />} />
+          <Route path="/choosequiz" element={<ChooseQuiz />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/quizresult" element={<QuizResult />} />
           <Route path="/originalquiz" element={<OriginalQuiz />} />
