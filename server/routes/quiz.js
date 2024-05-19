@@ -1,6 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const { sequelize, Plant, Picture, User } = require("../models");
+const { Op } = require('sequelize');
+
+// Utility function to shuffle array
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
 router.get('/', async (req, res) => {
     try {
@@ -49,5 +59,6 @@ router.get('/', async (req, res) => {
       res.status(500).json({ error: 'Error updating score' });
     }
   });
+
 
 module.exports = router;

@@ -235,8 +235,8 @@ const quitQuiz = () => {
   return (
     
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="container mx-auto p-5">
-        <h3 className="text-2xl font-bold font-poetsen text-brown-light mb-5">*Drag the matching names and picture into the match box to confirm</h3>
+      <div className="flex flex-col items-center justify-center pt-10">
+        <h3 className="text-2xl font-bold font-poetsen text-beige bg-green-700 mb-5">*Drag the matching names and picture into the match box and confirm</h3>
         <div className="grid grid-cols-5 gap-4">
         <Droppable droppableId="academicNames">
         {(provided, snapshot) => (
