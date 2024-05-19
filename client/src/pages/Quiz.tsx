@@ -239,7 +239,7 @@ const quitQuiz = () => {
         <h3 className="text-2xl font-bold font-poetsen text-brown-light mb-5">*Drag the matching names and picture into the match box to confirm</h3>
         <div className="grid grid-cols-5 gap-4">
         <Droppable droppableId="academicNames">
-        {(provided) => (
+        {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
@@ -254,6 +254,7 @@ const quitQuiz = () => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
+                    style={{backgroundColor: snapshot.isDraggingOver ? '#006400' : '', }}
                   >
                     {plant.academic_name}
                   </div>
@@ -266,7 +267,7 @@ const quitQuiz = () => {
       </Droppable>
 
         <Droppable droppableId="dailyNames">
-        {(provided) => (
+        {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
@@ -281,6 +282,7 @@ const quitQuiz = () => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
+                    style={{backgroundColor: snapshot.isDraggingOver ? '#006400' : '', }}
                   >
                     {plant.daily_name}
                   </div>
@@ -293,7 +295,7 @@ const quitQuiz = () => {
       </Droppable>
 
         <Droppable droppableId="pictures">
-        {(provided) => (
+        {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
@@ -309,14 +311,14 @@ const quitQuiz = () => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className="p-2 mb-4 bg-green-600 rounded shadow cursor-pointer font-opensans text-white w-1/3"
-                    style={{ maxWidth: "20%" }}
+                    style={{ maxWidth: "20%", backgroundColor: snapshot.isDraggingOver ? '#006400' : '' }}
                   >
                     {plant.Pictures && plant.Pictures[0] && (
                   <img
                     className="w-full"
                     style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                     src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
-                    alt={plant.daily_name}
+                    alt={plant.academic_name}
                   />
                 )}
                   </div>
@@ -331,14 +333,14 @@ const quitQuiz = () => {
 </Droppable>
 
 <div className="col-span-3 h-80 p-3 bg-gray-300 rounded shadow-lg">
+<div className="text-xl text-brown font-bold font-poetsen text-center mb-2">Match Box</div>
     <Droppable droppableId="matchBox">
-            {(provided) => (
+            {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="h-full p-3 rounded shadow-lg overflow-auto"
+                className="flex flex-row flex-wrap justify-start items-start gap-2 p-3 rounded shadow-lg overflow-auto h-full text-white font-opensans"
               >
-                <div className="text-xl text-brown font-bold font-poetsen text-center mb-2">Match Box</div>
                 {getListByLocation('matchBox').map((plant, index) => (
                   <Draggable key={`match-${plant.id}-${plant.type}`} draggableId={`${plant.type}-${plant.id}`} index={index}>
                     {(provided) => (
@@ -347,7 +349,7 @@ const quitQuiz = () => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer"
-                        style={{ height: '220px', width: '200px' }}
+                        style={{ height: '220px', width: '200px', backgroundColor: snapshot.isDraggingOver ? '#006400' : '' }}
                       >
                         {
                           plant.type === 'academicNames' && (
@@ -362,7 +364,7 @@ const quitQuiz = () => {
                         {
                           plant.type === 'pictures' && plant.Pictures && plant.Pictures[0] && (
                             <img
-                              className="w-full"
+                              className="w-full object-cover"
                               style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                               src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}`}
                               alt={plant.daily_name}
@@ -379,20 +381,17 @@ const quitQuiz = () => {
         </Droppable>
       </div>
 
-  {/* Button to finalize the match and calculate the score */}
-    <div className="text-center mt-4 space-x-4">
+    <div className="flex flex-col text-center mt-4 space-y-4">
       <button
         onClick={confirmMatch}
-        className="bg-green-600 text-white px-6 py-2 rounded shadow-lg hover:bg-green-700 transition-colors"
+        className="bg-green-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-green-700 transition-colors"
         disabled={matches.length >= 10} // Disable after 10 matches
       >
         {matches.length < 10 ? 'Confirm Match' : 'See Results'}
       </button>
-    </div>
-    <div className="text-center mt-4">
       <button 
         onClick={quitQuiz} 
-        className="bg-red-600 text-white px-6 py-2 rounded shadow-lg hover:bg-red-700 transition-colors"
+        className="bg-red-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-red-700 transition-colors"
         >Quit
       </button>
     </div>
