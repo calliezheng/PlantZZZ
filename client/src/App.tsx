@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import SignModal from "./pages/SignModal";
 import Learn from "./pages/Learn";
 import Quiz from "./pages/Quiz";
+import OriginalQuiz from "./pages/OriginalQuiz";
 import QuizResult from "./pages/QuizResult";
 import DashboardStudent from './pages/DashboardStudent';
 import DashboardAdmin from './pages/DashboardAdmin';
@@ -73,6 +74,7 @@ function App() {
           <Route path="/learn" element={<Learn />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/quizresult" element={<QuizResult />} />
+          <Route path="/originalquiz" element={<OriginalQuiz />} />
           <Route path="/dashboard" element={Number(localStorage.getItem('user_type')) === 1 ? <DashboardAdmin /> : <DashboardStudent />} />
           <Route path="/dashboard/profile/:id" element={<Profile />} />
           <Route path="/dashboard/profile/:id/password" element={<Password />} />
