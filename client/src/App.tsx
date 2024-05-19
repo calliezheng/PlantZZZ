@@ -53,8 +53,8 @@ function App() {
       <ToastContainer />
       <Router>
       <div className="flex flex-col w-full">
-          <Link to="/" ><h1 className="text-8xl font-amatic font-bold text-green-600 text-left hover:text-green-700">PlantZZZ.web.app</h1></Link>
-          <nav className="flex items-start space-x-4">
+          <Link to="/" ><h1 className="text-8xl font-amatic font-bold text-green-600 text-left pl-8 hover:text-green-700">PlantZZZ.web.app</h1></Link>
+          <nav className="flex items-start pl-8 space-x-4">
             <Link to="/" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Home </Link>
             <Link to="/learn" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Learn </Link>
             <Link to="/quiz" className="text-green-600 hover:text-green-700 font-poetsen font-bold text-2xl"> Quiz </Link>

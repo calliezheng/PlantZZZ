@@ -62,19 +62,19 @@ const Profile = () => {
                   <div className="mb-4">
                   <label htmlFor="username" className="block text-xl text-left font-opensans font-medium text-brown">Username:</label>
                   <Field id="username" name="username" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"/>
-                  <ErrorMessage name="username" component="div" />
+                  <ErrorMessage name="username" component="div" className="error text-red-500 text-base italic"/>
                   </div>
 
                   <div className="mb-6">
                   <label htmlFor="email" className="block text-xl text-left font-opensans font-medium text-brown">Email:</label>
                   <Field id="email" name="email" type="email" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg" />
-                  <ErrorMessage name="email" component="div" />
+                  <ErrorMessage name="email" component="div" className="error text-red-500 text-base italic"/>
                   </div>
                   <div className="flex justify-between items-center mt-4">
                     <button type="submit" disabled={isSubmitting} className="text-xl font-opensans font-medium text-green-700 hover:text-green-800 rounded py-2 px-4">
                       Save
                     </button>
-                    <Link to={`/profile/${id}/password`} className="text-xl font-opensans font-medium text-brown hover:text-brown-dark">
+                    <Link to={`/dashboard/profile/${id}/password`} className="text-xl font-opensans font-medium text-brown hover:text-brown-dark">
                     Change Password
                   </Link>
                 </div>

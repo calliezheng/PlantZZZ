@@ -43,6 +43,7 @@ function ManageProduct() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [updatedFiles, setUpdatedFiles] = useState<{[key: number]: File | null }>({});
+    const [currentType, setCurrentType] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -71,6 +72,10 @@ function ManageProduct() {
   
       fetchTypes();
     }, []);
+
+    const filteredProducts = currentType
+    ? products.filter(p => p.ProductType?.type_name === currentType)
+    : products;
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, productId?: number) => {
       if (event.currentTarget.files && event.currentTarget.files.length > 0) {
@@ -206,124 +211,160 @@ function ManageProduct() {
 
   return (
     <div className="container mx-auto p-4">
+      <button onClick={() => setIsAdding(true)} className="text-lg leading-6 font-medium font-poetsen text-beige bg-brown hover:bg-brown-dark focus:outline-none focus:ring-2 focus:ring-brown-dark focus:ring-opacity-50 rounded-lg shadow-lg transition duration-150 ease-in-out px-6 py-2 my-4">Add New Product</button>
+      <div className="flex justify-left space-x-4">
+        {types.map(type => (
+          <button
+            key={type.id}
+            onClick={() => setCurrentType(type.type_name)}
+            className={`text-lg font-poetsen text-brown px-4 py-2 rounded-lg shadow hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out mb-4 ${currentType === type.type_name ? 'font-bold bg-green-600' : 'bg-beige'}`}
+          >
+            {type.type_name}
+          </button>
+        ))}
+      </div>
         {isAdding && (
                 <Formik
-                    initialValues={{
-                        product_name: '',
-                        product_type: '',
-                        price: 0,
-                        picture: '',
-                        is_active: true
-                    }}
+                    initialValues={{ product_name: '', product_type: '', price: 0, picture: '', is_active: true }}
                     validationSchema={validationSchema}
-                    onSubmit={async (values, actions) => {
-                        await handleAddProduct(values, actions);
-                    }}
+                    onSubmit={async (values, actions) => { await handleAddProduct(values, actions);}}
                 >
                     {({ isSubmitting, setFieldValue }) => (
-                        <Form>
-                            <Field name="product_name" type="text" placeholder="Product Name" />
-                            <ErrorMessage name="product_name" component="div" />
-                            
-                            <Field as="select" name="product_type" type="text" placeholder="Product Type">
-                                <option value="">Select a type</option>
-                                {types.map(type => (
-                                    <option key={type.id} value={type.id}>{type.type_name}</option>
-                                ))}
-                            <ErrorMessage name="product_type" component="div" />
-                            </Field>
+                      <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full ${isAdding ? '' : 'hidden'}`}>
+                        <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                          <div className="mt-3 text-center">
+                            <h3 className="block text-4xl font-amatic font-medium text-green-700 text-center">Add New Product</h3>
+                            <Form>
+                              <div className="mt-2">
+                                <label htmlFor="product_name" className="block text-lg text-left font-opensans font-medium text-green-700">Product Name</label>
+                                <Field name="product_name" type="text" placeholder="Product Name" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                                <ErrorMessage name="product_name" component="div" className="error text-red-500 text-base italic"/>
+                              </div>
 
-                            <Field name="price" type="number" placeholder="Price" />
-                            <ErrorMessage name="price" component="div" />
-                            
-                            <input type="file" name="picture" onChange={(event) => {
-                                if (event.currentTarget.files && event.currentTarget.files.length > 0){
-                                    handleFileChange(event, editingProduct?.id);
-                                    setFieldValue("picture", event.currentTarget.files[0]);
-                                }
-                            }} />
-                            <ErrorMessage name="picture" component="div" />
+                              <div className="mt-2">
+                                <label htmlFor="product_type" className="block text-lg text-left font-opensans font-medium text-green-700">Product Type</label>    
+                                <Field as="select" name="product_type" type="text" placeholder="Product Type" className="mt-1 p-2 w-full border rounded-md font-opensans">
+                                    <option value="">Select a type</option>
+                                    {types.map(type => (
+                                        <option key={type.id} value={type.id}>{type.type_name}</option>
+                                    ))}
+                                <ErrorMessage name="product_type" component="div" className="error text-red-500 text-base italic"/>
+                                </Field>
+                              </div>
 
-                            <button type="submit" disabled={isSubmitting}>Add Plant</button>
-                            <button
-                              type="button"
-                              onClick={() => setIsAdding(false)} 
-                              disabled={isSubmitting}
-                            >Cancel</button>
-                        </Form>
+                              <div className="mt-2">
+                                <label htmlFor="price" className="block text-lg text-left font-opensans font-medium text-green-700">Picture</label>   
+                                <Field name="price" type="number" placeholder="Price" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                                <ErrorMessage name="price" component="div" className="error text-red-500 text-base italic"/>
+                              </div>
+
+                              <div className="mt-2">
+                                <label htmlFor="picture" className="block text-lg text-left font-opensans font-medium text-green-700">Picture</label>    
+                                  <input type="file" name="picture" onChange={(event) => {
+                                      if (event.currentTarget.files && event.currentTarget.files.length > 0){
+                                          handleFileChange(event, editingProduct?.id);
+                                          setFieldValue("picture", event.currentTarget.files[0]);
+                                      }
+                                  }} className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                                  <ErrorMessage name="picture" component="div" className="error text-red-500 text-base italic"/>
+                              </div>
+
+                              <div className="items-center px-4 py-3">
+                                <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-green-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300">Add Plant</button>
+                                <button type="button" onClick={() => setIsAdding(false)} disabled={isSubmitting} className="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300">Cancel</button>
+                              </div>
+                            </Form>
+                          </div>
+                        </div>
+                      </div>
                     )}
                 </Formik>
             )}
 
-            <button onClick={() => setIsAdding(true)}>Add New Product</button>
-
         {editingProduct && (
           <Formik
-              initialValues={{
-                product_name: '',
-                product_type: '',
-                price: 0,
-                picture: '',
-                is_active: true
-            }}
+            initialValues={{product_name: '', product_type: '', price: 0, picture: '', is_active: true}}
             validationSchema={validationSchema}
             onSubmit={handleUpdateProduct}
           >
             {({ isSubmitting, setFieldValue }) => (
-              <Form>
-                <Field name="product_name" type="text" placeholder="Product Name" />
-                <ErrorMessage name="product_name" component="div" />
-                
-                <Field as="select" name="product_type" type="text" placeholder="Product Type">
-                    <option value="">Select a type</option>
-                    {types.map(type => (
-                        <option key={type.id} value={type.id}>{type.type_name}</option>
-                    ))}
-                <ErrorMessage name="product_type" component="div" />
-                </Field>
+              <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full ${ editingProduct? '' : 'hidden'}`}>
+                <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                  <div className="mt-3 text-center">
+                    <h3 className="block text-4xl font-amatic font-medium text-green-700 text-center">Edit Plant</h3>
+                    <Form>
+                    <div className="mt-2">
+                      <label htmlFor="product_name" className="block text-lg text-left font-opensans font-medium text-green-700">Product Name</label>
+                      <Field name="product_name" type="text" placeholder="Product Name" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                      <ErrorMessage name="product_name" component="div" className="error text-red-500 text-base italic"/>
+                    </div>
 
-                <Field name="price" type="number" placeholder="Price" />
-                <ErrorMessage name="price" component="div" />
-                
-                <input type="file" name="picture" onChange={(event) => {
-                                if (event.currentTarget.files && event.currentTarget.files.length > 0){
-                                    handleFileChange(event);
-                                    setFieldValue("picture", event.currentTarget.files[0]);
-                                }
-                            }} />
-                <ErrorMessage name="picture" component="div" />
-                <button type="submit" disabled={isSubmitting}>Update Product</button>
-                <button type="button" onClick={() => setEditingProduct(null)}>Cancel</button>
-              </Form>
+                    <div className="mt-2">
+                      <label htmlFor="product_type" className="block text-lg text-left font-opensans font-medium text-green-700">Product Type</label>    
+                      <Field as="select" name="product_type" type="text" placeholder="Product Type" className="mt-1 p-2 w-full border rounded-md font-opensans">
+                          <option value="">Select a type</option>
+                          {types.map(type => (
+                              <option key={type.id} value={type.id}>{type.type_name}</option>
+                          ))}
+                      <ErrorMessage name="product_type" component="div" className="error text-red-500 text-base italic"/>
+                      </Field>
+                    </div>
+
+                    <div className="mt-2">
+                      <label htmlFor="price" className="block text-lg text-left font-opensans font-medium text-green-700">Picture</label> 
+                      <Field name="price" type="number" placeholder="Price" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                      <ErrorMessage name="price" component="div" className="error text-red-500 text-base italic"/>
+                    </div>
+
+                    <div className="mt-2">
+                      <label htmlFor="picture" className="block text-lg text-left font-opensans font-medium text-green-700">Picture</label>   
+                      <input type="file" name="picture" onChange={(event) => {
+                                      if (event.currentTarget.files && event.currentTarget.files.length > 0){
+                                          handleFileChange(event);
+                                          setFieldValue("picture", event.currentTarget.files[0]);
+                                      }
+                                  }} className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                      <ErrorMessage name="picture" component="div" className="error text-red-500 text-base italic"/>
+                    </div>
+
+                    <div className="items-center px-4 py-3">
+                      <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-green-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300">Update Product</button>
+                      <button type="button" onClick={() => setEditingProduct(null)} className="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300">Cancel</button>
+                    </div>
+                    </Form>
+                  </div>
+                </div>
+              </div>
             )}
           </Formik>
         )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg">
             <img className="w-full h-48 object-cover" src={`http://localhost:3001/images/products/${encodeURIComponent(product.picture)}`} alt={product.product_name} />
-            <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2">Name: {product.product_name}</div>
-              <div className="font-bold text-xl mb-2">Price: {product.price}</div>
-              <div className="font-bold text-xl mb-2">
+            <div className="px-6 py-4 bg-beige">
+              <div className="font-bold font-opensans text-xl text-brown mb-2">Name: {product.product_name}</div>
+              <div className="font-bold font-opensans text-xl text-brown mb-2">Price: {product.price}</div>
+              <div className="font-bold font-opensans text-xl text-brown mb-2">
                 {product.ProductType ? `Type: ${product.ProductType.type_name}` : ''}
               </div>
-              <div className="font-bold text-xl mb-2">Status: {product.is_active ? 'Active' : 'Inactive'}</div>
-            </div>
-              <button onClick={() => setEditingProduct(product)} className="mr-2">Edit</button>
+              <div className="font-bold font-opensans text-xl text-brown mb-2">Status: {product.is_active ? 'Active' : 'Inactive'}</div>
+            
+              <button onClick={() => setEditingProduct(product)} className="mr-4 font-poetsen text-green-600 text-lg">Edit</button>
               <button
                 onClick={() => product.is_active ? handleDeactiveProduct(product.id) : handleActiveProduct(product.id)}
-                className="mr-2"
-            >
+                className={`mr-4 font-poetsen text-lg ${product.is_active ? 'text-red-600' : 'text-green-600'}`}
+              >
                 {product.is_active ? 'Deactivate' : 'Activate'}
-            </button>
-              <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+              </button>
+              <button onClick={() => handleDeleteProduct(product.id)} className="font-poetsen text-red-600 text-lg">Delete</button>
+            </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default ManageProduct

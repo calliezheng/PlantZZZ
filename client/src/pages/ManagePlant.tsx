@@ -158,86 +158,115 @@ function ManagePlant() {
             key={group}
             onClick={() => handleLetterClick(group)}
             className={`${
-              filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'
-            } text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
+              filter === group ? 'font-bold bg-green-600' : 'bg-beige'
+            } text-lg font-poetsen text-brown px-4 py-2 rounded-lg shadow hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out mb-4`}
           >
             {group}
           </button>
         ))}
       </div>
+      <button onClick={() => setIsAdding(true)} className="text-lg leading-6 font-medium font-poetsen text-beige bg-brown hover:bg-brown-dark focus:outline-none focus:ring-2 focus:ring-brown-dark focus:ring-opacity-50 rounded-lg shadow-lg transition duration-150 ease-in-out px-6 py-2 my-4">Add New Plant</button>
       {isAdding && (
-        <Formik
-          initialValues={{
-            academic_name: '',
-            daily_name: ''
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleAddPlant}
-        >
+        <Formik initialValues={{ academic_name: '', daily_name: ''}} validationSchema={validationSchema} onSubmit={handleAddPlant}>
           {({ isSubmitting }) => (
-            <Form>
-              <Field name="academic_name" type="text" placeholder="Academic Name" />
-              <ErrorMessage name="academic_name" component="div" />
-              <Field name="daily_name" type="text" placeholder="Daily Name" />
-              <ErrorMessage name="daily_name" component="div" />
-              <input id="picture" name="picture" type="file" onChange={handleFileChange} />
-              <button type="submit" disabled={isSubmitting}>Add Plant</button>
-              <button
-                type="button"
-                onClick={() => setIsAdding(false)} 
-                disabled={isSubmitting}
-              >Cancel</button>
-            </Form>
-          )}
-        </Formik>
-      )}
-      {editingPlant && (
-        <Formik
-          initialValues={{
-            academic_name: editingPlant.academic_name,
-            daily_name: editingPlant.daily_name,
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleUpdatePlant}
-        >
-          {({ isSubmitting }) => (
-            <Form>
-              <Field name="academic_name" type="text" placeholder="Academic Name" />
-              <ErrorMessage name="academic_name" component="div" />
-              <Field name="daily_name" type="text" placeholder="Daily Name" />
-              <ErrorMessage name="daily_name" component="div" />
-              <input id="picture" name="picture" type="file" onChange={(e) => handleFileChange(e, editingPlant?.id)} />
-              <button type="submit" disabled={isSubmitting}>Update Plant</button>
-              <button type="button" onClick={() => setEditingPlant(null)}>Cancel</button>
-            </Form>
-          )}
-        </Formik>
-      )}
-      <button onClick={() => setIsAdding(true)}>Add New Plant</button>
-    
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {filteredPlants.map((plant) => (
-          <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
-              {plant.Pictures && plant.Pictures[0] && (
-                <img className="w-full" 
-                style={{
-                  width: '100%', // This will make the image responsive and fill the container
-                  height: '200px', // Replace with the height you want
-                  objectFit: 'cover' // This will cover the area without stretching the image
-                }}
-                src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
-              )}
-              <div className="px-6 py-4">
-                <div className="font-bold text-xl mb-2">{plant.academic_name}</div>
-                <p className="text-gray-700 text-base">
-                  {plant.daily_name}
-                </p>
+            <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full ${isAdding ? '' : 'hidden'}`}>
+              <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div className="mt-3 text-center">
+                  <h3 className="block text-4xl font-amatic font-medium text-green-700 text-center">Add New Plant</h3>
+                  <Form>
+                    <div className="mt-2">
+                      <label htmlFor="academic_name" className="block text-lg text-left font-opensans font-medium text-green-700">Academic Name</label>
+                      <Field name="academic_name" type="text" placeholder="Academic Name" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                      <ErrorMessage name="academic_name" component="div" className="error text-red-500 text-base italic"/>
+                    </div>
+
+                    <div className="mt-2">
+                      <label htmlFor="daily_name" className="block text-lg text-left font-opensans font-medium text-green-700">Daily Name</label>
+                      <Field name="daily_name" type="text" placeholder="Daily Name" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                      <ErrorMessage name="daily_name" component="div" className="error text-red-500 text-base italic"/>
+                    </div>
+
+                    <div className="mt-2">
+                      <label htmlFor="picture" className="block text-lg text-left font-opensans font-medium text-green-700">Picture</label>
+                      <input id="picture" name="picture" type="file" onChange={handleFileChange} className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                    </div>
+
+                    <div className="items-center px-4 py-3">
+                      <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-green-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300">Add Plant</button>
+                      <button type="button" onClick={() => setIsAdding(false)} disabled={isSubmitting} className="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300">Cancel</button>
+                    </div>
+                  </Form>
+                  </div>
+                </div>
               </div>
-              <button onClick={() => setEditingPlant(plant)} className="mr-2">Edit</button>
-              <button onClick={() => handleDeletePlant(plant.id)}>Delete</button>
-            </div>
-          ))}
-      </div>
+                )}
+              </Formik>
+            )}
+
+        
+            {editingPlant && (
+              <Formik
+                initialValues={{ academic_name: editingPlant.academic_name, daily_name: editingPlant.daily_name,}}
+                validationSchema={validationSchema}
+                onSubmit={handleUpdatePlant}
+              >
+                {({ isSubmitting }) => (
+                  <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full ${ editingPlant? '' : 'hidden'}`}>
+                    <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                      <div className="mt-3 text-center">
+                        <h3 className="block text-4xl font-amatic font-medium text-green-700 text-center">Edit Plant</h3>
+                        <Form>
+                          <div className="mt-2">
+                            <label htmlFor="academic_name" className="block text-lg text-left font-opensans font-medium text-green-700">Academic Name</label>
+                            <Field name="academic_name" type="text" placeholder="Academic Name" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                            <ErrorMessage name="academic_name" component="div" className="error text-red-500 text-base italic"/>
+                          </div>
+                          <div className="mt-2">
+                            <label htmlFor="daily_name" className="block text-lg text-left font-opensans font-medium text-green-700">Daily Name</label>
+                            <Field name="daily_name" type="text" placeholder="Daily Name" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                            <ErrorMessage name="daily_name" component="div" className="error text-red-500 text-base italic"/>
+                          </div>
+
+                          <div className="mt-2">
+                            <label htmlFor="picture" className="block text-lg text-left font-opensans font-medium text-green-700">Picture</label>
+                            <input id="picture" name="picture" type="file" onChange={(e) => handleFileChange(e, editingPlant?.id)} className="mt-1 p-2 w-full border rounded-md font-opensans"/>
+                          </div>
+
+                          <div className="items-center px-4 py-3">
+                            <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-green-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300">Update Plant</button>
+                            <button type="button" onClick={() => setEditingPlant(null)} className="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300">Cancel</button>
+                          </div>
+                        </Form>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Formik>
+            )}
+ 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredPlants.map((plant) => (
+              <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
+                  {plant.Pictures && plant.Pictures[0] && (
+                    <img className="w-full" 
+                    style={{
+                      width: '100%', // This will make the image responsive and fill the container
+                      height: '200px', // Replace with the height you want
+                      objectFit: 'cover' // This will cover the area without stretching the image
+                    }}
+                    src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
+                  )}
+                  <div className="px-6 py-4 bg-beige">
+                    <div className="font-bold font-opensans text-xl text-brown mb-2">{plant.academic_name}</div>
+                    <p className="font-bold font-opensans text-brown-light text-lg mb-4">
+                      {plant.daily_name}
+                    </p>
+                    <button onClick={() => setEditingPlant(plant)} className="mr-4 font-poetsen text-green-600 text-lg">Edit</button>
+                    <button onClick={() => handleDeletePlant(plant.id)} className="font-poetsen text-red-600 text-lg">Delete</button>
+                  </div>
+                </div>
+              ))}
+        </div>
     </div>
   );
 }

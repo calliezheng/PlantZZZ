@@ -233,17 +233,19 @@ const quitQuiz = () => {
 };
 
   return (
+    
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex flex-col md:flex-row md:justify-center p-5 gap-4">
-        {/* Droppable container for academic names */}
+      <div className="container mx-auto p-5">
+        <h3 className="text-2xl font-bold font-poetsen text-brown-light mb-5">*Drag the matching names and picture into the match box to confirm</h3>
+        <div className="grid grid-cols-5 gap-4">
         <Droppable droppableId="academicNames">
         {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
+            className="col-span-1 bg-beige p-3 rounded shadow overflow-auto"
           >
-            {/* Filter and map over academicNames only */}
+            <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Academic Names</h3>
             {getListByLocation('academicNames').map((plant, index) => (
               <Draggable key={`academicNames-${plant.id}`} draggableId={`academicNames-${plant.id}`} index={index}>
                 {(provided) => (
@@ -251,7 +253,7 @@ const quitQuiz = () => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                    className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
                   >
                     {plant.academic_name}
                   </div>
@@ -263,15 +265,14 @@ const quitQuiz = () => {
         )}
       </Droppable>
 
-        {/* Droppable container for daily names */}
         <Droppable droppableId="dailyNames">
         {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
+            className="col-span-1 bg-beige p-3 rounded shadow-lg overflow-auto"
           >
-            {/* Filter and map over academicNames only */}
+            <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Daily Names</h3>
             {getListByLocation('dailyNames').map((plant, index) => (
               <Draggable key={`dailyNames-${plant.id}`} draggableId={`dailyNames-${plant.id}`} index={index}>
                 {(provided) => (
@@ -279,7 +280,7 @@ const quitQuiz = () => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                    className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
                   >
                     {plant.daily_name}
                   </div>
@@ -291,14 +292,15 @@ const quitQuiz = () => {
         )}
       </Droppable>
 
-        {/* Droppable container for pictures */}
         <Droppable droppableId="pictures">
         {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="w-64 h-96 bg-gray-100 p-2 rounded overflow-auto"
+            className="col-span-3 bg-beige p-3 rounded shadow-lg overflow-auto"
           >
+            <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Pictures</h3>
+            <div className="flex flex-wrap justify-start items-start">
             {getListByLocation('pictures').map((plant, index) => (
               <Draggable key={`pictures-${plant.id}`} draggableId={`pictures-${plant.id}`} index={index}>
                 {(provided) => (
@@ -306,7 +308,8 @@ const quitQuiz = () => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
+                    className="p-2 mb-4 bg-green-600 rounded shadow cursor-pointer font-opensans text-white w-1/3"
+                    style={{ maxWidth: "20%" }}
                   >
                     {plant.Pictures && plant.Pictures[0] && (
                   <img
@@ -318,79 +321,82 @@ const quitQuiz = () => {
                 )}
                   </div>
                 )}
+                
           </Draggable>
       ))}
+      </div>
       {provided.placeholder}
     </div>
   )}
 </Droppable>
 
-<Droppable droppableId="matchBox">
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="w-64 h-96 bg-gray-300 p-2 rounded"
-          >
-            <div className="text-center font-bold">Match Box</div>
-            {/* Filter and map over items that are in the matchBox */}
-            {getListByLocation('matchBox').map((plant, index) => (
-              <Draggable key={`match-${plant.id}-${plant.type}`} draggableId={`${plant.type}-${plant.id}`} index={index}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className="p-2 mb-2 bg-white rounded shadow cursor-pointer"
-                  >
-                    {/* Show either name or image depending on the item type */}
-                    {
-                      plant.type === 'academicNames' && (
-                        <div className="name-display">{plant.academic_name}</div>
-                      )
-                    }
-                    {
-                      plant.type === 'dailyNames' && (
-                        <div className="name-display">{plant.daily_name}</div>
-                      )
-                    }
-                    {
-                      plant.type === 'pictures' && plant.Pictures && plant.Pictures[0] && (
-                        <img
-                          className="w-full"
-                          style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                          src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}`}
-                          alt={plant.daily_name}
-                        />
-                      )
-                    }
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-
+<div className="col-span-3 h-80 p-3 bg-gray-300 rounded shadow-lg">
+    <Droppable droppableId="matchBox">
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="h-full p-3 rounded shadow-lg overflow-auto"
+              >
+                <div className="text-xl text-brown font-bold font-poetsen text-center mb-2">Match Box</div>
+                {getListByLocation('matchBox').map((plant, index) => (
+                  <Draggable key={`match-${plant.id}-${plant.type}`} draggableId={`${plant.type}-${plant.id}`} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer"
+                        style={{ height: '220px', width: '200px' }}
+                      >
+                        {
+                          plant.type === 'academicNames' && (
+                            <div className="name-display">{plant.academic_name}</div>
+                          )
+                        }
+                        {
+                          plant.type === 'dailyNames' && (
+                            <div className="name-display">{plant.daily_name}</div>
+                          )
+                        }
+                        {
+                          plant.type === 'pictures' && plant.Pictures && plant.Pictures[0] && (
+                            <img
+                              className="w-full"
+                              style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                              src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}`}
+                              alt={plant.daily_name}
+                            />
+                          )
+                        }
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+        </Droppable>
+      </div>
 
   {/* Button to finalize the match and calculate the score */}
-  <div className="text-center mt-4">
-  <button
-    onClick={confirmMatch}
-    className="bg-blue-500 text-white px-6 py-2 rounded shadow-lg hover:bg-blue-600 transition-colors"
-    disabled={matches.length >= 10} // Disable after 10 matches
-  >
-    {matches.length < 10 ? 'Confirm Match' : 'See Results'}
-  </button>
-</div>
-<div className="text-center mt-4">
-  <button 
-    onClick={quitQuiz} 
-    className="bg-blue-500 text-white px-6 py-2 rounded shadow-lg hover:bg-blue-600 transition-colors"
-    >Quit
-  </button>
-</div>
+    <div className="text-center mt-4 space-x-4">
+      <button
+        onClick={confirmMatch}
+        className="bg-green-600 text-white px-6 py-2 rounded shadow-lg hover:bg-green-700 transition-colors"
+        disabled={matches.length >= 10} // Disable after 10 matches
+      >
+        {matches.length < 10 ? 'Confirm Match' : 'See Results'}
+      </button>
+    </div>
+    <div className="text-center mt-4">
+      <button 
+        onClick={quitQuiz} 
+        className="bg-red-600 text-white px-6 py-2 rounded shadow-lg hover:bg-red-700 transition-colors"
+        >Quit
+      </button>
+    </div>
+  </div>
 </div>
 </DragDropContext>
   );

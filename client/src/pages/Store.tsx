@@ -81,7 +81,7 @@ function Store() {
           <button
             key={type}
             onClick={() => setCurrentTypeName(type)}
-            className={`px-3 py-2 rounded ${currentTypeName === type ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            className={`text-lg font-poetsen text-brown px-4 py-2 rounded-lg shadow hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out mb-4 ${currentTypeName === type ? 'font-bold bg-green-600' : 'bg-beige'}`}
           >
             {type}
           </button>
@@ -92,11 +92,11 @@ function Store() {
         {filteredProducts.map((product) => (
           <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg">
             <img className="w-full h-48 object-cover" src={`http://localhost:3001/images/products/${encodeURIComponent(product.picture)}`} alt={product.product_name} />
-            <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2">{product.product_name}</div>
-              <p className="text-gray-700 text-base">Price: ${product.price.toFixed(2)}</p>
-              <input type="number" value={quantities[product.id] || 1} onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))} min="1" className="border rounded px-2 py-1 mr-2"/>
-              <button onClick={() => handlePurchase(product.id, quantities[product.id] || 1)}>Buy</button>
+            <div className="px-6 py-4 bg-beige">
+              <div className="font-bold font-opensans text-xl text-brown mb-2">{product.product_name}</div>
+              <p className="font-bold font-opensans text-base text-brown mb-2">Price: ${product.price.toFixed(2)}</p>
+              <input type="number" value={quantities[product.id] || 1} onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))} min="1" className="border rounded px-2 py-1 mr-2 font-opensans"/>
+              <button onClick={() => handlePurchase(product.id, quantities[product.id] || 1)} className="mr-4 font-poetsen text-green-600 text-lg">Buy</button>
             </div>
           </div>
         ))}

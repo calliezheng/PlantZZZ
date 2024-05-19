@@ -98,19 +98,21 @@ const Learn = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-5">Learn About Plants</h1>
+      <h1 className="text-4xl font-bold font-poetsen text-brown mb-5">Learn Plants</h1>
       <div>
         {letterGroups.map((group) => (
           <button
             key={group}
             onClick={() => handleLetterClick(group)}
-            className={`${filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'} text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
+            className={`${
+              filter === group ? 'font-bold bg-green-600' : 'bg-beige'
+            } text-lg font-poetsen text-brown px-4 py-2 rounded-lg shadow hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out mb-4`}
           >
             {group}
           </button>
         ))}
-        <label className="ml-4">
-          <input type="checkbox" checked={showRemembered} onChange={() => setShowRemembered(!showRemembered)} /> Show Remembered
+        <label className="ml-4 px-6 py-4 font-bold font-opensans text-beige text-base mb-4">
+          <input type="checkbox" checked={showRemembered} onChange={() => setShowRemembered(!showRemembered)}/> Show Remembered
         </label>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -124,13 +126,13 @@ const Learn = () => {
                 alt={plant.daily_name}
               />
             )}
-            <div className="px-6 py-4">
-              <div className="font-bold text-xl mb-2">{plant.academic_name}</div>
-              <p className="text-gray-700 text-base">{plant.daily_name}</p>
-            </div>
-            <label className="px-6 py-4">
-              <input type="checkbox" checked={!!rememberedPlants[plant.id]} onChange={() => handleRememberToggle(plant.id)} /> Remembered
+            <div className="px-6 py-4 bg-beige">
+              <div className="font-bold font-opensans text-xl text-brown mb-2">{plant.academic_name}</div>
+              <p className="font-bold font-opensans text-brown-light text-lg mb-4">{plant.daily_name}</p>
+            <label className="px-6 py-4 font-bold font-opensans text-green-700 text-sm mb-4">
+              <input type="checkbox" checked={!!rememberedPlants[plant.id]} onChange={() => handleRememberToggle(plant.id)}/> Remembered
             </label>
+            </div>
           </div>
         ))}
       </div>
