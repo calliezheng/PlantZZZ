@@ -268,21 +268,4 @@ router.patch('/product/activate/:id', async (req, res) => {
   }
 });
 
-router.delete('/product/delete/:id', async (req, res) => {
-  const productId = req.params.id;
-  try {
-      const result = await Product.destroy({
-          where: { id: productId }
-      });
-      if (result > 0) {
-          res.status(200).send('Product deleted successfully.');
-      } else {
-          res.status(404).send('Product not found.');
-      }
-  } catch (error) {
-      console.error('Error deleting product:', error);
-      res.status(500).send('Error deleting product.');
-  }
-});
-
 module.exports = router;

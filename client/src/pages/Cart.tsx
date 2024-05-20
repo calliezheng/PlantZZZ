@@ -13,7 +13,7 @@ interface Product {
 }
 
 function Cart() {
-    const [products, setProducts] = useState<Product[]>([]);;
+    const [products, setProducts] = useState<Product[]>([]);
     const id = localStorage.getItem('user_id');
     const navigate = useNavigate();
   
@@ -31,6 +31,9 @@ function Cart() {
         fetchProducts();
     }, [id]);
     
+    // Filter products to hide those with a quantity of 0
+    const filteredProducts = products.filter(product => parseInt(product.quantity) > 0);
+    
     return (
         <div className="container mx-auto p-4">
             <div className="absolute left-5 m-4">
@@ -38,7 +41,7 @@ function Cart() {
             </div>
             <h1 className="text-4xl font-bold font-poetsen text-white mb-5">Your Purchases</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-10">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                     <div key={product.product_id} className="max-w-sm rounded overflow-hidden shadow-lg bg-beige">
                         <img className="w-full h-48 object-cover" src={`http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}`} alt={product.Product.product_name} />
                         <div className="px-6 py-4">
@@ -48,8 +51,8 @@ function Cart() {
                     </div>
                 ))}
             </div>
-    </div>
-  )
+        </div>
+    )
 }
 
-export default Cart
+export default Cart;

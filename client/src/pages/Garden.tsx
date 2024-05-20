@@ -272,13 +272,16 @@ const saveGardenState = async () => {
               </Droppable>
             ))}
           </div>
-    <div className="w-36 h-full overflow-y-auto shadow-lg max-h-full" style={{height: 'calc(16.6 * 50px)'}}>
+    <div className="w-36 h-full overflow-y-auto shadow-lg max-h-full bg-beige bg-opacity-50" style={{height: 'calc(16.6 * 50px)'}}>
       <Droppable droppableId="items-container">
-        {(provided) => (
+        {(provided, snapshot) => (
           <div 
             ref={provided.innerRef}
             {...provided.droppableProps}
             className="p-2"
+            style={{
+              backgroundColor: snapshot.isDraggingOver ? 'highlight' : '',
+            }}
           >
             {products.map((product, index) => {
               // Check if the product quantity is greater than 0

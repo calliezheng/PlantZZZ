@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
     id?: number;
@@ -43,7 +44,8 @@ function ManageProduct() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [updatedFiles, setUpdatedFiles] = useState<{[key: number]: File | null }>({});
-    const [currentType, setCurrentType] = useState<string | null>(null);
+    const [currentType, setCurrentType] = useState<string>("Plant");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -194,23 +196,11 @@ function ManageProduct() {
       }
     };
 
-    const handleDeleteProduct = async (id?: number) => {
-      if (window.confirm('Are you sure you want to delete this product?')) {
-          try {
-              const response = await axios.delete(`http://localhost:3001/store/product/delete/${id}`);
-              if (response.status === 200) {
-                  alert('Product deleted successfully');
-                  setProducts(products.filter(product => product.id !== id));
-              }
-          } catch (error) {
-              console.error('Error deleting product:', error);
-              alert('Failed to delete product');
-          }
-      }
-  };
-
   return (
     <div className="container mx-auto p-4">
+      <div className="absolute left-5 m-4">
+          <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
+      </div>
       <button onClick={() => setIsAdding(true)} className="text-lg leading-6 font-medium font-poetsen text-beige bg-brown hover:bg-brown-dark focus:outline-none focus:ring-2 focus:ring-brown-dark focus:ring-opacity-50 rounded-lg shadow-lg transition duration-150 ease-in-out px-6 py-2 my-4">Add New Product</button>
       <div className="flex justify-left space-x-4">
         {types.map(type => (
@@ -341,9 +331,9 @@ function ManageProduct() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg">
+          <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg bg-beige">
             <img className="w-full h-48 object-cover" src={`http://localhost:3001/images/products/${encodeURIComponent(product.picture)}`} alt={product.product_name} />
-            <div className="px-6 py-4 bg-beige">
+            <div className="px-6 py-4">
               <div className="font-bold font-opensans text-xl text-brown mb-2">Name: {product.product_name}</div>
               <div className="font-bold font-opensans text-xl text-brown mb-2">Price: {product.price}</div>
               <div className="font-bold font-opensans text-xl text-brown mb-2">
@@ -356,9 +346,8 @@ function ManageProduct() {
                 onClick={() => product.is_active ? handleDeactiveProduct(product.id) : handleActiveProduct(product.id)}
                 className={`mr-4 font-poetsen text-lg ${product.is_active ? 'text-red-600' : 'text-green-600'}`}
               >
-                {product.is_active ? 'Deactivate' : 'Activate'}
+                {product.is_active ? 'Inactivate' : 'Activate'}
               </button>
-              <button onClick={() => handleDeleteProduct(product.id)} className="font-poetsen text-red-600 text-lg">Delete</button>
             </div>
           </div>
         ))}

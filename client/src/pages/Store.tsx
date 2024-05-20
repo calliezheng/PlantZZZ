@@ -94,9 +94,9 @@ function Store() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg">
+          <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg bg-beige">
             <img className="w-full h-48 object-cover" src={`http://localhost:3001/images/products/${encodeURIComponent(product.picture)}`} alt={product.product_name} />
-            <div className="px-6 py-4 bg-beige">
+            <div className="px-6 py-4">
               <div className="font-bold font-opensans text-xl text-brown mb-2">{product.product_name}</div>
               <p className="font-bold font-opensans text-base text-brown mb-2">Price: ${product.price.toFixed(2)}</p>
               <input type="number" value={quantities[product.id] || 1} onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))} min="1" className="border rounded px-2 py-1 mr-2 font-opensans"/>

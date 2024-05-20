@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import axios from 'axios';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 interface Staff {
     id?: number;
@@ -21,6 +22,7 @@ function ManageStaff() {
     const id = localStorage.getItem('user_id');
     const [staffs, setStaffs] = useState<Staff[]>([]);
     const [isAdding, setIsAdding] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchStaffs = async () => {
@@ -72,6 +74,9 @@ function ManageStaff() {
 
   return (
     <div className="flex items-center justify-center pt-36">
+      <div className="absolute top-36 left-5 m-4">
+          <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
+      </div>
       <div className="bg-beige p-10 rounded-lg shadow-lg w-1/3 mx-auto">
       <h2 className="block text-3xl text-center font-poetsen font-bold text-brown">Staff List</h2>
         <table className="w-full text-left">
