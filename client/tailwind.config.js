@@ -23,7 +23,7 @@ module.exports = {
           light: '#A98274',  // Lighter shade of brown
           dark: '#4B2C20'   // Darker shade of brown
         },
-        beige: '#DFE4E7',
+        beige: '#DFE4E7'
       }
     },
   },

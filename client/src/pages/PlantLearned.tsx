@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface RememberedPlant {
   Plant: {
@@ -16,7 +17,7 @@ interface Picture {
 }
 
 function PlantLearned() {
-
+  const navigate = useNavigate();
   const userId = localStorage.getItem('user_id');
   const [rememberedPlants, setRememberedPlants] = useState<RememberedPlant[]>([]);
   const [filter, setFilter] = useState<string>('AB');
@@ -52,12 +53,17 @@ function PlantLearned() {
 
   return (
     <div className="container mx-auto p-4">
-      <div>
+      <div className="absolute left-5 m-4">
+        <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
+      </div>
+      <div className="pt-10">
       {letterGroups.map((group) => (
           <button
             key={group}
             onClick={() => handleLetterClick(group)}
-            className={`${filter === group ? 'font-bold bg-gray-300' : 'bg-gray-100'} text-sm px-4 py-2 rounded hover:bg-gray-200 focus:outline-none`}
+            className={`${
+              filter === group ? 'font-bold bg-green-600' : 'bg-beige'
+            } text-lg font-poetsen text-brown px-4 py-2 rounded-lg shadow hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out mb-4`}
           >
             {group}
           </button>
@@ -65,7 +71,7 @@ function PlantLearned() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredPlants.map((rememberedPlant) => (
-          <div key={rememberedPlant.Plant.id} className="max-w-sm rounded overflow-hidden shadow-lg p-5 m-3 bg-white">
+          <div key={rememberedPlant.Plant.id} className="max-w-sm rounded overflow-hidden shadow-lg p-5 m-3 bg-beige">
             {rememberedPlant.Plant.Pictures && rememberedPlant.Plant.Pictures.length > 0 && (
               <img
                 src={`http://localhost:3001/images/plants/${encodeURIComponent(rememberedPlant.Plant.Pictures[0].picture_file_name)}`}
@@ -74,8 +80,8 @@ function PlantLearned() {
               />
             )}
             <div className="px-6 py-4">
-              <div className="font-bold text-lg mb-2">{rememberedPlant.Plant.academic_name}</div>
-              <p className="text-gray-700 text-base">{rememberedPlant.Plant.daily_name}</p>
+              <div className="font-bold font-opensans text-xl text-brown mb-2">{rememberedPlant.Plant.academic_name}</div>
+              <p className="font-bold font-opensans text-brown-light text-lg">{rememberedPlant.Plant.daily_name}</p>
             </div>
           </div>
       ))}

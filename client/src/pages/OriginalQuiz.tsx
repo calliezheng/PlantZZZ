@@ -1,5 +1,7 @@
+// src/components/OriginalQuiz.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export interface Plant {
   id: number;
@@ -15,7 +17,7 @@ export interface Picture {
   picture_file_name: string;
 }
 
-interface Answer {
+export interface Answer {
   name: string;
   correct: boolean;
 }
@@ -26,14 +28,17 @@ const OriginalQuiz: React.FC = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [score, setScore] = useState<number>(0);
   const [questions, setQuestions] = useState<{ question: Plant; answers: Answer[] }[]>([]);
+  const [answerRecords, setAnswerRecords] = useState<{ question: Plant; selectedAnswers: Answer[]; allOptions: Answer[] }[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
         const response = await axios.get<Plant[]>('http://localhost:3001/learn');
         console.log('response.data', response.data);
-        setQuizData(response.data);
-        generateQuestions(response.data);
+        const randomPlants = shuffleArray(response.data).slice(0, 10);
+        setQuizData(randomPlants);
+        generateQuestions(randomPlants, response.data);
       } catch (error) {
         console.error('Error fetching quiz data:', error);
       }
@@ -50,8 +55,8 @@ const OriginalQuiz: React.FC = () => {
     return array;
   };
 
-  const generateQuestions = (data: Plant[]) => {
-    const generatedQuestions = data.map(plant => {
+  const generateQuestions = (selectedPlants: Plant[], allPlants: Plant[]) => {
+    const generatedQuestions = selectedPlants.map(plant => {
       // Decide randomly if there should be one or two correct answers
       const hasTwoCorrectAnswers = Math.random() > 0.5;
 
@@ -60,7 +65,7 @@ const OriginalQuiz: React.FC = () => {
         { name: plant.daily_name || '', correct: true }
       ];
 
-      const otherPlants = data.filter(p => p.id !== plant.id);
+      const otherPlants = allPlants.filter(p => p.id !== plant.id);
       const wrongAnswers: Answer[] = [];
 
       while (wrongAnswers.length < 3) {
@@ -114,8 +119,33 @@ const OriginalQuiz: React.FC = () => {
     }
 
     setScore(prev => prev + currentScore);
-    setSelectedAnswers([]);
-    setCurrentQuestion(prev => (prev + 1) % questions.length); // Loop back to the start if at the end
+    setAnswerRecords(prev => [
+      ...prev,
+      {
+        question: questions[currentQuestion].question,
+        selectedAnswers,
+        allOptions: questions[currentQuestion].answers
+      }
+    ]);
+
+    if (currentQuestion + 1 < questions.length) {
+      setSelectedAnswers([]);
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      navigate('/originalquizresult', {
+        state: {
+          score: score + currentScore,
+          answerRecords: [
+            ...answerRecords,
+            {
+              question: questions[currentQuestion].question,
+              selectedAnswers,
+              allOptions: questions[currentQuestion].answers
+            }
+          ]
+        }
+      });
+    }
   };
 
   if (questions.length === 0) {
@@ -127,12 +157,15 @@ const OriginalQuiz: React.FC = () => {
     ? `http://localhost:3001/images/plants/${encodeURIComponent(question.Pictures[0].picture_file_name)}`
     : '';
 
+  const quitQuiz = () => {
+    navigate('/choosequiz'); 
+  };
   return (
-    <div className="flex flex-col items-center justify-center pt-10">
-      <h3 className="text-2xl font-bold font-poetsen text-beige bg-green-700 mb-5">*Click to choose the right name/names for the plants (up to two answers, click again to cancel the answer)</h3>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <button onClick={quitQuiz} className="bg-red-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-red-700 transition-colors">Quit</button>
       <div className="bg-beige rounded-lg shadow-lg p-6 m-4 max-w-md w-full relative">
         <img src={imageUrl} alt={question.id.toString()} className="w-full h-64 object-cover rounded-lg mb-4" />
-        <div className="absolute top-2 right-2 bg-white text-black rounded-full px-3 py-1 text-sm">Q
+        <div className="absolute top-2 right-2 bg-white text-black rounded-full px-3 py-1 text-sm">
           {currentQuestion + 1}/10
         </div>
         <div className="grid grid-cols-1 gap-4">
@@ -140,23 +173,23 @@ const OriginalQuiz: React.FC = () => {
             <button
               key={index}
               onClick={() => handleAnswerClick(answer)}
-              className={`py-2 px-4 rounded-lg ${selectedAnswers.some(a => a.name === answer.name) ? 'bg-brown-dark' : 'bg-brown hover:bg-brown-dark'} text-white font-bold font-opensans`}
+              className={`py-2 px-4 rounded-lg ${selectedAnswers.some(a => a.name === answer.name) ? 'bg-brown-dark' : 'bg-brown hover:bg-brown-dark'} text-white font-bold`}
             >
               {answer.name}
             </button>
           ))}
         </div>
-        <button
-          onClick={handleNextQuestion}
-          disabled={selectedAnswers.length === 0}
-          className={`mt-4 px-6 py-2 rounded shadow-lg font-opensans font-bold transition-colors ${
-            selectedAnswers.length === 0
-              ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-              : 'bg-green-600 text-white hover:bg-green-700'
-          }`}
-        >
-          Next
-        </button>
+          <button
+            onClick={handleNextQuestion}
+            disabled={selectedAnswers.length === 0}
+            className={`mt-4 px-6 py-2 rounded shadow-lg font-opensans font-bold transition-colors ${
+              selectedAnswers.length === 0
+                ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                : 'bg-green-600 text-white hover:bg-green-700'
+            }`}
+          >
+            {currentQuestion + 1 === questions.length ? 'Show Results' : 'Next'}
+          </button>
       </div>
     </div>
   );

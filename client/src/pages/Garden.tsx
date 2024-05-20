@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, DropResult, DraggableLocation, Draggable} from 'react-beautiful-dnd';
 import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductInfo {
   productId: string;
@@ -36,6 +37,7 @@ function Garden() {
   const [grid, setGrid] = useState<Cell[][]>(createEmptyGrid(16, 30));
   const [products, setProducts] = useState<Product[]>([]);;
   const id = localStorage.getItem('user_id');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGardenAndProducts = async () => {
@@ -230,6 +232,9 @@ const saveGardenState = async () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex justify-center items-start w-full min-h-screen">
+        <div className="absolute left-5 m-4">
+          <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
+        </div>
         <div className="flex flex-wrap justify-center garden">
           {grid.flat().map((cell, index) => (
             <Droppable key={cell.id} droppableId={cell.id}>
