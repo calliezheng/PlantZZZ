@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import BackButton from './BackButton';
 
 
@@ -21,7 +21,6 @@ interface Product {
 }
 
 function Store() {
-  const navigate = useNavigate();
   const [scores, setScores] = useState<Score | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [currentTypeName, setCurrentTypeName] = useState<string>("Plant");
