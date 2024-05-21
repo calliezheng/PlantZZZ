@@ -229,7 +229,9 @@ function calculateMatchScore(matchedItems: Plant[]): { score: number, correctIds
 }
 
 const quitQuiz = () => {
-  navigate('/choosequiz'); 
+  if (window.confirm('Are you sure you want to quit the quiz?')) {
+    navigate('/choosequiz'); 
+  }
 };
 
   return (

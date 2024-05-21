@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 interface RememberedPlant {
   Plant: {
@@ -17,7 +17,6 @@ interface Picture {
 }
 
 function PlantLearned() {
-  const navigate = useNavigate();
   const userId = localStorage.getItem('user_id');
   const [rememberedPlants, setRememberedPlants] = useState<RememberedPlant[]>([]);
   const [filter, setFilter] = useState<string>('AB');
@@ -53,9 +52,7 @@ function PlantLearned() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="absolute left-5 m-4">
-        <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
-      </div>
+      <BackButton />
       <div className="pt-10">
       {letterGroups.map((group) => (
           <button

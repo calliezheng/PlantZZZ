@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 
 interface Score {
@@ -71,11 +72,9 @@ function Store() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="absolute left-5 m-4">
-        <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
-      </div>
+      <BackButton />
       {scores ? (
-        <p className="text-2xl mb-4 font-bold font-opensans text-brown">Score: {scores.score} <button className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors ml-4"><Link to={`/dashboard/store/${id}/cart`} className="text-beige"> Cart </Link></button></p>
+        <p className="text-2xl mb-4 font-bold font-opensans text-brown">Score: {scores.score} <button className="bg-brown text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors ml-4"><Link to={`/dashboard/store/${id}/cart`} className="text-beige"> Cart </Link></button></p>
       ) : (
         <p className="text-2xl mb-4 font-bold font-opensans text-brown">Loading scores...</p>
       )}

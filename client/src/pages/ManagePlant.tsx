@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import axios from 'axios';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 interface Plant {
   id?: number;
@@ -30,8 +30,6 @@ function ManagePlant() {
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [updatedFiles, setUpdatedFiles] = useState<{[key: number]: File | null }>({});
   const [filter, setFilter] = useState<string>('AB');
-  const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -154,9 +152,7 @@ function ManagePlant() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="absolute top-36 left-5 m-4">
-          <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
-      </div>
+      <BackButton />
       <div>
         {letterGroups.map((group) => (
           <button

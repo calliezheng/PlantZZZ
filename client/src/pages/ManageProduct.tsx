@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
+
 
 interface Product {
     id?: number;
@@ -45,7 +46,7 @@ function ManageProduct() {
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [updatedFiles, setUpdatedFiles] = useState<{[key: number]: File | null }>({});
     const [currentType, setCurrentType] = useState<string>("Plant");
-    const navigate = useNavigate();
+   
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -198,9 +199,7 @@ function ManageProduct() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="absolute left-5 m-4">
-          <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
-      </div>
+      <BackButton />
       <button onClick={() => setIsAdding(true)} className="text-lg leading-6 font-medium font-poetsen text-beige bg-brown hover:bg-brown-dark focus:outline-none focus:ring-2 focus:ring-brown-dark focus:ring-opacity-50 rounded-lg shadow-lg transition duration-150 ease-in-out px-6 py-2 my-4">Add New Product</button>
       <div className="flex justify-left space-x-4">
         {types.map(type => (

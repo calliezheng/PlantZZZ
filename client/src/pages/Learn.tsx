@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
 //Define the type for Typescript 
 interface Plant {
   id: number;

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import BackButton from './BackButton';
 
 interface User {
   id: number;
@@ -36,9 +37,7 @@ const Profile = () => {
 
   return (
     <div className="flex items-center justify-center pt-36">
-      <div className="absolute top-36 left-5 m-4">
-          <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
-      </div>
+      <BackButton />
       <div className="bg-beige p-10 rounded-lg shadow-lg max-w-md w-1/3">
       {user ? (
         <Formik

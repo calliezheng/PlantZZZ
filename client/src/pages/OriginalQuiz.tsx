@@ -158,8 +158,11 @@ const OriginalQuiz: React.FC = () => {
     : '';
 
   const quitQuiz = () => {
-    navigate('/choosequiz'); 
+    if (window.confirm('Are you sure you want to quit the quiz?')) {
+      navigate('/choosequiz'); 
+    }
   };
+  
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <button onClick={quitQuiz} className="bg-red-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-red-700 transition-colors">Quit</button>
