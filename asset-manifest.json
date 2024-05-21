@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/PlantZZZ/static/css/main.deff6485.css",
+    "main.js": "/PlantZZZ/static/js/main.6dc0d80a.js",
+    "static/js/453.419a5d54.chunk.js": "/PlantZZZ/static/js/453.419a5d54.chunk.js",
+    "index.html": "/PlantZZZ/index.html",
+    "main.deff6485.css.map": "/PlantZZZ/static/css/main.deff6485.css.map",
+    "main.6dc0d80a.js.map": "/PlantZZZ/static/js/main.6dc0d80a.js.map",
+    "453.419a5d54.chunk.js.map": "/PlantZZZ/static/js/453.419a5d54.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.deff6485.css",
+    "static/js/main.6dc0d80a.js"
+  ]
+}
