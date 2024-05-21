@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 interface Product {
     product_id: number;
@@ -15,7 +15,6 @@ interface Product {
 function Cart() {
     const [products, setProducts] = useState<Product[]>([]);
     const id = localStorage.getItem('user_id');
-    const navigate = useNavigate();
   
     useEffect(() => {
         const fetchProducts = async () => {
@@ -36,9 +35,7 @@ function Cart() {
     
     return (
         <div className="container mx-auto p-4">
-            <div className="absolute left-5 m-4">
-                <button onClick={() => navigate(-1)} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors items-start">back</button>
-            </div>
+            <BackButton />
             <h1 className="text-4xl font-bold font-poetsen text-white mb-5">Your Purchases</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-10">
                 {filteredProducts.map((product) => (
