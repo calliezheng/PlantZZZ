@@ -246,6 +246,7 @@ const quitQuiz = () => {
             ref={provided.innerRef}
             {...provided.droppableProps}
             className="col-span-1 bg-beige p-3 rounded shadow overflow-auto"
+            style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
           >
             <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Academic Names</h3>
             {getListByLocation('academicNames').map((plant, index) => (
@@ -256,7 +257,6 @@ const quitQuiz = () => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
-                    style={{backgroundColor: snapshot.isDraggingOver ? '#006400' : '', }}
                   >
                     {plant.academic_name}
                   </div>
@@ -274,6 +274,7 @@ const quitQuiz = () => {
             ref={provided.innerRef}
             {...provided.droppableProps}
             className="col-span-1 bg-beige p-3 rounded shadow-lg overflow-auto"
+            style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
           >
             <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Daily Names</h3>
             {getListByLocation('dailyNames').map((plant, index) => (
@@ -284,7 +285,6 @@ const quitQuiz = () => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
-                    style={{backgroundColor: snapshot.isDraggingOver ? '#006400' : '', }}
                   >
                     {plant.daily_name}
                   </div>
@@ -302,6 +302,7 @@ const quitQuiz = () => {
             ref={provided.innerRef}
             {...provided.droppableProps}
             className="col-span-3 bg-beige p-3 rounded shadow-lg overflow-auto"
+            style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
           >
             <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Pictures</h3>
             <div className="flex flex-wrap justify-start items-start">
@@ -313,7 +314,7 @@ const quitQuiz = () => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     className="p-2 mb-4 bg-green-600 rounded shadow cursor-pointer font-opensans text-white w-1/3"
-                    style={{ maxWidth: "20%", backgroundColor: snapshot.isDraggingOver ? '#006400' : '' }}
+                    style={{ maxWidth: "20%"}}
                   >
                     {plant.Pictures && plant.Pictures[0] && (
                   <img
@@ -334,7 +335,7 @@ const quitQuiz = () => {
   )}
 </Droppable>
 
-<div className="col-span-3 h-80 p-3 bg-gray-300 rounded shadow-lg">
+<div className="col-span-3 h-80 p-3 bg-beige rounded shadow-lg">
 <div className="text-xl text-brown font-bold font-poetsen text-center mb-2">Match Box</div>
     <Droppable droppableId="matchBox">
             {(provided, snapshot) => (
@@ -342,6 +343,7 @@ const quitQuiz = () => {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 className="flex flex-row flex-wrap justify-start items-start gap-2 p-3 rounded shadow-lg overflow-auto h-full text-white font-opensans"
+                style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
               >
                 {getListByLocation('matchBox').map((plant, index) => (
                   <Draggable key={`match-${plant.id}-${plant.type}`} draggableId={`${plant.type}-${plant.id}`} index={index}>
@@ -351,7 +353,7 @@ const quitQuiz = () => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer"
-                        style={{ height: '220px', width: '200px', backgroundColor: snapshot.isDraggingOver ? '#006400' : '' }}
+                        style={{ height: '220px', width: '200px' }}
                       >
                         {
                           plant.type === 'academicNames' && (
