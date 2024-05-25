@@ -71,7 +71,7 @@ export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
       {({ errors, touched }) => (
         <Form className="space-y-6">
           <label htmlFor="username" className="block text-xl font-medium font-opensans text-green-700">Username</label>
-          <Field id="username" name="username" placeholder="Username or Email" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
+          <Field id="username" name="username" placeholder="Username" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
 />
           <ErrorMessage name="username" component="span" className="error text-red-500 text-base italic" />
           
