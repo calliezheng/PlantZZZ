@@ -259,7 +259,7 @@ function ManageProduct() {
                               </div>
 
                               <div className="items-center px-4 py-3">
-                                <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-green-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300">Add Plant</button>
+                                <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-green-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300">Add Product</button>
                                 <button type="button" onClick={() => setIsAdding(false)} disabled={isSubmitting} className="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-opensans font-medium rounded-md w-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300">Cancel</button>
                               </div>
                             </Form>
@@ -280,7 +280,7 @@ function ManageProduct() {
               <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full ${ editingProduct? '' : 'hidden'}`}>
                 <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                   <div className="mt-3 text-center">
-                    <h3 className="block text-4xl font-amatic font-medium text-green-700 text-center">Edit Plant</h3>
+                    <h3 className="block text-4xl font-amatic font-medium text-green-700 text-center">Edit Product</h3>
                     <Form>
                     <div className="mt-2">
                       <label htmlFor="product_name" className="block text-lg text-left font-opensans font-medium text-green-700">Product Name</label>
