@@ -53,6 +53,7 @@ function PlantLearned() {
   return (
     <div className="container mx-auto p-4">
       <BackButton />
+      <h1 className="text-4xl font-bold font-poetsen text-brown mb-5">Plants Learned</h1>
       <div className="pt-10">
       {letterGroups.map((group) => (
           <button
