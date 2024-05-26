@@ -25,12 +25,12 @@ const quitQuiz = () => {
 
   return (
     <div className="flex flex-col items-center justify-center pt-10 text-white">
-    <h2 className="text-4xl font-bold font-poetsen mb-4 bg-green-700">Quiz Results</h2>
+    <h1 className="text-3xl text-beige bg-brown font-bold font-poetsen mb-5 text-center">Quiz Completed!</h1>
     <div className="flex">
-    <p className="text-2xl mb-4 font-bold font-opensans bg-green-700 mr-8">Your Score: {score}</p>
-    <button onClick={quitQuiz} className="bg-green-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-green-700 transition-colors mr-8 mb-2">Done</button>
-    <button onClick={handleTryAnotherQuiz} className="bg-brown-light text-white font-bold font-opensans px-6 py-2 rounded shadow-lg hover:bg-brown transition-colors mb-2">Try Another Quiz</button>
+    <button onClick={quitQuiz} className="bg-green-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-green-700 transition-colors mr-8 mb-4">Done</button>
+    <button onClick={handleTryAnotherQuiz} className="bg-green-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-green-700 transition-colors mb-4">Try Another Quiz</button>
     </div>
+    <p className="text-2xl mb-4 font-bold font-poetsen bg-brown mr-8">Your total score is: {score}</p>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {answerRecords.map((record, index) => (
             <div key={index} className="mb-8 bg-white rounded-lg shadow-lg p-6 m-4 max-w-md w-full relative">
