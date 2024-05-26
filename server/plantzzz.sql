@@ -68,7 +68,8 @@ CREATE TABLE product (
   price INT NOT NULL,
   picture VARCHAR(255) NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (product_type) REFERENCES product_type(id)
 );
 
 DROP TABLE IF EXISTS purchase;
