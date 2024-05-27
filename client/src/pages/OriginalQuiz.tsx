@@ -119,13 +119,20 @@ const OriginalQuiz: React.FC = () => {
   const handleNextQuestion = () => {
     let currentScore = 0;
     const correctAnswersCount = selectedAnswers.filter(answer => answer.correct).length;
+    const wrongAnswersCount = selectedAnswers.length - correctAnswersCount;
 
-    if (correctAnswersCount === 2) {
+    if (correctAnswersCount === 2 && wrongAnswersCount === 0) {
       currentScore = 5;
-    } else if (correctAnswersCount === 1) {
+    } else if (correctAnswersCount === 1 && wrongAnswersCount === 0) {
+      currentScore = 3;
+    } else if (correctAnswersCount === 1 && wrongAnswersCount === 1) {
+      currentScore = 2;
+    } else if (correctAnswersCount === 1 && selectedAnswers.length === 1) {
+      currentScore = 5;
+    } else if (correctAnswersCount === 1 && selectedAnswers.length === 2) {
       currentScore = 2;
     }
-
+    
     setScore(prev => prev + currentScore);
     setAnswerRecords(prev => [
       ...prev,
