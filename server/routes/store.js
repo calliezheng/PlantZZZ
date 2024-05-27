@@ -5,18 +5,21 @@ const path = require('path');
 const router = express.Router();
 const { User, Product, Product_Type, Purchase, sequelize } = require("../models");
 
+// Save picture into folder
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const destPath = path.join(__dirname, '..', 'images', 'product picture');
     cb(null, destPath);
   },
   filename: function (req, file, cb) {
-    cb(null, `${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+    const productName = req.body.product_name.replace(/\s+/g, '-').toLowerCase();
+    cb(null, `${productName}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
   }
 });
 
 const upload = multer({ storage: storage });
 
+// Fetch data from product table
 router.get("/", async (req, res) => {
     try {
         const products = await Product.findAll({
@@ -35,6 +38,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Fetch data from user table to get the score
 router.get("/:id", async (req, res) => {
     try {
         const userId = req.params.id;  
@@ -52,6 +56,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+// Fetch data from product table for the manage product page
 router.get("/product/manage", async (req, res) => {
     try {
         const products = await Product.findAll({
@@ -69,6 +74,7 @@ router.get("/product/manage", async (req, res) => {
     }
 });
 
+// Fetch the product type from the product_type table
 router.get("/product/type", async (req, res) => {
     try {
         const types = await Product_Type.findAll();
@@ -80,6 +86,7 @@ router.get("/product/type", async (req, res) => {
     }
 });
 
+//Update the scores of user table when users purchase products with their scores
 router.post('/purchase/:userId', async (req, res) => {
   const { userId } = req.params;
   const { productId, quantity } = req.body;
@@ -134,7 +141,7 @@ router.post('/purchase/:userId', async (req, res) => {
   }
 });
 
-
+// Update the purchase table for user who bought products
 router.get("/:id/cart", async (req, res) => {
   const userId = req.params.id;
 
@@ -155,7 +162,7 @@ router.get("/:id/cart", async (req, res) => {
   }
 });
 
-
+// Add product in product table
 router.post('/product/add', upload.single('picture'), async (req, res) => {
     try {
       const product = await Product.create({
@@ -172,90 +179,75 @@ router.post('/product/add', upload.single('picture'), async (req, res) => {
     }
   });
 
-  router.put('/product/edit/:id', upload.single('picture'), async (req, res) => {
-    const productId = req.params.id;
-    const transaction = await sequelize.transaction();
-    try {
-      // Fetch the existing product to get the old picture path
-      const existingProduct = await Product.findOne({
-        where: { id: productId }
-      });
-  
-      if (!existingProduct) {
-        await transaction.rollback();
-        return res.status(404).json({ error: 'Product not found' });
-      }
-  
-      // Construct update data
-      const updateData = {
-        product_name: req.body.product_name,
-        price: req.body.price,
-        product_type: req.body.product_type
-      };
-  
-      // Check if a new picture was uploaded and an old picture exists
-      if (req.file && existingProduct.picture) {
-        const oldPicturePath = path.join(__dirname, '..', 'images', 'product picture', existingProduct.picture);
-        // Delete the old picture
-        fs.unlink(oldPicturePath, (err) => {
-          if (err) {
-            console.error('Failed to delete old picture:', err);
-          }
-        });
-      }
-  
-      // Add new picture to update data if uploaded
-      if (req.file) {
-        updateData.picture = req.file.filename;
-      }
-  
-      // Update product details within a transaction
-      await Product.update(updateData, {
-        where: { id: productId },
-        transaction: transaction
-      });
-  
-      // Commit the transaction
-      await transaction.commit();
-  
-      // Fetch the updated product to return in the response
-      const updatedProduct = await Product.findOne({ where: { id: productId } });
-      if (updatedProduct) {
-        res.json(updatedProduct);
-      } else {
-        res.status(404).json({ error: 'Product not found after update' });
-      }
-    } catch (error) {
-      // Rollback the transaction in case of an error
-      await transaction.rollback();
-      console.error('Error updating product:', error);
-      res.status(500).json({ error: 'Error updating product' });
-    }
-  });
-  router.patch('/product/deactivate/:id', async (req, res) => {
-    const transaction = await sequelize.transaction();
-    try {
-      // Update the product's is_active field to 0
-      await Product.update(
-        { is_active: 0 },
-        { where: { id: req.params.id } },
-        { transaction }
-      );
-      
-      await transaction.commit();
-      res.status(204).send();
-    } catch (error) {
-      await transaction.rollback();
-      res.status(500).json({ error: 'Error updating product and picture status' });
-    }
-});
-
-router.patch('/product/activate/:id', async (req, res) => {
+// Edit product in product table
+router.put('/product/edit/:id', upload.single('picture'), async (req, res) => {
+  const productId = req.params.id;
   const transaction = await sequelize.transaction();
   try {
-    // Update the product's is_active field to 1
+    // Fetch the existing product to get the old picture path
+    const existingProduct = await Product.findOne({
+      where: { id: productId }
+    });
+
+    if (!existingProduct) {
+      await transaction.rollback();
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    // Construct update data
+    const updateData = {
+      product_name: req.body.product_name,
+      price: req.body.price,
+      product_type: req.body.product_type
+    };
+
+    // Check if a new picture was uploaded and an old picture exists
+    if (req.file && existingProduct.picture) {
+      const oldPicturePath = path.join(__dirname, '..', 'images', 'product picture', existingProduct.picture);
+      // Delete the old picture
+      fs.unlink(oldPicturePath, (err) => {
+        if (err) {
+          console.error('Failed to delete old picture:', err);
+        }
+      });
+    }
+
+    // Add new picture to update data if uploaded
+    if (req.file) {
+      updateData.picture = req.file.filename;
+    }
+
+    // Update product details within a transaction
+    await Product.update(updateData, {
+      where: { id: productId },
+      transaction: transaction
+    });
+
+    // Commit the transaction
+    await transaction.commit();
+
+    // Fetch the updated product to return in the response
+    const updatedProduct = await Product.findOne({ where: { id: productId } });
+    if (updatedProduct) {
+      res.json(updatedProduct);
+    } else {
+      res.status(404).json({ error: 'Product not found after update' });
+    }
+  } catch (error) {
+    // Rollback the transaction in case of an error
+    await transaction.rollback();
+    console.error('Error updating product:', error);
+    res.status(500).json({ error: 'Error updating product' });
+  }
+});
+
+// Inactive the product in product table
+router.patch('/product/deactivate/:id', async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    // Update the product's is_active field to 0
     await Product.update(
-      { is_active: 1 },
+      { is_active: 0 },
       { where: { id: req.params.id } },
       { transaction }
     );
@@ -266,6 +258,25 @@ router.patch('/product/activate/:id', async (req, res) => {
     await transaction.rollback();
     res.status(500).json({ error: 'Error updating product and picture status' });
   }
+});
+
+// Active the product in product table
+router.patch('/product/activate/:id', async (req, res) => {
+const transaction = await sequelize.transaction();
+try {
+  // Update the product's is_active field to 1
+  await Product.update(
+    { is_active: 1 },
+    { where: { id: req.params.id } },
+    { transaction }
+  );
+  
+  await transaction.commit();
+  res.status(204).send();
+} catch (error) {
+  await transaction.rollback();
+  res.status(500).json({ error: 'Error updating product and picture status' });
+}
 });
 
 module.exports = router;

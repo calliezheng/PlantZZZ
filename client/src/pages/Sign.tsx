@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
+//Define the type for Typescript 
 interface SignInProps {
   toggleModal: () => void;
   authenticateUser: (isAuth: boolean) => void;
 }
 
+//Export to make it can be imported in the SignModal 
 export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
   
   const navigate = useNavigate();
@@ -29,12 +30,13 @@ export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
     password:'',
   };
 
+  // Create Validation with yup
   const validationSchema = Yup.object().shape({
     username: Yup.string().required(),
     password: Yup.string().min(6).max(20).required(),
   });
   
- 
+ // Fetch data
   const onSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
     try {
       const response = await fetch('http://localhost:3001/home/signin', {

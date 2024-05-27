@@ -4,6 +4,7 @@ import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable'
 import axios from 'axios';
 import BackButton from './BackButton';
 
+// Define Typescript
 interface ProductInfo {
   productId: string;
   imageUrl: string;
@@ -38,6 +39,7 @@ function Garden() {
   const [products, setProducts] = useState<Product[]>([]);;
   const id = localStorage.getItem('user_id');
 
+  // Fetch Data of cart and garden layout
   useEffect(() => {
     const fetchGardenAndProducts = async () => {
       try {
@@ -64,6 +66,7 @@ function Garden() {
     fetchGardenAndProducts();
   }, [id]);
 
+  // Move items from cart to garden
   const moveProductToGarden = async (product: Product, destination: DraggableLocation) => {
   const newGrid = Array.from(grid); 
   const destinationCoords = destination.droppableId.match(/cell-(\d+)-(\d+)/);
@@ -75,10 +78,10 @@ function Garden() {
     if (!destinationCell.occupied) {
       destinationCell.content = {
         productId: product.Product.id.toString(),  // Store the product ID
-        imageUrl: `http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}` // Store the image URL
+        imageUrl: `http://localhost:3001/images/products/${encodeURIComponent(product.Product.picture)}` // Store the image URL and display the picture on the chosen grid
       };
       destinationCell.occupied = true;
-      setGrid(newGrid);
+      setGrid(newGrid);// Update the grid state
 
       setProducts(prevProducts => prevProducts.map(p => {
         if (p.product_id === product.product_id) {
@@ -93,6 +96,7 @@ function Garden() {
   }
 };
 
+// Move item from garden back to cart
 const moveProductToItems = async (source: DraggableLocation, product: Product) => {
   const newGrid = Array.from(grid);
   const sourceCoords = source.droppableId.match(/cell-(\d+)-(\d+)/);
@@ -105,7 +109,7 @@ const moveProductToItems = async (source: DraggableLocation, product: Product) =
       // Clear the cell content and occupied state
       sourceCell.content = null;
       sourceCell.occupied = false;
-      setGrid(newGrid); // Update the grid state
+      setGrid(newGrid); 
 
       // Return the item to the product list
       setProducts(prevProducts => prevProducts.map(p => {
@@ -122,11 +126,9 @@ const moveProductToItems = async (source: DraggableLocation, product: Product) =
   console.log(`Product ${product.product_id} moved back to items. New state:`, products);
 };
 
+// Move item among garden grids
 const moveItemWithinGarden = async (source: DraggableLocation, destination: DraggableLocation) => {
-  // Create a shallow copy of the grid to manipulate
   const newGrid = [...grid];
-
-  // Parse the row and column from the droppableId of source and destination
   const sourceCoords = source.droppableId.match(/cell-(\d+)-(\d+)/);
   const destinationCoords = destination.droppableId.match(/cell-(\d+)-(\d+)/);
 
@@ -136,27 +138,23 @@ const moveItemWithinGarden = async (source: DraggableLocation, destination: Drag
     const destinationRow = parseInt(destinationCoords[1], 10);
     const destinationCol = parseInt(destinationCoords[2], 10);
 
-    // Access the source and destination cells using their coordinates
     const sourceCell = newGrid[sourceRow][sourceCol];
     const destinationCell = newGrid[destinationRow][destinationCol];
 
-    // Move the content from the source cell to the destination cell
     if (!destinationCell.occupied) {
       destinationCell.content = sourceCell.content;
       destinationCell.occupied = true;
 
-      // Clear the source cell
       sourceCell.content = null;
       sourceCell.occupied = false;
     }
 
-    // Update the grid state to reflect the changes
     setGrid(newGrid);
     await saveGardenState();
   }
 };
 
-
+// Apply these move actions above with corresponding logic
 const onDragEnd = (result: DropResult) => {
   const { source, destination, draggableId } = result;
   console.log(`Drag ended from ${source.droppableId} to ${destination ? destination.droppableId : "none"}`);
@@ -202,6 +200,7 @@ const onDragEnd = (result: DropResult) => {
   }
 };
 
+// Pass the new quantity of products in cart to the back-end and update the database
 const updateProductQuantity = async (productId:number, increment: boolean) => {
   const payload = {
     productId: productId,
@@ -215,12 +214,13 @@ const updateProductQuantity = async (productId:number, increment: boolean) => {
   }
 };
 
+//Send the new layout of garden to back-end and update the database
 const saveGardenState = async () => {
   try {
     const serializedGarden = JSON.stringify(grid);  // Convert the current grid state to a JSON string
     await axios.post(`http://localhost:3001/garden/${id}/garden`, {
       userId: id,
-      gardenState: serializedGarden  // Send the serialized garden as part of your POST request
+      gardenState: serializedGarden 
     });
     console.log("Garden state saved successfully.");
   } catch (error) {
@@ -232,6 +232,7 @@ const saveGardenState = async () => {
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex justify-center items-start w-full min-h-screen">
       <BackButton />
+      {/* Create the Garden Grid */}
         <div className="flex flex-wrap justify-center garden">
           {grid.flat().map((cell, index) => (
             <Droppable key={cell.id} droppableId={cell.id}>
@@ -251,7 +252,7 @@ const saveGardenState = async () => {
                           width: '50px',
                           height: '50px',
                           border: '1px solid black',
-                          backgroundColor: snapshot.isDraggingOver ? 'highlight' : '#8B4513',
+                          backgroundColor: snapshot.isDraggingOver ? 'highlight' : '#8B4513', // Add react of the grid when it is chosen
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
@@ -269,6 +270,7 @@ const saveGardenState = async () => {
               </Droppable>
             ))}
           </div>
+    {/* Create the cart container */}      
     <div className="w-36 h-full overflow-y-auto shadow-lg max-h-full bg-beige bg-opacity-50" style={{height: 'calc(16.6 * 50px)'}}>
       <Droppable droppableId="items-container">
         {(provided, snapshot) => (
@@ -277,7 +279,7 @@ const saveGardenState = async () => {
             {...provided.droppableProps}
             className="p-2"
             style={{
-              backgroundColor: snapshot.isDraggingOver ? 'highlight' : '',
+              backgroundColor: snapshot.isDraggingOver ? 'highlight' : '', // Add react of the cart container when it is chosen
             }}
           >
             {products.map((product, index) => {
@@ -299,7 +301,7 @@ const saveGardenState = async () => {
                   </Draggable>
                 );
               }
-              return null;  // Return null for products with a quantity of 0, thus not rendering them
+              return null;  // Return null for products with a quantity of 0
             })}
             {provided.placeholder}
           </div>

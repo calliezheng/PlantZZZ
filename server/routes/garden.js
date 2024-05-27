@@ -5,6 +5,7 @@ const path = require('path');
 const router = express.Router();
 const { Purchase, Garden, sequelize } = require("../models");
 
+// Update the quantity of product in Purchase table
 router.post('/:userId/cart', async (req, res) => {
     const userId = parseInt(req.params.userId, 10);
     const { productId, increment } = req.body;
@@ -27,6 +28,7 @@ router.post('/:userId/cart', async (req, res) => {
     }
 });
 
+// Update the data of garden layout in the garden table
 router.post('/:userId/garden', async (req, res) => {
     const { userId, gardenState } = req.body;
   
@@ -48,6 +50,7 @@ router.post('/:userId/garden', async (req, res) => {
     }
   });
   
+  // Fetch the data from garden table
   router.get('/:userId/garden', async (req, res) => {
     const userId = req.params.userId;
     try {

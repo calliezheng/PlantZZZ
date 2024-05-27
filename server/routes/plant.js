@@ -5,6 +5,7 @@ const path = require('path');
 const router = express.Router();
 const { sequelize, Plant, Picture } = require("../models");
 
+// Save picture into folder
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const destPath = path.join(__dirname, '..', 'images', 'plant picture');
@@ -18,7 +19,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Create a new plant
+// Insert new plant to plant table
 router.post('/', upload.single('picture'), async (req, res) => {
     try {
       const plant = await Plant.create({
@@ -41,7 +42,7 @@ router.post('/', upload.single('picture'), async (req, res) => {
     }
   });
   
-  // Update an existing plant
+  // Edit plant data in plant table
   router.put('/:id', upload.single('picture'), async (req, res) => {
     const plantId = req.params.id;
     const transaction = await sequelize.transaction();
@@ -68,7 +69,7 @@ router.post('/', upload.single('picture'), async (req, res) => {
             if (oldPicture) {
                 // Delete the picture file from the server
                 const oldPicturePath = path.join(__dirname, '..', 'images', 'plant picture', oldPicture.picture_file_name);
-                fs.unlinkSync(oldPicturePath);  // Ensure synchronous deletion
+                fs.unlinkSync(oldPicturePath); 
 
                 // Delete the picture record from the database
                 await Picture.destroy({
@@ -84,8 +85,6 @@ router.post('/', upload.single('picture'), async (req, res) => {
                 is_active: 1
             }, { transaction });
         }
-
-        // Commit the transaction
         await transaction.commit();
 
         // Fetch the updated plant to return in the response
@@ -109,7 +108,7 @@ router.post('/', upload.single('picture'), async (req, res) => {
 });
   
   
-  // Delete a plant
+  // Inactive a plant in plant table
   router.patch('/deactivate/:id', async (req, res) => {
     const transaction = await sequelize.transaction();
     try {
@@ -135,5 +134,4 @@ router.post('/', upload.single('picture'), async (req, res) => {
     }
 });
 
-  
 module.exports = router;

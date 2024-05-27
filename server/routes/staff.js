@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const upload = multer();
 
-
+// Fetch data from user table
 router.get("/:id", async (req, res) => {
     try {
         const userId = req.params.id;
@@ -20,6 +20,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
+// Add new staff with given username and email, and default password 
 router.post("/", upload.none(), async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash('plantzzz1234+', 10);
@@ -39,22 +40,23 @@ router.post("/", upload.none(), async (req, res) => {
       }
     });
 
-    router.patch('/deactivate/:id', async (req, res) => {
-        const transaction = await sequelize.transaction();
-        try {
-          // Update the plant's is_active field to 0
-          await User.update(
-            { is_active: 0 },
-            { where: { id: req.params.id } },
-            { transaction }
-          );
-    
-          await transaction.commit();
-          res.status(204).send();
-        } catch (error) {
-          await transaction.rollback();
-          res.status(500).json({ error: 'Error updating staff status' });
-        }
-    });
+// Inactive staff account
+router.patch('/deactivate/:id', async (req, res) => {
+    const transaction = await sequelize.transaction();
+    try {
+      // Update the plant's is_active field to 0
+      await User.update(
+        { is_active: 0 },
+        { where: { id: req.params.id } },
+        { transaction }
+      );
+
+      await transaction.commit();
+      res.status(204).send();
+    } catch (error) {
+      await transaction.rollback();
+      res.status(500).json({ error: 'Error updating staff status' });
+    }
+});
 
 module.exports = router;

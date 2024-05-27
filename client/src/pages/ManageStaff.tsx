@@ -4,12 +4,14 @@ import axios from 'axios';
 import * as Yup from 'yup';
 import BackButton from './BackButton';
 
+//Define the type for Typescript 
 interface Staff {
     id?: number;
     username: string;
     email: string
 }
 
+// Create Validation by yup
 const validationSchema = Yup.object().shape({
     username: Yup.string()
       .required('Username is required'),
@@ -23,6 +25,7 @@ function ManageStaff() {
     const [staffs, setStaffs] = useState<Staff[]>([]);
     const [isAdding, setIsAdding] = useState(false);
 
+    // Fetch data
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
@@ -36,6 +39,7 @@ function ManageStaff() {
         fetchStaffs();
         }, []);
 
+    // Add staff
     const handleAddStaff = async (values: Staff, actions: FormikHelpers<Staff>) => {
         const formData = new FormData();
         formData.append('username', values.username);
@@ -57,6 +61,7 @@ function ManageStaff() {
         actions.setSubmitting(false);
         };
 
+    // Delete staff
     const handleDeleteStaff = async (id?: number) => {
         if (id) {
             try {
@@ -74,6 +79,8 @@ function ManageStaff() {
   return (
     <div className="flex items-center justify-center pt-36">
       <BackButton />
+
+      {/* Staff list */}
       <div className="bg-beige p-10 rounded-lg shadow-lg w-1/3 mx-auto">
       <h2 className="block text-3xl text-center font-poetsen font-bold text-brown">Staff List</h2>
         <table className="w-full text-left">
@@ -99,6 +106,8 @@ function ManageStaff() {
           </table>
           <button onClick={() => setIsAdding(true)} className="text-lg font-opensans font-bold text-green-700 hover:text-green-800 rounded py-2 px-4">Add Staff</button>
         </div>
+
+        {/* Add staff form */}
         {isAdding && (
         <Formik
           initialValues={{

@@ -4,10 +4,12 @@ const { User } = require("../models");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Connect front-end
 router.get('/', (req, res) => {
   res.send('Home Page');
 });
 
+// Check the username and password in user table
 router.post('/signin', async (req, res) => {
   console.log('Received sign-in request:', req.body);
   try {
@@ -41,7 +43,7 @@ router.post('/signin', async (req, res) => {
   }
 });
 
-
+// Insert new user in user table
 router.post('/signup', async (req, res) => {
   try {
     console.log('Received data:', req.body);

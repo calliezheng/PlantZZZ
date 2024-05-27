@@ -3,6 +3,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Plant, Answer } from './OriginalQuiz';
 
+//Define the type for Typescript 
 interface LocationState {
   score: number;
   answerRecords: { question: Plant; selectedAnswers: Answer[]; allOptions: Answer[] }[];

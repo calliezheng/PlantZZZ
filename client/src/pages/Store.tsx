@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link} from 'react-router-dom';
 import BackButton from './BackButton';
 
-
+//Define the type for Typescript 
 interface Score {
   score: number;
 }
@@ -27,6 +27,7 @@ function Store() {
   const [quantities, setQuantities] = useState<{[productId: number]: number}>({});
   const id = localStorage.getItem('user_id');
 
+  // Fetch data
   useEffect(() => {
     const fetchScoresAndProducts = async () => {
       try {
@@ -65,8 +66,10 @@ function Store() {
     }
   };
 
-  const productTypes = Array.from(new Set(products.map(p => p.ProductType.type_name)));  // Create a unique list of type_names
+  // Create a unique list of type_names
+  const productTypes = Array.from(new Set(products.map(p => p.ProductType.type_name)));  
 
+ // Filter product with different type to display on different pages
   const filteredProducts = products.filter(product => currentTypeName === null || product.ProductType.type_name === currentTypeName);
 
   return (
@@ -78,6 +81,7 @@ function Store() {
         <p className="text-2xl mb-4 font-bold font-opensans text-brown">Loading scores...</p>
       )}
 
+      {/* Filter nav bar */}
       <div className="flex space-x-4 mb-4">
         {productTypes.map((type) => (
           <button
@@ -90,6 +94,7 @@ function Store() {
         ))}
       </div>
 
+      {/* Existing product card */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         {filteredProducts.map((product) => (
           <div key={product.id} className="max-w-sm rounded overflow-hidden shadow-lg bg-beige">

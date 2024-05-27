@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Plant } from './Quiz';
 import axios from 'axios';
 
+//Define the type for Typescript 
 type MatchPackage = {
   items: Plant[];
   score: number;

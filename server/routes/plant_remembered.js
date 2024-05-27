@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Plant_Remembered, Plant, Picture } = require("../models");
 
-// Get remembered plants for a specific user
+// Fetch data from plant-remembered table
 router.get("/:userId", async (req, res) => {
     const userId = req.params.userId;
     try {
@@ -30,6 +30,7 @@ router.get("/:userId", async (req, res) => {
     }
 });
 
+// Add plant in plant-remembered table
 router.post("/:userId/add-remembered-plant", async (req, res) => {
     const { user_id, plant_id, remember } = req.body;
     // Authentication and validation logic here

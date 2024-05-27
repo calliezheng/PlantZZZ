@@ -5,6 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import BackButton from './BackButton';
 
+//Define the type for Typescript 
 interface User {
   id: number;
   username: string;
@@ -17,6 +18,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
+  //Fetch data
   const fetchProfile = async () => {
     try {
       const response = await axios.get(`http://localhost:3001/profile/${id}`);
@@ -30,6 +32,7 @@ const Profile = () => {
     fetchProfile();
   }, [id]);
 
+  // Create Validation with yup
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -48,6 +51,7 @@ const Profile = () => {
           validationSchema={validationSchema}
           onSubmit={async (values, { setSubmitting }) => {
             try {
+              // Perform the profile update
               const response = await axios.put(`http://localhost:3001/profile/${id}`, values);
               setUser(response.data);
               setSubmitting(false);

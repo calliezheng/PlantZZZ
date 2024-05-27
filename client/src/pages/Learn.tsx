@@ -21,7 +21,7 @@ const Learn = () => {
   const [showRemembered, setShowRemembered] = useState(false);
   const [rememberedPlants, setRememberedPlants] = useState<{ [key: number]: boolean }>({});
 
-  // Function to fetch remembered plants from the backend
+  // Fetch remembered plants from the back-end
   const fetchRememberedPlants = async (userId: string) => {
     try {
       const response = await axios.get(`http://localhost:3001/plant-remembered/${userId}`);
@@ -35,7 +35,7 @@ const Learn = () => {
     }
   };
 
-  // Effect to fetch plants data
+  // Fetch plants data
   useEffect(() => {
     const fetchPlants = async () => {
       try {
@@ -49,7 +49,7 @@ const Learn = () => {
     fetchPlants();
   }, []);
 
-  // Effect to fetch remembered plants when a user is logged in
+  // Fetch remembered plants when a user is logged in
   useEffect(() => {
     const userId = localStorage.getItem('user_id');
     if (userId) {
@@ -57,7 +57,7 @@ const Learn = () => {
     }
   }, []);
 
-  // Pass the remembered plant id with user id if signed in to the back end 
+  // Pass the remembered plant id with user id to the back-end if signed in 
   const handleRememberToggle = async (plantId: number) => {
     const userId = localStorage.getItem('user_id');
 
@@ -100,6 +100,7 @@ const Learn = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-4xl font-bold font-poetsen text-brown mb-5">Learn Plants</h1>
+      {/* Filter nav bar */}
       <div>
         {letterGroups.map((group) => (
           <button
@@ -116,6 +117,8 @@ const Learn = () => {
           <input type="checkbox" checked={showRemembered} onChange={() => setShowRemembered(!showRemembered)}/> Show Remembered
         </label>
       </div>
+
+      {/* Plant Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPlants.map((plant) => (
           <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">

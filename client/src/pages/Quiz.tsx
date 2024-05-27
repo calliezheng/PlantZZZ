@@ -4,6 +4,8 @@ import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import { StrictModeDroppable as Droppable} from '../helpers/StrictModeDroppable'; //Solve the problem between React 18 and react-beautiful-dnd Droppable 
 import { useNavigate } from 'react-router-dom';
 
+//Define the type for Typescript
+//Export the module so that the Quiz Result page can import 
 export interface Plant {
   id: number;
   academic_name?: string;
@@ -30,21 +32,15 @@ interface MatchPackage {
   correctIds: Set<number>;
 }
 
+// Randomize the order of elements
 const shuffleArray = (array: any[]) => {
   let currentIndex = array.length, randomIndex;
-
-  // While there remain elements to shuffle...
   while (currentIndex !== 0) {
-
-    // Pick a remaining element...
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
-
-    // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [
       array[randomIndex], array[currentIndex]];
   }
-
   return array;
 };
 
@@ -55,7 +51,7 @@ const Quiz = () => {
   const [score, setScore] = useState<number>(0);
   const [matchPackages, setMatchPackages] = useState<MatchPackage[]>([]);
 
-
+  // Fetch data
   useEffect(() => {
     const fetchPlants = async () => {
       try {
@@ -240,6 +236,8 @@ const quitQuiz = () => {
       <div className="flex flex-col items-center justify-center pt-10">
         <h3 className="text-2xl font-bold font-poetsen text-beige bg-green-700 mb-5">*Drag the matching names and picture into the match box and confirm</h3>
         <div className="grid grid-cols-5 gap-4">
+
+        {/* Academic name container */}
         <Droppable droppableId="academicNames">
         {(provided, snapshot) => (
           <div
@@ -268,66 +266,68 @@ const quitQuiz = () => {
         )}
       </Droppable>
 
-        <Droppable droppableId="dailyNames">
-        {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="col-span-1 bg-beige p-3 rounded shadow-lg overflow-auto"
-            style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
-          >
-            <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Daily Names</h3>
-            {getListByLocation('dailyNames').map((plant, index) => (
-              <Draggable key={`dailyNames-${plant.id}`} draggableId={`dailyNames-${plant.id}`} index={index}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
-                  >
-                    {plant.daily_name}
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+      {/* Daily name container */}
+      <Droppable droppableId="dailyNames">
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className="col-span-1 bg-beige p-3 rounded shadow-lg overflow-auto"
+          style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
+        >
+          <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Daily Names</h3>
+          {getListByLocation('dailyNames').map((plant, index) => (
+            <Draggable key={`dailyNames-${plant.id}`} draggableId={`dailyNames-${plant.id}`} index={index}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                  className="p-2 mb-2 bg-green-600 rounded shadow cursor-pointer font-opensans text-white"
+                >
+                  {plant.daily_name}
+                </div>
+              )}
+            </Draggable>
+          ))}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
 
-        <Droppable droppableId="pictures">
-        {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="col-span-3 bg-beige p-3 rounded shadow-lg overflow-auto"
-            style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
-          >
-            <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Pictures</h3>
-            <div className="flex flex-wrap justify-start items-start">
-            {getListByLocation('pictures').map((plant, index) => (
-              <Draggable key={`pictures-${plant.id}`} draggableId={`pictures-${plant.id}`} index={index}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className="p-2 mb-4 bg-green-600 rounded shadow cursor-pointer font-opensans text-white w-1/3"
-                    style={{ maxWidth: "20%"}}
-                  >
-                    {plant.Pictures && plant.Pictures[0] && (
-                  <img
-                    className="w-full"
-                    style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                    src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
-                    alt={plant.academic_name}
-                  />
-                )}
-                  </div>
-                )}
-                
-          </Draggable>
+    {/* Picture container */}
+    <Droppable droppableId="pictures">
+    {(provided, snapshot) => (
+      <div
+        ref={provided.innerRef}
+        {...provided.droppableProps}
+        className="col-span-3 bg-beige p-3 rounded shadow-lg overflow-auto"
+        style={{ backgroundColor: snapshot.isDraggingOver ? '#81C784' : '' }}
+      >
+        <h3 className="text-xl text-brown font-bold font-poetsen text-center mb-2">Pictures</h3>
+        <div className="flex flex-wrap justify-start items-start">
+        {getListByLocation('pictures').map((plant, index) => (
+          <Draggable key={`pictures-${plant.id}`} draggableId={`pictures-${plant.id}`} index={index}>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                className="p-2 mb-4 bg-green-600 rounded shadow cursor-pointer font-opensans text-white w-1/3"
+                style={{ maxWidth: "20%"}}
+              >
+                {plant.Pictures && plant.Pictures[0] && (
+              <img
+                className="w-full"
+                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                alt={plant.academic_name}
+              />
+            )}
+              </div>
+            )}
+            
+      </Draggable>
       ))}
       </div>
       {provided.placeholder}
@@ -335,8 +335,9 @@ const quitQuiz = () => {
   )}
 </Droppable>
 
+{/* Match box container */}
 <div className="col-span-3 h-80 p-3 bg-beige rounded shadow-lg">
-<div className="text-xl text-brown font-bold font-poetsen text-center mb-2">Match Box</div>
+  <div className="text-xl text-brown font-bold font-poetsen text-center mb-2">Match Box</div>
     <Droppable droppableId="matchBox">
             {(provided, snapshot) => (
               <div

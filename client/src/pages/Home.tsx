@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 
 function Home() {
+    // Connect the back-end 
     useEffect(() => {
         axios.get("http://localhost:3001/home").then((response) => {
         console.log(response);

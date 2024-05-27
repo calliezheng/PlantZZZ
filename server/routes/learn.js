@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Plant, Picture } = require("../models");
 
-// GET route to fetch all plants with only their cover picture
+// fetch data from plant table with plant's picture in picture table
 router.get("/", async (req, res) => {
     try {
         const plants = await Plant.findAll({
@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
                 model: Picture,
                 as: 'Pictures',
                 where: { is_active: 1 },
-                limit: 1, // Only fetch the first picture
+                limit: 1, // Fetch one if there are many
                 separate: true, 
                 order: [['id', 'ASC']], 
             }]
@@ -24,13 +24,13 @@ router.get("/", async (req, res) => {
 });
 
 
-// GET route to fetch all pictures for a specific plant
+// Fetch all pictures for a specific plant
 router.get("/:plantId/pictures", async (req, res) => {
     try {
-        const plantId = parseInt(req.params.plantId, 10); // Ensure plantId is an integer
+        const plantId = parseInt(req.params.plantId, 10);
         const pictures = await Picture.findAll({
             where: { plant_id: plantId },
-            order: [['id', 'ASC']] // Assuming 'id' orders pictures; adjust as needed
+            order: [['id', 'ASC']]
         });
         res.json(pictures);
     } catch (error) {

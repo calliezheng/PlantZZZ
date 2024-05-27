@@ -37,6 +37,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+// Define the relationship between tables
 db.User.belongsTo(db.User_Type, { 
   foreignKey: 'user_type', 
   as: 'UserType' 

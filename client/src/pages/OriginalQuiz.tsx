@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+//Define the type for Typescript 
+//Export the module so that the Quiz Result page can import
 export interface Plant {
   id: number;
   academic_name?: string;
@@ -31,6 +33,7 @@ const OriginalQuiz: React.FC = () => {
   const [answerRecords, setAnswerRecords] = useState<{ question: Plant; selectedAnswers: Answer[]; allOptions: Answer[] }[]>([]);
   const navigate = useNavigate();
 
+  // Fetch plant data
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
@@ -47,6 +50,7 @@ const OriginalQuiz: React.FC = () => {
     fetchQuizData();
   }, []);
 
+  // Randomize the order of elements
   const shuffleArray = (array: any[]) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -55,6 +59,7 @@ const OriginalQuiz: React.FC = () => {
     return array;
   };
 
+  //Generate questions
   const generateQuestions = (selectedPlants: Plant[], allPlants: Plant[]) => {
     const generatedQuestions = selectedPlants.map(plant => {
       // Decide randomly if there should be one or two correct answers
@@ -65,6 +70,7 @@ const OriginalQuiz: React.FC = () => {
         { name: plant.daily_name || '', correct: true }
       ];
 
+      // Use other plants' names to be the wrong answers
       const otherPlants = allPlants.filter(p => p.id !== plant.id);
       const wrongAnswers: Answer[] = [];
 
@@ -96,6 +102,7 @@ const OriginalQuiz: React.FC = () => {
     setQuestions(generatedQuestions);
   };
 
+  // Click to change the status of the answer (chosen or not chosen)
   const handleAnswerClick = (answer: Answer) => {
     setSelectedAnswers(prev => {
       if (prev.some(a => a.name === answer.name)) {
@@ -108,6 +115,7 @@ const OriginalQuiz: React.FC = () => {
     });
   };
 
+  //Go to the next question
   const handleNextQuestion = () => {
     let currentScore = 0;
     const correctAnswersCount = selectedAnswers.filter(answer => answer.correct).length;
@@ -152,11 +160,13 @@ const OriginalQuiz: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  // Create for easily use in 'return'
   const { question, answers } = questions[currentQuestion];
   const imageUrl = question.Pictures && question.Pictures[0]
     ? `http://localhost:3001/images/plants/${encodeURIComponent(question.Pictures[0].picture_file_name)}`
     : '';
 
+  // allow users can quit the quiz in the middle
   const quitQuiz = () => {
     if (window.confirm('Are you sure you want to quit the quiz?')) {
       navigate('/choosequiz'); 

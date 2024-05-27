@@ -4,6 +4,7 @@ const { User } = require("../models");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Fetch data from user table
 router.get('/:id', async (req, res) => {
     try {
       const userId = req.params.id;
@@ -19,6 +20,7 @@ router.get('/:id', async (req, res) => {
     }
   });
 
+  // Update user's data in user table
   router.put('/:id', async (req, res) => {
     try {
       const userId = req.params.id;
@@ -44,20 +46,17 @@ router.get('/:id', async (req, res) => {
     }
   });
   
+  // Update the user's password in user table
   router.put('/:id/password', async (req, res) => {
     try {
       const userId = req.params.id;
       const { currentPassword, newPassword } = req.body;
-  
-      // Retrieve the user by id
       const user = await User.findByPk(userId);
       
-      // Check if user was found
       if (!user) {
         return res.status(404).send('User not found');
       }
 
-      // Validate the current password
       const isMatch = await bcrypt.compare(currentPassword, user.password);
       if (!isMatch) {
         return res.status(401).send('Current password is incorrect');
@@ -66,7 +65,6 @@ router.get('/:id', async (req, res) => {
       // Hash the new password
       const hashedPassword = await bcrypt.hash(newPassword, 10);
   
-      // Update the user's password in the database
       const [updatedRowCount] = await User.update({ password: hashedPassword }, {
         where: { id: userId },
       });

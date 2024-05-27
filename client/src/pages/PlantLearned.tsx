@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BackButton from './BackButton';
 
+//Define the type for Typescript 
 interface RememberedPlant {
   Plant: {
     id: number;
@@ -21,6 +22,7 @@ function PlantLearned() {
   const [rememberedPlants, setRememberedPlants] = useState<RememberedPlant[]>([]);
   const [filter, setFilter] = useState<string>('AB');
 
+  //Fetch data
   useEffect(() => {
     const fetchRememberedPlants = async () => {
       try {
@@ -54,6 +56,7 @@ function PlantLearned() {
     <div className="container mx-auto p-4">
       <BackButton />
       <h1 className="text-4xl font-bold font-poetsen text-brown mb-5">Plants Learned</h1>
+      {/* Filter nav bar */}
       <div className="pt-10">
       {letterGroups.map((group) => (
           <button
@@ -67,6 +70,8 @@ function PlantLearned() {
           </button>
         ))}
       </div>
+
+      {/* Learned plants card */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredPlants.map((rememberedPlant) => (
           <div key={rememberedPlant.Plant.id} className="max-w-sm rounded overflow-hidden shadow-lg p-5 m-3 bg-beige">

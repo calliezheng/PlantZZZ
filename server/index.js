@@ -5,12 +5,16 @@ const cors = require('cors');
 
 app.use(express.json());
 app.use(cors());
+
+// Use pictures in folders
 app.use('/images/plants', express.static(path.join(__dirname, 'images', 'plant picture')));
 app.use('/images/products', express.static(path.join(__dirname, 'images', 'product picture')));
 app.use('/images/other', express.static(path.join(__dirname, 'images', 'other')));
 
+// Use database
 const db = require("./models");
 
+// Create routers
 const homeRouter = require("./routes/home");
 app.use("/home", homeRouter);
 

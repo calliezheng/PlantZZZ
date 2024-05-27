@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as Yup from 'yup';
 import BackButton from './BackButton';
 
+//Define the type for Typescript 
 interface Plant {
   id?: number;
   academic_name: string;
@@ -16,6 +17,7 @@ interface Picture {
   picture_file_name: string;
 }
 
+// Create Validation by yup
 const validationSchema = Yup.object().shape({
   academic_name: Yup.string()
     .required('Academic name is required'),
@@ -31,6 +33,7 @@ function ManagePlant() {
   const [updatedFiles, setUpdatedFiles] = useState<{[key: number]: File | null }>({});
   const [filter, setFilter] = useState<string>('AB');
 
+  //Fetch plant data from back-end
   useEffect(() => {
     const fetchPlants = async () => {
       try {
@@ -44,6 +47,7 @@ function ManagePlant() {
     fetchPlants();
   }, []);
 
+  // Function to filter the plants out with the first letter to display on different pages
   const handleLetterClick = (letterGroup: string) => {
     setFilter(letterGroup);
   };
@@ -55,6 +59,7 @@ function ManagePlant() {
   
   const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
 
+  // Function to add or change pictures
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, plantId?: number) => {
     if (event.currentTarget.files) {
       const file = event.currentTarget.files[0];
@@ -68,7 +73,9 @@ function ManagePlant() {
     }
   };
 
+  // Add plant
   const handleAddPlant = async (values: Plant, actions: FormikHelpers<Plant>) => {
+    //Create form with formik
     const formData = new FormData();
     formData.append('academic_name', values.academic_name);
     formData.append('daily_name', values.daily_name);
@@ -81,7 +88,9 @@ function ManagePlant() {
         'Content-Type': 'multipart/form-data',
         },
       });
+      // Update the state to reflect the changes
       setPlants(currentPlants => [...currentPlants, response.data]);
+      // Reset adding plant and selected file
       setIsAdding(false);
       setSelectedFile(null);
       alert('New Plant added successfully');
@@ -89,17 +98,17 @@ function ManagePlant() {
     } catch (error) {
       console.error('Error adding plant:', error);
     }
+    // Stop the form submission process
     actions.setSubmitting(false);
   };
 
+  //Edit plant
   const handleUpdatePlant = async (values: Plant, actions: FormikHelpers<Plant>) => {
     // Check if there's an editing plant and if it has an ID
     if (!editingPlant || editingPlant.id === undefined) {
       console.error('Error updating plant: editingPlant is not defined or lacks an ID');
       return;
     }
-  
-    // Prepare FormData for multipart/form-data request
     const formData = new FormData();
     formData.append('academic_name', values.academic_name);
     formData.append('daily_name', values.daily_name);
@@ -110,31 +119,25 @@ function ManagePlant() {
     }
   
     try {
-      // Send the update request with formData
       const response = await axios.put(`http://localhost:3001/plant/${editingPlant.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
-      // Update the state to reflect the changes
       setPlants(currentPlants =>
         currentPlants.map(plant => (plant.id === editingPlant.id ? { ...plant, ...response.data } : plant))
     );
-      
-      // Reset editing plant and selected file
       setEditingPlant(null);
       alert('Plant updated successfully');
       window.location.reload();
     } catch (error) {
       console.error('Error updating plant:', error);
     } finally {
-      // Stop the form submission process
       actions.setSubmitting(false);
     }
   };
   
-
+  //Delete Plant
   const handleDeletePlant = async (id?: number) => {
     if (id) {
       try {
@@ -153,6 +156,7 @@ function ManagePlant() {
   return (
     <div className="container mx-auto p-4">
       <BackButton />
+       {/* Filter nav bar */}
       <div>
         {letterGroups.map((group) => (
           <button
@@ -166,6 +170,8 @@ function ManagePlant() {
           </button>
         ))}
       </div>
+
+      {/* Add plant form */}
       <button onClick={() => setIsAdding(true)} className="text-lg leading-6 font-medium font-poetsen text-beige bg-brown hover:bg-brown-dark focus:outline-none focus:ring-2 focus:ring-brown-dark focus:ring-opacity-50 rounded-lg shadow-lg transition duration-150 ease-in-out px-6 py-2 my-4">Add New Plant</button>
       {isAdding && (
         <Formik initialValues={{ academic_name: '', daily_name: ''}} validationSchema={validationSchema} onSubmit={handleAddPlant}>
@@ -204,7 +210,7 @@ function ManagePlant() {
               </Formik>
             )}
 
-        
+            {/* Edit plant form */}    
             {editingPlant && (
               <Formik
                 initialValues={{ academic_name: editingPlant.academic_name, daily_name: editingPlant.daily_name,}}
@@ -244,7 +250,7 @@ function ManagePlant() {
                 )}
               </Formik>
             )}
- 
+        {/* Existing plant cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPlants.map((plant) => (
               <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { SignIn, SignUp } from './Sign';
 
+//Define the type for Typescript 
 interface SignModalProps {
   showModal: boolean; // This indicates if the modal should be shown or not
   toggleModal: () => void; // The function to call when we want to toggle the modal

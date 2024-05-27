@@ -16,6 +16,7 @@ function Cart() {
     const [products, setProducts] = useState<Product[]>([]);
     const id = localStorage.getItem('user_id');
   
+    //Fetch data from back-end to get the Purchase history of specific user id
     useEffect(() => {
         const fetchProducts = async () => {
             try {
