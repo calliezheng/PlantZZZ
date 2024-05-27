@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const productName = req.body.product_name.replace(/\s+/g, '-').toLowerCase();
-    cb(null, `${productName}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+    cb(null, `${productName}${path.extname(file.originalname).toLowerCase()}`);
   }
 });
 

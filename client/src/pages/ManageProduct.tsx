@@ -250,7 +250,7 @@ const handleUpdateProduct = async (values: Product, actions: FormikHelpers<Produ
                             </div>
 
                             <div className="mt-2">
-                              <label htmlFor="price" className="block text-lg text-left font-opensans font-medium text-green-700">Picture</label>   
+                              <label htmlFor="price" className="block text-lg text-left font-opensans font-medium text-green-700">Price</label>   
                               <Field name="price" type="number" placeholder="Price" className="mt-1 p-2 w-full border rounded-md font-opensans"/>
                               <ErrorMessage name="price" component="div" className="error text-red-500 text-base italic"/>
                             </div>
@@ -281,7 +281,7 @@ const handleUpdateProduct = async (values: Product, actions: FormikHelpers<Produ
         {/* Edit product form */}
         {editingProduct && (
           <Formik
-            initialValues={{product_name: '', product_type: '', price: 0, picture: '', is_active: true}}
+            initialValues={{product_name: editingProduct.product_name, product_type: editingProduct.product_type, price: editingProduct.price, picture: '', is_active: true}}
             validationSchema={validationSchema}
             onSubmit={handleUpdateProduct}
           >

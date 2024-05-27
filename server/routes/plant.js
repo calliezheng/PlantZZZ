@@ -12,7 +12,8 @@ const storage = multer.diskStorage({
     cb(null, destPath);
   },
   filename: function (req, file, cb) {
-    cb(null, `${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+    const plantName = req.body.academic_name.replace(/\s+/g, '-').toLowerCase();
+    cb(null, `${plantName}${path.extname(file.originalname).toLowerCase()}`);
   }
 });
 
