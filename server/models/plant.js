@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'Introduce the plant ...',
+    },
     is_active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

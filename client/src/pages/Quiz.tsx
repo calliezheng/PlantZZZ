@@ -10,15 +10,11 @@ export interface Plant {
   id: number;
   academic_name?: string;
   daily_name?: string;
-  Pictures?: Picture[];
+  randomPicture?: string;
   location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox';
   type: 'academicNames' | 'dailyNames' | 'pictures';
 }
 
-export interface Picture {
-  id: number;
-  picture_file_name: string;
-}
 
 interface MatchAttempt {
   academicId: number;
@@ -56,6 +52,7 @@ const Quiz = () => {
     const fetchPlants = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/quiz`);
+        console.log('plants:', response)
         // Shuffle the fetched data
         let shuffledData = shuffleArray(response.data);
   
@@ -82,7 +79,7 @@ const Quiz = () => {
           ...dailyNamesWithLocation,
           ...picturesWithLocation,
         ];
-        console.log('combinedPlants:', combinedPlants)
+        console.log('combinedPlants:', combinedPlants);
         // Set the combined plants with location to state
         setPlants(combinedPlants);
       } catch (error) {
@@ -316,11 +313,11 @@ const quitQuiz = () => {
                 className="p-2 mb-4 bg-green-600 rounded shadow cursor-pointer font-opensans text-white w-1/3"
                 style={{ maxWidth: "20%"}}
               >
-                {plant.Pictures && plant.Pictures[0] && (
+                {plant.randomPicture && (
               <img
                 className="w-full"
                 style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                src={plant.randomPicture.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.randomPicture)}` : '/images/plants/picture_is_missing.png'}
                 alt={plant.academic_name}
               />
             )}
@@ -367,11 +364,11 @@ const quitQuiz = () => {
                           )
                         }
                         {
-                          plant.type === 'pictures' && plant.Pictures && plant.Pictures[0] && (
+                          plant.type === 'pictures' && plant.randomPicture && (
                             <img
                               className="w-full object-cover"
                               style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                              src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}`}
+                              src={`http://localhost:3001/images/plants/${encodeURIComponent(plant.randomPicture)}`}
                               alt={plant.daily_name}
                             />
                           )

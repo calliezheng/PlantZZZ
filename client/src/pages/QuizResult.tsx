@@ -63,10 +63,10 @@ const QuizResult: React.FC = () => {
                   <div className="px-6 py-4">
                     {item.type === 'academicNames' && <p className="text-brown-dark font-opensans text-base">{item.academic_name}</p>}
                     {item.type === 'dailyNames' && <p className="text-brown-dark font-opensans text-base">{item.daily_name}</p>}
-                    {item.type === 'pictures' && item.Pictures && item.Pictures[0] && (
+                    {item.type === 'pictures' && item.randomPicture && (
                       <img
                         className="w-full h-48 object-cover"
-                        src={`http://localhost:3001/images/plants/${encodeURIComponent(item.Pictures[0].picture_file_name)}`}
+                        src={`http://localhost:3001/images/plants/${encodeURIComponent(item.randomPicture)}`}
                         alt={item.daily_name || item.academic_name}
                       />
                     )}
@@ -87,10 +87,10 @@ const QuizResult: React.FC = () => {
                 <div key={itemIndex} className="px-6 py-4 bg-beige">
                 <div className="text-brown-dark font-opensans text-base mb-2">{item.academic_name}</div>
                 <p className="text-brown-dark font-opensans text-base mb-4">{item.daily_name}</p>
-                {item.Pictures && item.Pictures[0] && (
+                {item.randomPicture && (
                     <img
                     className="w-full h-48 object-cover"
-                    src={`http://localhost:3001/images/plants/${encodeURIComponent(item.Pictures[0].picture_file_name)}`}
+                    src={`http://localhost:3001/images/plants/${encodeURIComponent(item.randomPicture)}`}
                     alt={item.daily_name || item.academic_name}
                     />
                 )}
