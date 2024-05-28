@@ -15,6 +15,7 @@ import DashboardAdmin from './pages/DashboardAdmin';
 import Profile from './pages/Profile';
 import Password from './pages/Password';
 import ManagePlant from './pages/ManagePlant';
+import ManageLearnDetail from "./pages/ManageLearnDetail";
 import ManageStaff from './pages/ManageStaff';
 import ManageProduct from './pages/ManageProduct';
 import PlantLearned from './pages/PlantLearned';
@@ -91,6 +92,7 @@ function App() {
         <Route path="/dashboard/profile/:id" element={<Profile />} />
         <Route path="/dashboard/profile/:id/password" element={<Password />} />
         <Route path="/dashboard/profile/:id/manageplant" element={<ManagePlant />} />
+        <Route path="/dashboard/profile/:id/learndetail/:id" element={<ManageLearnDetail />} />
         <Route path="/dashboard/profile/:id/managestaff" element={<ManageStaff />} />
         <Route path="/dashboard/profile/:id/manageproduct" element={<ManageProduct />} />
         <Route path="/dashboard/learned plant/:id" element={<PlantLearned />} />

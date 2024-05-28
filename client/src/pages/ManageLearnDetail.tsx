@@ -7,9 +7,9 @@ interface Picture {
   id: number;
   picture_file_name: string;
 }
+  
 
-
-const LearnDetail: React.FC = () => {
+const ManageLearnDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [pictures, setPictures] = useState<Picture[]>([]);
   const location = useLocation();
@@ -58,4 +58,4 @@ const LearnDetail: React.FC = () => {
   );
 };
 
-export default LearnDetail;
+export default ManageLearnDetail;

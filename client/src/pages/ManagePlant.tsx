@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import axios from 'axios';
 import * as Yup from 'yup';
 import BackButton from './BackButton';
+import { useNavigate } from 'react-router-dom';
 
 //Define the type for Typescript 
 interface Plant {
@@ -26,6 +27,7 @@ const validationSchema = Yup.object().shape({
 });
 
 function ManagePlant() {
+  const navigate = useNavigate();
   const [plants, setPlants] = useState<Plant[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -152,6 +154,10 @@ function ManagePlant() {
     }
 };
 
+const handlePlantClick = (plant: Plant) => {
+  console.log('Plant clicked:', plant);
+  navigate(`/learndetail/${plant.id}`, { state: { plant } });
+};
 
   return (
     <div className="container mx-auto p-4">
@@ -255,13 +261,15 @@ function ManagePlant() {
           {filteredPlants.map((plant) => (
               <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
                   {plant.Pictures && plant.Pictures[0] && (
-                    <img className="w-full" 
-                    style={{
-                      width: '100%', // This will make the image responsive and fill the container
-                      height: '200px', // Replace with the height you want
-                      objectFit: 'cover' // This will cover the area without stretching the image
-                    }}
-                    src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
+                    <div onClick={() => handlePlantClick(plant)} className="cursor-pointer">
+                      <img className="w-full" 
+                      style={{
+                        width: '100%', // This will make the image responsive and fill the container
+                        height: '200px', // Replace with the height you want
+                        objectFit: 'cover' // This will cover the area without stretching the image
+                      }}
+                      src={plant.Pictures && plant.Pictures.length > 0 ? `/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'} />
+                    </div>
                   )}
                   <div className="px-6 py-4 bg-beige">
                     <div className="font-bold font-opensans text-xl text-brown mb-2">{plant.academic_name}</div>
