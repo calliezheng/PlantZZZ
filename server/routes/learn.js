@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { Plant, Picture } = require("../models");
+const { Op } = require('sequelize');
 
-// fetch data from plant table with plant's picture in picture table
+// fetch data from plant table with one cover picture in picture table
 router.get("/", async (req, res) => {
     try {
         const plants = await Plant.findAll({
@@ -24,14 +25,35 @@ router.get("/", async (req, res) => {
 });
 
 
-// Fetch all pictures for a specific plant
+// Fetch all pictures for a specific plant except for the cover page
 router.get("/:plantId/pictures", async (req, res) => {
     try {
         const plantId = parseInt(req.params.plantId, 10);
-        const pictures = await Picture.findAll({
-            where: { plant_id: plantId },
+        
+        // Find the cover picture ID for the given plantId
+        const coverPicture = await Picture.findOne({
+            where: {
+                plant_id: plantId,
+                is_active: 1
+            },
             order: [['id', 'ASC']]
         });
+
+        const coverPictureId = coverPicture ? coverPicture.id : null;
+
+        const whereCondition = {
+            plant_id: plantId
+        };
+
+        if (coverPictureId) {
+            whereCondition.id = { [Op.ne]: coverPictureId };
+        }
+
+        const pictures = await Picture.findAll({
+            where: whereCondition,
+            order: [['id', 'ASC']]
+        });
+
         res.json(pictures);
     } catch (error) {
         console.error(`Error fetching pictures for plant ${req.params.plantId}:`, error);

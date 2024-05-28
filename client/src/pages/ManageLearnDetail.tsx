@@ -14,6 +14,7 @@ const ManageLearnDetail: React.FC = () => {
   const [pictures, setPictures] = useState<Picture[]>([]);
   const location = useLocation();
   const plant = location.state?.plant;
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     const fetchPictures = async () => {
@@ -25,8 +26,25 @@ const ManageLearnDetail: React.FC = () => {
       }
     };
 
+    if (plant) {
+        setDescription(plant.description);
+      }
+
     fetchPictures();
   }, [id]);
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      await axios.put(`http://localhost:3001/plant/${id}`, { description });
+      alert('Changes saved successfully');
+    } catch (error) {
+      console.error('Error saving changes:', error);
+    }
+  };
 
   if (!plant) {
     return <div>Loading...</div>;
@@ -50,9 +68,16 @@ const ManageLearnDetail: React.FC = () => {
         </div>
         <div className="ml-10">
           <div className="border-2 border-beige p-10 bg-beige" style={{ width: '960px', height: '480px'}}>
-            <p className="text-xl">{plant.description}</p>
+          <textarea
+              className="w-full h-full p-2 text-xl"
+              value={description}
+              onChange={handleDescriptionChange}
+            />
           </div>
         </div>
+        <button onClick={handleSaveChanges} className="mt-5 bg-green-500 text-white p-2 rounded">
+          Save Changes
+        </button>
       </div>
     </div>
   );

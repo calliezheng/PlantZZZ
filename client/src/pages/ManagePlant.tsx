@@ -28,6 +28,7 @@ const validationSchema = Yup.object().shape({
 
 function ManagePlant() {
   const navigate = useNavigate();
+  const userId = localStorage.getItem('user_id');
   const [plants, setPlants] = useState<Plant[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -156,7 +157,7 @@ function ManagePlant() {
 
 const handlePlantClick = (plant: Plant) => {
   console.log('Plant clicked:', plant);
-  navigate(`/learndetail/${plant.id}`, { state: { plant } });
+  navigate(`/dashboard/profile/${userId}/learndetail/${plant.id}`, { state: { plant } });
 };
 
   return (
