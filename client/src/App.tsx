@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
 import Home from "./pages/Home";
 import SignModal from "./pages/SignModal";
 import Learn from "./pages/Learn";
+import LearnDetail from "./pages/LearnDetail";
 import ChooseQuiz from "./pages/ChooseQuiz";
 import Quiz from "./pages/Quiz";
 import QuizResult from "./pages/QuizResult";
@@ -80,6 +81,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/learn" element={<Learn />} />
+        <Route path="/learndetail/:id" element={<LearnDetail />} />
         <Route path="/choosequiz" element={<ChooseQuiz />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/quizresult" element={<QuizResult />} />

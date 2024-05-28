@@ -200,7 +200,7 @@ function calculateMatchScore(matchedItems: Plant[]): { score: number, correctIds
     if (matchedAcademic.id === matchedDaily.id && matchedDaily.id === matchedPicture.id) {
       // All items match, perfect match
       correctIds.add(matchedAcademic.id);
-      return { score: 3, correctIds };
+      return { score: 6, correctIds };
     } else {
       // Check for partial matches
       if (matchedAcademic.id === matchedDaily.id) {

@@ -7,7 +7,7 @@ import axios from 'axios';
 type MatchPackage = {
   items: Plant[];
   score: number;
-  correctIds: Set<number>; // Correct this to be a Set of numbers
+  correctIds: Set<number>;
 };
 
 const QuizResult: React.FC = () => {
@@ -20,6 +20,7 @@ const QuizResult: React.FC = () => {
     navigate('/quiz'); 
   };
 
+  // Send the score to back-end
   const sendScoreToBackend = async (userId: string, score: number) => {
     try {
       const url = `http://localhost:3001/quiz/${userId}`; // Adjust URL based on your actual API endpoint

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 //Define the type for Typescript 
@@ -7,6 +9,7 @@ interface Plant {
   id: number;
   academic_name: string;
   daily_name: string;
+  description: string;
   Pictures?: Picture[];
 }
 
@@ -16,6 +19,7 @@ interface Picture {
 }
 
 const Learn = () => {
+  const navigate = useNavigate();
   const [plants, setPlants] = useState<Plant[]>([]);
   const [filter, setFilter] = useState<string>('AB');
   const [showRemembered, setShowRemembered] = useState(false);
@@ -97,6 +101,11 @@ const Learn = () => {
 
   const letterGroups = ['AB', 'C', 'DEFG', 'HIJK', 'LMN', 'OPQ', 'RST', 'UVW', 'XYZ'];
 
+  const handlePlantClick = (plant: Plant) => {
+    console.log('Plant clicked:', plant);
+    navigate(`/learndetail/${plant.id}`, { state: { plant } });
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-4xl font-bold font-poetsen text-brown mb-5">Learn Plants</h1>
@@ -123,12 +132,14 @@ const Learn = () => {
         {filteredPlants.map((plant) => (
           <div key={plant.id} className="max-w-sm rounded overflow-hidden shadow-lg">
             {plant.Pictures && plant.Pictures[0] && (
-              <img
-                className="w-full"
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
-                alt={plant.daily_name}
-              />
+              <div onClick={() => handlePlantClick(plant)} className="cursor-pointer">
+                <img
+                  className="w-full"
+                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                  src={plant.Pictures.length > 0 ? `http://localhost:3001/images/plants/${encodeURIComponent(plant.Pictures[0].picture_file_name)}` : '/images/plants/picture_is_missing.png'}
+                  alt={plant.daily_name}
+                />
+              </div>
             )}
             <div className="px-6 py-4 bg-beige">
               <div className="font-bold font-opensans text-xl text-brown mb-2">{plant.academic_name}</div>

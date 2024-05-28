@@ -9,14 +9,7 @@ export interface Plant {
   id: number;
   academic_name?: string;
   daily_name?: string;
-  Pictures?: Picture[];
-  location: 'academicNames' | 'dailyNames' | 'pictures' | 'matchBox';
-  type: 'academicNames' | 'dailyNames' | 'pictures';
-}
-
-export interface Picture {
-  id: number;
-  picture_file_name: string;
+  picture?: string;
 }
 
 export interface Answer {
@@ -37,7 +30,7 @@ const OriginalQuiz: React.FC = () => {
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
-        const response = await axios.get<Plant[]>('http://localhost:3001/learn');
+        const response = await axios.get<Plant[]>('http://localhost:3001/quiz/originalquiz');
         console.log('response.data', response.data);
         const randomPlants = shuffleArray(response.data).slice(0, 10);
         setQuizData(randomPlants);
@@ -169,8 +162,8 @@ const OriginalQuiz: React.FC = () => {
 
   // Create for easily use in 'return'
   const { question, answers } = questions[currentQuestion];
-  const imageUrl = question.Pictures && question.Pictures[0]
-    ? `http://localhost:3001/images/plants/${encodeURIComponent(question.Pictures[0].picture_file_name)}`
+  const imageUrl = question.picture
+    ? `http://localhost:3001/images/plants/${encodeURIComponent(question.picture)}`
     : '';
 
   // allow users can quit the quiz in the middle

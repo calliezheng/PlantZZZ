@@ -7,7 +7,7 @@ CREATE TABLE plant (
   id INT NOT NULL AUTO_INCREMENT,
   academic_name VARCHAR(255) NOT NULL,
   daily_name VARCHAR(255) NOT NULL,
-  description VARCHAR(255) NOT NULL DEFAULT 'Introduce the plant ...',
+  description VARCHAR(1000) NOT NULL DEFAULT 'Oops! Nothing is here ...',
   is_active BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (id)
 );

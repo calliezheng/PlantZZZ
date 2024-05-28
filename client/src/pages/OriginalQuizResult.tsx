@@ -2,6 +2,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Plant, Answer } from './OriginalQuiz';
+import axios from 'axios';
 
 //Define the type for Typescript 
 interface LocationState {
@@ -12,11 +13,29 @@ interface LocationState {
 const Results: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const userId = localStorage.getItem('user_id');
   const state = location.state as LocationState;
   const { score, answerRecords } = state;
   const handleTryAnotherQuiz = () => {
     navigate('/originalquiz'); 
   };
+
+const sendScoreToBackend = async (userId: string, score: number) => {
+  try {
+    const url = `http://localhost:3001/quiz/${userId}`; 
+    const response = await axios.post(url, { score });
+    console.log('Score updated successfully:', response.data);
+  } catch (error) {
+    console.error('Failed to update score:', error);
+  }
+};
+
+if (userId) {
+  sendScoreToBackend(userId, score);
+} else {
+  console.error('User ID is not available');
+}
+
 
 const quitQuiz = () => {
   if (window.confirm('Are you sure you want to quit the quiz?')) {
@@ -37,7 +56,7 @@ const quitQuiz = () => {
             <div key={index} className="mb-8 bg-white rounded-lg shadow-lg p-6 m-4 max-w-md w-full relative">
                 <h3 className="text-lg text-brown font-bold font-opensans mb-2">Question {index + 1}</h3>
                 <img
-                src={`http://localhost:3001/images/plants/${encodeURIComponent(record.question.Pictures?.[0].picture_file_name ?? '')}`}
+                src={`http://localhost:3001/images/plants/${encodeURIComponent(record.question.picture ?? '')}`}
                 alt={record.question.id.toString()}
                 className="w-full h-64 object-cover rounded-lg mb-4"
                 />

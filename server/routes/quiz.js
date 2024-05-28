@@ -32,6 +32,31 @@ router.get('/', async (req, res) => {
     }
   });
 
+router.get('/originalquiz', async (req, res) => {
+  try {
+    const plants = await Plant.findAll({
+      include: [{
+        model: Picture,
+        as: 'Pictures',
+        order: sequelize.random(),
+        limit: 1,
+      }],
+    });
+
+    const plantsWithRandomPictures = plants.map(plant => ({
+      id: plant.id,
+      academic_name: plant.academic_name,
+      daily_name: plant.daily_name,
+      picture: plant.Pictures[0] ? plant.Pictures[0].picture_file_name : null,
+    }));
+
+    res.json(plantsWithRandomPictures);
+  } catch (error) {
+    console.error('Error fetching random pictures for plants:', error);
+    res.status(500).send('Error fetching random pictures for plants');
+  }
+});
+
 // Update score for user in user table
 router.post('/:id', express.json(), async (req, res) => {
   const userId = req.params.id;

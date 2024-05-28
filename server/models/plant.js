@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'Introduce the plant ...',
+      defaultValue: 'Oops! Nothing is here ...',
     },
     is_active: {
       type: DataTypes.BOOLEAN,
