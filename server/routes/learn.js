@@ -42,7 +42,8 @@ router.get("/:plantId/pictures", async (req, res) => {
         const coverPictureId = coverPicture ? coverPicture.id : null;
 
         const whereCondition = {
-            plant_id: plantId
+            plant_id: plantId,
+            is_active: 1
         };
 
         if (coverPictureId) {

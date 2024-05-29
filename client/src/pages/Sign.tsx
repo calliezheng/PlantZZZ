@@ -83,7 +83,7 @@ export function SignIn({ toggleModal, authenticateUser }: SignInProps ) {
           <ErrorMessage name="password" component="span" className="error text-red-500 text-base italic" />
           
           {((errors as FormikErrorValues).general) && (
-            <div className="error text-red-500 text-xs italic">{(errors as FormikErrorValues).general}</div>
+            <div className="error text-red-500 text-base italic">{(errors as FormikErrorValues).general}</div>
           )}
           
           <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium font-opensans text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Sign In</button>
@@ -108,6 +108,10 @@ export function SignUp({ toggleModal }: SignUpProps) {
     password: string;
   }
 
+  interface FormikErrorValues extends FormikErrors<FormValues> {
+    general?: string;
+  }
+
   const initialValues = {
     username: '',
     email: '',
@@ -129,22 +133,25 @@ export function SignUp({ toggleModal }: SignUpProps) {
         },
         body: JSON.stringify(values),
       });
-      if (!response.ok) {
-        throw new Error('Sign up Failed');
-      }
-      const responseBody = await response.json();
-      console.log(responseBody);
-      if (responseBody.success) { // Assume your API returns { success: true } on successful login
-        navigate('/');
-        toggleModal();
-        toast.success('Sign up successful!');
+      
+      if (response.status === 409) {
+        const responseBody = await response.json();
+        actions.setFieldError('general', responseBody.error);
+      } else if (!response.ok) {
+        throw new Error('Sign up failed');
       } else {
-        // Handle failed sign-in attempt
-        actions.setFieldError('general', 'Your username is occupied.');
+        const responseBody = await response.json();
+        console.log(responseBody);
+        if (responseBody.success) { 
+          navigate('/');
+          toggleModal();
+          toast.success('Sign up successful!');
+        } else {
+          actions.setFieldError('general', 'Failed to sign up. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Error:', error);
-      // Optionally set form error messages here
       actions.setFieldError('general', 'Failed to sign up. Please check your credentials and try again.');
     }
   };
@@ -152,6 +159,7 @@ export function SignUp({ toggleModal }: SignUpProps) {
   return (
     <div className='signUpForm max-w-lg mx-auto p-8 bg-white shadow-lg rounded-lg'>
       <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
+      {({ errors, touched }) => (
         <Form className="space-y-6">
           <label htmlFor="username" className="block text-xl font-medium font-opensans text-green-700">Username</label>
           <Field id="username" name="username" placeholder="Username" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 text-lg focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-lg"
@@ -168,8 +176,12 @@ export function SignUp({ toggleModal }: SignUpProps) {
 />
           <ErrorMessage name="password" component="span" className="error text-red-500 text-base italic"/>
           
+          {((errors as FormikErrorValues).general) && (
+            <div className="error text-red-500 text-base italic">{(errors as FormikErrorValues).general}</div>
+          )}
           <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium font-opensans text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:border-green-500">Sign Up</button>
         </Form>
+        )}
       </Formik>
     </div>
   );

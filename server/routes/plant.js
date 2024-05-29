@@ -12,8 +12,7 @@ const storage = multer.diskStorage({
     cb(null, destPath);
   },
   filename: function (req, file, cb) {
-    const plantName = req.body.academic_name.replace(/\s+/g, '-').toLowerCase();
-    cb(null, `${plantName}${path.extname(file.originalname).toLowerCase()}`);
+    cb(null, file.originalname.toLowerCase());
   }
 });
 
@@ -48,7 +47,6 @@ router.post('/', upload.single('picture'), async (req, res) => {
     const plantId = req.params.id;
     const transaction = await sequelize.transaction();
     try {
-        // Update plant details within a transaction
         await Plant.update(
             {
                 academic_name: req.body.academic_name,
@@ -133,6 +131,75 @@ router.post('/', upload.single('picture'), async (req, res) => {
       await transaction.rollback();
       res.status(500).json({ error: 'Error updating plant and picture status' });
     }
+});
+
+// Update plant description within a transaction
+router.put('/description/:id', async (req, res) => {
+  const plantId = req.params.id;
+  const transaction = await sequelize.transaction();
+
+  try {
+      // Update plant details within a transaction
+      await Plant.update(
+          { description: req.body.description },
+          { where: { id: plantId }, transaction: transaction }
+      );
+
+      // Commit the transaction
+      await transaction.commit();
+
+      res.send('Description updated successfully');
+  } catch (error) {
+      // Rollback the transaction in case of error
+      await transaction.rollback();
+
+      console.error(`Error updating description for plant ${plantId}:`, error);
+      res.status(500).send('Error updating plant description');
+  }
+});
+
+router.post('/addpicture/:id', upload.single('picture'), async (req, res) => {
+  const plantId = req.params.id;
+  const transaction = await sequelize.transaction();
+  try {
+    if (req.file) {
+      const picture = await Picture.create({
+        picture_file_name: req.file.filename,
+        plant_id: plantId,
+        is_active: 1
+      }, { transaction });
+      
+      await transaction.commit();
+      res.status(201).json(picture); // Return the created picture
+    } else {
+      res.status(400).json({ error: 'No picture file provided' });
+    }
+  } catch (error) {
+    console.error('Error creating new picture:', error);
+    res.status(500).json({ error: 'Error creating new picture' });
+  }
+});
+
+// Deactivate a picture
+router.patch('/deactivatepicture/:id', async (req, res) => {
+  const pictureId = req.params.id;
+  const transaction = await sequelize.transaction();
+
+  try {
+    // Update the chosen picture's is_active field to 0
+    await Picture.update(
+      { is_active: 0 },
+      { where: { id: pictureId } }, // Correct the condition to use the picture ID
+      { transaction }
+    );
+
+    await transaction.commit();
+    res.status(204).send();
+  } catch (error) {
+    await transaction.rollback();
+    console.error('Error updating picture status:', error);
+    res.status(500).json({ error: 'Error updating picture status' });
+  }
 });
 
 module.exports = router;
