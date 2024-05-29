@@ -39,7 +39,7 @@ const LearnDetail: React.FC = () => {
       <h1 className="text-3xl font-bold font-poetsen text-brown bg-beige mb-5"> {plant.daily_name} </h1>
       <div className="flex">
         <div className="grid grid-cols-2 gap-4">
-          {pictures.slice(0, 4).map((picture) => (
+          {pictures.map((picture) => (
             <img
               key={picture.id}
               src={`http://localhost:3001/images/plants/${encodeURIComponent(picture.picture_file_name)}`}
