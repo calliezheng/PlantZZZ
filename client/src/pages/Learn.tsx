@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -53,38 +52,46 @@ const Learn = () => {
     fetchPlants();
   }, []);
 
-  // Fetch remembered plants when a user is logged in
-  useEffect(() => {
-    const userId = localStorage.getItem('user_id');
-    if (userId) {
-      fetchRememberedPlants(userId);
+// Fetch remembered plants when a user is logged in or load from localStorage
+useEffect(() => {
+  const userId = localStorage.getItem('user_id');
+  if (userId) {
+    fetchRememberedPlants(userId);
+  } else {
+    const localRememberedPlants = localStorage.getItem('rememberedPlants');
+    if (localRememberedPlants) {
+      setRememberedPlants(JSON.parse(localRememberedPlants));
     }
-  }, []);
+  }
+}, []);
 
   // Pass the remembered plant id with user id to the back-end if signed in 
   const handleRememberToggle = async (plantId: number) => {
     const userId = localStorage.getItem('user_id');
 
-    if (!userId) {
-      console.error('User is not logged in');
-      return;
-    }
-
     const newRememberedState = !rememberedPlants[plantId];
-    setRememberedPlants(prev => ({ ...prev, [plantId]: newRememberedState }));
+    setRememberedPlants(prev => {
+      const updated = { ...prev, [plantId]: newRememberedState };
+      if (!userId) {
+        localStorage.setItem('rememberedPlants', JSON.stringify(updated));
+      }
+      return updated;
+    });
 
-    try {
-      await axios.post(`http://localhost:3001/plant-remembered/${userId}/add-remembered-plant`, {
-        user_id: userId,
-        plant_id: plantId,
-        remember: newRememberedState,
-      });
+    if (userId) {
+      try {
+        await axios.post(`http://localhost:3001/plant-remembered/${userId}/add-remembered-plant`, {
+          user_id: userId,
+          plant_id: plantId,
+          remember: newRememberedState,
+        });
 
-      // re-fetch the remembered plants to keep the state consistent with the database
-      fetchRememberedPlants(userId);
+        // re-fetch the remembered plants to keep the state consistent with the database
+        fetchRememberedPlants(userId);
 
-    } catch (error) {
-      console.error('Error updating remembered plants:', error);
+      } catch (error) {
+        console.error('Error updating remembered plants:', error);
+      }
     }
   };
   
