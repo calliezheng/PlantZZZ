@@ -175,6 +175,7 @@ const OriginalQuiz: React.FC = () => {
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
+      <h3 className="text-2xl font-bold font-poetsen text-beige bg-green-700 mb-5">*Click to choose the right answers(up to 2), click again to cancel the choose</h3>
       <button onClick={quitQuiz} className="bg-red-600 text-white font-opensans px-6 py-2 rounded shadow-lg hover:bg-red-700 transition-colors">Quit</button>
       <div className="bg-beige rounded-lg shadow-lg p-6 m-4 max-w-md w-full relative">
         <img src={imageUrl} alt={question.id.toString()} className="w-full h-64 object-cover rounded-lg mb-4" />
